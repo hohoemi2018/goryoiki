@@ -1,0 +1,2410 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>五領域アセスメント整理アプリ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kiwi+Maru:wght@400;500&family=Zen+Maru+Gothic:wght@400;500;700&display=swap">
+<style>
+:root{
+  --bg:#FFF8F4; --dot:#F6E4DE; --surface:#FFFFFF; --surface-2:#FFFBF8;
+  --ink:#57464F; --ink-soft:#7A6770; --line:#F0DDD8; --line-strong:#E6C8C1;
+  --pink:#F8C3CF; --pink-deep:#B6496C; --pink-soft:#FFEFF3;
+  --mint:#C7EBD6; --mint-deep:#2E7A55; --mint-soft:#EEFAF2;
+  --lav:#DDD3F5; --lav-deep:#6650A6; --lav-soft:#F5F1FD;
+  --sky:#CFE5F8; --sky-deep:#2C6A9E; --sky-soft:#EEF6FD;
+  --peach:#FFDCC0; --peach-deep:#A2561C; --peach-soft:#FFF3E8;
+  --sun:#FFEBA6; --sun-deep:#8A6A00; --sun-soft:#FFF9E0;
+  --coral:#FFD3C9; --coral-deep:#B24A36; --coral-soft:#FFEDE8;
+  --gray:#E4E0EC; --gray-deep:#5F5873; --gray-soft:#F4F2F8;
+  --r-l:22px; --r-m:14px; --r-s:10px;
+  --shadow:0 8px 22px -12px rgba(150,90,100,.35);
+  --f-body:"Zen Maru Gothic","Hiragino Maru Gothic ProN","BIZ UDPGothic","Meiryo",sans-serif;
+  --f-disp:"Kiwi Maru","Zen Maru Gothic","Hiragino Maru Gothic ProN","Meiryo",serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; font-family:var(--f-body); color:var(--ink); font-size:16px; line-height:1.75;
+  background-color:var(--bg);
+  background-image:radial-gradient(var(--dot) 1.3px, transparent 1.4px);
+  background-size:22px 22px;
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+button,input,select,textarea{font:inherit;color:inherit}
+h1,h2,h3,h4{font-family:var(--f-disp);font-weight:500;line-height:1.4;text-wrap:balance;margin:0}
+p{margin:0}
+.wrap{max-width:980px;margin:0 auto;padding-inline:16px}
+.hidden{display:none!important}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+:focus-visible{outline:3px solid var(--pink-deep);outline-offset:2px;border-radius:8px}
+
+/* ---------- header ---------- */
+.hero{position:relative;background:linear-gradient(180deg,#FFE4EA 0%,#FFEEDF 70%,#FFF4E6 100%);padding-top:env(safe-area-inset-top,0px)}
+.hero-inner{display:flex;align-items:center;gap:20px;padding-block:22px 34px}
+.hero-text{flex:1;min-width:0}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:6px;font-size:13px;letter-spacing:.08em;color:var(--pink-deep);background:rgba(255,255,255,.7);padding:3px 12px;border-radius:999px;margin-bottom:10px}
+.hero h1{font-size:clamp(24px,4.4vw,36px);letter-spacing:.04em;color:#5A3F4C}
+.hero-sub{margin-top:6px;font-size:15px;color:var(--ink-soft)}
+.hero-art{flex:0 0 auto;width:min(240px,34vw)}
+.hero-art svg{display:block;width:100%;height:auto}
+.hero-wave{position:absolute;left:0;right:0;bottom:-1px;height:26px;display:block;width:100%}
+
+/* ---------- nav ---------- */
+.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:rgba(255,248,244,.92);backdrop-filter:blur(6px);border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;gap:8px;padding-block:10px;overflow-x:auto;scrollbar-width:none}
+.nav .wrap::-webkit-scrollbar{display:none}
+.tab{flex:0 0 auto;display:inline-flex;align-items:center;gap:8px;border:2px solid transparent;background:transparent;border-radius:999px;padding:7px 16px;font-weight:700;font-size:15px;color:var(--ink-soft);cursor:pointer}
+.tab svg{width:20px;height:20px}
+.tab:hover{background:var(--surface)}
+.tab[aria-current="page"]{background:var(--surface);border-color:var(--pink);color:var(--ink);box-shadow:0 3px 0 var(--pink)}
+.tab .count{font-size:12px;background:var(--pink-soft);color:var(--pink-deep);border-radius:999px;padding:0 8px;font-variant-numeric:tabular-nums}
+
+main{padding-block:22px 120px}
+
+/* ---------- common parts ---------- */
+.card{background:var(--surface);border:1.5px solid var(--line);border-radius:var(--r-l);box-shadow:var(--shadow);padding:22px}
+.stack{display:flex;flex-direction:column;gap:18px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.muted{color:var(--ink-soft)}
+.small{font-size:13.5px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:999px;border:2px solid var(--line-strong);background:var(--surface);padding:9px 18px;font-weight:700;font-size:15px;cursor:pointer;line-height:1.3;text-decoration:none;color:var(--ink);transition:transform .08s ease, box-shadow .08s ease}
+.btn:hover{background:var(--surface-2)}
+.btn:active{transform:translateY(1px)}
+.btn svg{width:18px;height:18px;flex:0 0 auto}
+.btn-main{background:var(--pink);border-color:#EFA8B8;box-shadow:0 4px 0 #E79DB0;color:#4A3440}
+.btn-main:hover{background:#F6B6C4}
+.btn-main:active{box-shadow:0 2px 0 #E79DB0;transform:translateY(2px)}
+.btn-mint{background:var(--mint);border-color:#A9DDBE;box-shadow:0 4px 0 #9CD3B3;color:#2B4A3A}
+.btn-mint:hover{background:#B9E5CB}
+.btn-sun{background:var(--sun);border-color:#F3D878;box-shadow:0 4px 0 #EDCF6A;color:#4F4210}
+.btn-big{font-size:17px;padding:13px 26px}
+.btn-sm{font-size:13.5px;padding:5px 12px;border-width:1.5px}
+.btn-ghost{border-color:transparent;background:transparent}
+.btn-ghost:hover{background:var(--pink-soft)}
+.btn-danger{color:var(--coral-deep);border-color:var(--coral)}
+.btn-danger:hover{background:var(--coral-soft)}
+.linkish{background:none;border:none;padding:0;color:var(--pink-deep);font-weight:700;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+
+.banner{display:flex;gap:14px;align-items:flex-start;border-radius:var(--r-m);padding:14px 16px;background:var(--sun-soft);border:1.5px dashed #F1D884}
+.banner svg{flex:0 0 auto;width:40px;height:40px}
+.banner.mint{background:var(--mint-soft);border-color:#AEDDC2}
+.banner.pink{background:var(--pink-soft);border-color:#F2B3C2}
+
+/* ---------- form ---------- */
+.sec-head{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.num{flex:0 0 auto;width:38px;height:38px;border-radius:50%;display:grid;place-items:center;font-family:var(--f-disp);font-size:18px;color:#fff}
+.sec-head h2{font-size:21px}
+.sec-head p{font-size:13.5px;color:var(--ink-soft)}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 18px}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px 18px}
+.span2{grid-column:span 2}
+.field{display:flex;flex-direction:column;gap:6px;min-width:0}
+.field > label, .field > .lbl{font-weight:700;font-size:15px;display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.field .hint{font-weight:400;font-size:12.5px;color:var(--ink-soft)}
+.req{font-size:11.5px;background:var(--pink);color:#4A3440;border-radius:6px;padding:0 6px;font-weight:700}
+input[type=text],input[type=date],select,textarea{width:100%;border:2px solid var(--line);background:#FFFDFC;border-radius:12px;padding:10px 12px;font-size:16px;line-height:1.6;outline:none;transition:border-color .12s, box-shadow .12s}
+textarea{min-height:92px;resize:vertical}
+input:focus,select:focus,textarea:focus{border-color:#E9A2B5;box-shadow:0 0 0 4px var(--pink-soft)}
+input::placeholder,textarea::placeholder{color:#B8A5AC}
+.period{display:flex;align-items:center;gap:8px}
+.period span{flex:0 0 auto}
+.err{color:var(--coral-deep);font-size:13.5px;font-weight:700}
+.field.has-err input{border-color:#E7907C}
+
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{position:relative;display:inline-flex}
+.chip input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer}
+.chip span{display:inline-flex;align-items:center;gap:6px;border:2px solid var(--line);background:#FFFDFC;border-radius:999px;padding:6px 14px 6px 10px;font-size:15px;font-weight:500;cursor:pointer;transition:all .12s}
+.chip span::before{content:"";width:16px;height:16px;border-radius:50%;border:2px solid var(--line-strong);background:#fff;flex:0 0 auto;transition:all .12s}
+.chip input:checked + span{background:var(--pink-soft);border-color:#EFA8B8;font-weight:700}
+.chip input:checked + span::before{background:var(--pink-deep);border-color:var(--pink-deep);box-shadow:inset 0 0 0 3px #fff}
+.chip input:focus-visible + span{outline:3px solid var(--pink-deep);outline-offset:2px}
+.chip.sup input:checked + span{background:var(--mint-soft);border-color:#9FD6B7}
+.chip.sup input:checked + span::before{background:var(--mint-deep);border-color:var(--mint-deep)}
+
+.addbox{margin-top:14px;border:1.5px dashed #AEDDC2;border-radius:var(--r-m);background:var(--mint-soft);padding:14px}
+.addbox summary{cursor:pointer;font-weight:700;color:var(--mint-deep);list-style:none;display:flex;align-items:center;gap:8px}
+.addbox summary::-webkit-details-marker{display:none}
+.addbox[open] summary{margin-bottom:12px}
+.dom-inputs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 14px}
+.dom-inputs textarea{min-height:64px;font-size:15px}
+.dlabel{display:inline-flex;align-items:center;gap:6px;font-weight:700;font-size:14px}
+.dlabel i{width:12px;height:12px;border-radius:50%;display:inline-block}
+
+.tipbox{display:flex;gap:10px;align-items:flex-start;background:var(--sky-soft);border-radius:var(--r-m);padding:12px 14px;font-size:14px;color:#3F5566}
+.tipbox svg{flex:0 0 auto;width:26px;height:26px}
+
+.formbar{position:fixed;left:0;right:0;bottom:0;z-index:15;background:rgba(255,248,244,.95);backdrop-filter:blur(6px);border-top:1.5px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
+.formbar .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:10px;flex-wrap:wrap}
+.formbar .note{font-size:13px;color:var(--ink-soft);flex:1;min-width:200px}
+
+/* ---------- result ---------- */
+.toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin-bottom:18px}
+.toolbar .left,.toolbar .right{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.printopt{display:inline-flex;align-items:center;gap:6px;font-size:13.5px;color:var(--ink-soft);cursor:pointer}
+.printopt input{width:18px;height:18px;accent-color:var(--pink-deep)}
+
+.sheet{background:var(--surface);border:1.5px solid var(--line);border-radius:var(--r-l);box-shadow:var(--shadow);padding:26px 26px 30px;margin-bottom:22px;position:relative}
+.sheet-tag{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.sheet-tag .pno{display:inline-flex;align-items:center;gap:10px}
+.sheet-tag .pno b{font-family:var(--f-disp);font-weight:500;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-size:17px}
+.sheet-tag h2{font-size:22px}
+.sheet-tag .who{font-size:12.5px;color:var(--ink-soft)}
+.sheet-lead{font-size:14px;color:var(--ink-soft);margin-bottom:16px}
+.sub-h{display:flex;align-items:center;gap:8px;font-family:var(--f-disp);font-size:17px;margin:22px 0 10px}
+.sub-h::before{content:"";width:10px;height:10px;border-radius:50%;background:var(--pink);box-shadow:14px 0 0 var(--sun),28px 0 0 var(--mint);margin-right:30px}
+
+.cover-title{display:flex;align-items:center;gap:16px;margin-bottom:18px}
+.cover-title svg{width:74px;height:74px;flex:0 0 auto}
+.cover-title h2{font-size:25px}
+.cover-title p{font-size:13.5px;color:var(--ink-soft)}
+.info{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border:1.5px solid var(--line);border-radius:var(--r-m);overflow:hidden}
+.info div{padding:9px 14px;border-right:1.5px solid var(--line);border-bottom:1.5px solid var(--line);min-width:0}
+.info div:nth-child(3n){border-right:none}
+.info div:nth-last-child(-n+3){border-bottom:none}
+.info dt{font-size:12px;color:var(--ink-soft);letter-spacing:.05em}
+.info dd{margin:0;font-weight:700;font-size:16px;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.glance{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:18px}
+.glance .g{border-radius:var(--r-m);padding:14px 16px;min-width:0}
+.glance .g h3{font-size:15px;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.glance .g.full{grid-column:span 2}
+.g-main{background:var(--lav-soft)}
+.g-str{background:var(--sun-soft)}
+.g-plan{background:var(--mint-soft)}
+.g-sup{background:var(--sky-soft)}
+
+.dchip{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:3px 12px 3px 4px;font-weight:700;font-size:14.5px;white-space:nowrap}
+.dchip svg{width:24px;height:24px}
+.pill{display:inline-flex;align-items:center;border-radius:999px;padding:1px 10px;font-size:12.5px;font-weight:700;white-space:nowrap}
+.pill.s{background:var(--sun);color:#5A4600}
+.pill.k{background:var(--coral);color:#7A2F20}
+.pill.c{background:var(--gray);color:var(--gray-deep)}
+.pill.n{background:#F3EEEE;color:var(--ink-soft)}
+.pill.sup{background:var(--sky);color:#24506F}
+
+/* check table */
+.tscroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:var(--r-m);border:1.5px solid var(--line)}
+table.ck{width:100%;border-collapse:collapse;min-width:600px;font-size:14.5px}
+table.ck th,table.ck td{border-bottom:1.5px solid var(--line);padding:8px 10px;vertical-align:middle;text-align:left}
+table.ck thead th{background:#FFF4F0;font-size:13px;letter-spacing:.05em;color:var(--ink-soft);font-weight:700;position:sticky;top:0}
+table.ck thead th.m{text-align:center;width:72px}
+table.ck tbody tr:last-child td{border-bottom:none}
+table.ck td.dom{font-weight:700;width:128px;font-family:var(--f-disp);font-size:15px;line-height:1.45}
+table.ck td.dom .di{display:flex;flex-direction:column;align-items:flex-start;gap:6px}
+table.ck td.dom svg{width:34px;height:34px}
+table.ck td.vp .ev{display:block;font-size:12px;color:var(--ink-soft);line-height:1.5;margin-top:2px}
+table.ck td.mk{text-align:center;padding:4px}
+.mark{width:58px;height:34px;border-radius:999px;white-space:nowrap;border:2px dashed var(--line-strong);background:#fff;cursor:pointer;display:inline-grid;place-items:center;transition:all .12s;font-weight:700;font-size:12px;color:transparent}
+.mark:hover{border-style:solid}
+.mark[aria-pressed="true"]{border-style:solid;color:inherit}
+.mark.s[aria-pressed="true"]{background:var(--sun);border-color:#EAC85A;color:#5A4600}
+.mark.k[aria-pressed="true"]{background:var(--coral);border-color:#EFA592;color:#7A2F20}
+.mark.c[aria-pressed="true"]{background:var(--gray);border-color:#C9C1D8;color:var(--gray-deep)}
+.legend{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;font-size:13px;color:var(--ink-soft);margin-top:10px}
+.point{margin-top:14px;display:flex;gap:10px;align-items:flex-start;background:var(--peach-soft);border-radius:var(--r-m);padding:12px 14px;font-size:14px}
+.point b{flex:0 0 auto;font-family:var(--f-disp);font-weight:500;color:var(--peach-deep)}
+
+/* key-value blocks */
+.kv{display:grid;grid-template-columns:170px minmax(0,1fr);border:1.5px solid var(--line);border-radius:var(--r-m);overflow:hidden}
+.kv > .k{background:#FFF6F2;padding:10px 14px;font-weight:700;font-size:14.5px;border-bottom:1.5px solid var(--line)}
+.kv > .v{padding:8px 12px;border-bottom:1.5px solid var(--line);min-width:0}
+.kv > .k:nth-last-child(2),.kv > .v:last-child{border-bottom:none}
+.kv2{grid-template-columns:130px minmax(0,1fr) 130px minmax(0,1fr)}
+.kv2 > .k,.kv2 > .v{border-bottom:1.5px solid var(--line)}
+.kv2 > .k:nth-last-child(-n+4),.kv2 > .v:nth-last-child(-n+3){border-bottom:none}
+
+/* editable */
+.ed{white-space:pre-wrap;overflow-wrap:anywhere;min-height:1.75em;padding:4px 6px;border-radius:8px;border:1.5px dashed transparent;outline:none;cursor:text}
+.ed:hover{border-color:var(--line-strong);background:#FFFDFB}
+.ed:focus{border-color:#E9A2B5;border-style:solid;background:#fff;box-shadow:0 0 0 3px var(--pink-soft)}
+.ed:empty::before{content:attr(data-ph);color:#B8A5AC}
+.edwrap{display:flex;flex-direction:column;align-items:flex-start;gap:2px}
+.edwrap .ed{width:100%}
+.reset{background:none;border:none;font-size:12px;color:var(--pink-deep);cursor:pointer;padding:0 6px;font-weight:700}
+.edited-flag{font-size:11px;color:var(--ink-soft)}
+
+/* domain memo cards */
+.dgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.dcard{border-radius:var(--r-m);border:1.5px solid;padding:14px 16px;min-width:0;break-inside:avoid}
+.dcard.full{grid-column:span 2}
+.dcard-h{display:flex;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap}
+.dcard-h svg{width:38px;height:38px;flex:0 0 auto}
+.dcard-h h3{font-size:17px;flex:1;min-width:0}
+.dcard .lab{font-size:12.5px;font-weight:700;letter-spacing:.05em;margin-top:10px;margin-bottom:2px;display:flex;align-items:center;gap:6px}
+.dcard .lab::before{content:"";width:8px;height:8px;border-radius:50%;background:currentColor}
+
+.confirm-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 18px;align-items:start}
+.cbox{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:6px}
+.cbox label{display:inline-flex;align-items:center;gap:8px;font-size:15px;cursor:pointer}
+.cbox input{width:20px;height:20px;accent-color:var(--pink-deep);flex:0 0 auto}
+.note-app{margin-top:14px;display:flex;gap:10px;align-items:flex-start;background:var(--lav-soft);border-radius:var(--r-m);padding:12px 14px;font-size:14px}
+.note-app b{flex:0 0 auto;color:var(--lav-deep);font-family:var(--f-disp);font-weight:500}
+
+table.fh{width:100%;border-collapse:collapse;min-width:640px;font-size:14.5px;table-layout:fixed}
+table.fh th{background:#FFF4F0;font-size:13px;color:var(--ink-soft);padding:8px 10px;text-align:left;border-bottom:1.5px solid var(--line)}
+table.fh th:nth-child(1){background:var(--peach-soft)}
+table.fh th:nth-child(2){background:var(--sun-soft)}
+table.fh th:nth-child(3){background:var(--lav-soft)}
+table.fh th:nth-child(4){background:var(--mint-soft)}
+table.fh td{vertical-align:top;padding:6px;border-bottom:1.5px solid var(--line);border-right:1.5px solid var(--line)}
+table.fh td:last-child{border-right:none}
+table.fh tr:last-child td{border-bottom:none}
+.oneline{background:var(--mint-soft);border:2px solid #AEDDC2;border-radius:var(--r-m);padding:12px 14px;font-size:16.5px;font-weight:500}
+.katachi{font-size:13px;color:var(--ink-soft);margin-bottom:6px}
+.katachi span{display:inline-block;background:#fff;border:1.5px solid var(--line);border-radius:6px;padding:0 8px;margin-right:4px}
+
+.p1-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 16px}
+.p1-item{border-left:4px solid var(--peach);padding:2px 0 2px 10px;min-width:0}
+.p1-item dt{font-size:12.5px;font-weight:700;color:var(--ink-soft)}
+.p1-item dd{margin:0;white-space:pre-wrap;overflow-wrap:anywhere;font-size:14.5px}
+
+/* ---------- history ---------- */
+.hist-tools{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:16px}
+.hist-tools input,.hist-tools select{width:auto;flex:1 1 180px}
+.hlist{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.hcard{background:var(--surface);border:1.5px solid var(--line);border-radius:var(--r-l);padding:16px 18px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:10px;min-width:0}
+.hcard-top{display:flex;align-items:flex-start;gap:12px}
+.avatar{flex:0 0 auto;width:46px;height:46px;border-radius:50%;display:grid;place-items:center;font-family:var(--f-disp);font-size:19px;color:#5A3F4C}
+.hcard h3{font-size:18px;overflow-wrap:anywhere}
+.hmeta{font-size:13px;color:var(--ink-soft);font-variant-numeric:tabular-nums}
+.hcard .acts{display:flex;flex-wrap:wrap;gap:6px;margin-top:auto}
+.empty{text-align:center;padding:30px 16px}
+.empty svg{width:160px;height:auto;margin:0 auto 10px;display:block}
+.backup{margin-top:26px}
+
+/* ---------- supports ---------- */
+.slist{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;align-items:start}
+.print-only{display:none}
+.scard{background:var(--surface);border:2px solid var(--line);border-radius:var(--r-l);padding:16px 18px;display:flex;flex-direction:column;gap:8px;min-width:0;transition:border-color .12s, background .12s}
+.scard.on{border-color:#9FD6B7;background:linear-gradient(180deg,var(--mint-soft),#fff 60%)}
+.scard-h{display:flex;align-items:flex-start;gap:10px}
+.scard-h h3{font-size:17px;flex:1;min-width:0;overflow-wrap:anywhere}
+.toggle{flex:0 0 auto;display:inline-flex;align-items:center;gap:8px;cursor:pointer;font-size:13.5px;font-weight:700;color:var(--ink-soft)}
+.toggle input{position:absolute;opacity:0;width:1px;height:1px}
+.toggle .sw{width:46px;height:26px;border-radius:999px;background:#EADCD8;position:relative;transition:background .15s}
+.toggle .sw::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.2);transition:left .15s}
+.toggle input:checked + .sw{background:#7CC59E}
+.toggle input:checked + .sw::after{left:23px}
+.toggle input:checked ~ .tlabel{color:var(--mint-deep)}
+.toggle input:focus-visible + .sw{outline:3px solid var(--pink-deep);outline-offset:2px}
+.scard .sdoms{display:flex;flex-wrap:wrap;gap:4px}
+.scard details summary{cursor:pointer;font-size:14px;font-weight:700;color:var(--pink-deep)}
+.scard details[open] summary{margin-bottom:10px}
+.scard .dom-inputs{grid-template-columns:1fr}
+.badge-custom{font-size:11.5px;background:var(--lav);color:#4B3A80;border-radius:6px;padding:0 6px;font-weight:700;margin-left:6px;vertical-align:middle;font-family:var(--f-body)}
+
+/* ---------- modal & toast ---------- */
+.modal-bg{position:fixed;inset:0;background:rgba(87,70,79,.35);display:grid;place-items:center;z-index:50;padding:16px}
+.modal{background:var(--surface);border-radius:var(--r-l);padding:22px;max-width:420px;width:100%;box-shadow:0 20px 50px -20px rgba(87,70,79,.6);text-align:center}
+.modal svg{width:70px;height:70px;margin:0 auto 8px;display:block}
+.modal p{margin-bottom:16px}
+.modal .row{justify-content:center}
+.toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:#5A3F4C;color:#fff;padding:10px 18px;border-radius:999px;font-size:14.5px;z-index:60;box-shadow:0 10px 24px -10px rgba(0,0,0,.4);max-width:calc(100% - 32px);text-align:center}
+
+footer.foot{text-align:center;font-size:12.5px;color:var(--ink-soft);padding-block:10px 30px}
+
+@media (max-width:720px){
+  .grid2,.grid3,.dom-inputs,.dgrid,.glance,.confirm-grid,.p1-grid,.hlist,.slist{grid-template-columns:1fr}
+  .span2,.dcard.full,.glance .g.full{grid-column:auto}
+  .info{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .info div:nth-child(3n){border-right:1.5px solid var(--line)}
+  .info div:nth-child(2n){border-right:none}
+  .info div:nth-last-child(-n+3){border-bottom:1.5px solid var(--line)}
+  .info div:nth-last-child(-n+2){border-bottom:none}
+  .kv,.kv2{grid-template-columns:1fr}
+  .kv > .k{border-bottom:none;padding-bottom:2px}
+  .kv2 > .k:nth-last-child(-n+4){border-bottom:none}
+  .kv2 > .v:nth-last-child(-n+3){border-bottom:1.5px solid var(--line)}
+  .kv2 > .v:last-child{border-bottom:none}
+  .hero-inner{padding-block:16px 30px}
+  .hero-art{width:112px}
+  .hero-sub{font-size:13.5px}
+  .sheet{padding:18px 16px 22px}
+  .card{padding:18px 16px}
+}
+
+/* ---------- ブレインジム・BBA ---------- */
+.safety{margin-top:14px;border:1.5px dashed var(--line-strong);border-radius:var(--r-m);padding:12px 14px;background:var(--surface-2)}
+.safety .lbl{font-weight:700;display:flex;gap:8px;flex-wrap:wrap;align-items:baseline}
+.safety .hint{font-weight:400;font-size:12.5px;color:var(--ink-soft)}
+.dims{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:12px}
+.dim{border:1.5px solid var(--line);border-radius:var(--r-m);padding:10px 12px;background:#fff;min-width:0}
+.dim.top{border-color:var(--dc);background:var(--ds);box-shadow:0 3px 0 var(--dc)}
+.dim-h{display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:wrap}
+.dim-h b{font-family:var(--f-disp);font-weight:500;font-size:16px;color:var(--dd)}
+.dim-q{font-size:13px;color:var(--ink-soft);margin-top:4px}
+.session{background:var(--lav-soft);border:2px solid #D3C6F0;border-radius:var(--r-m);padding:10px 12px}
+.bg-notes{margin:10px 0 0;padding-left:1.2em;font-size:13px;color:var(--ink-soft)}
+.gcard{background:var(--surface);border:1.5px solid var(--line);border-top:6px solid var(--dc,var(--pink));border-radius:var(--r-l);padding:18px 20px;box-shadow:var(--shadow);min-width:0}
+.gcard-h{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:10px}
+.gcard-h h3{font-size:20px;color:var(--dd,var(--ink))}
+.gmeta{display:grid;gap:4px;background:var(--ds,var(--surface-2));border-radius:var(--r-m);padding:10px 14px;font-size:14.5px}
+.gmeta p{display:grid;grid-template-columns:9.5em minmax(0,1fr);gap:8px}
+.gk{font-weight:700;font-size:12.5px;color:var(--ink-soft);padding-top:2px}
+.gcols{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:14px}
+.gcols h4{font-size:15px;margin-bottom:8px;font-family:var(--f-disp);font-weight:500}
+.glist{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.glist.two{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 16px}
+.glist li{display:flex;flex-direction:column;border-left:4px solid var(--dc,var(--pink));padding:2px 0 2px 10px;min-width:0}
+.glist b{font-size:15px}
+.glist span{font-size:13.5px;color:var(--ink-soft)}
+.glist em{font-style:normal;font-size:12.5px;color:var(--coral-deep)}
+.gsteps{margin:0 0 10px;padding-left:1.4em;display:grid;gap:6px}
+.gsteps b{display:block;color:var(--pink-deep)}
+.gcard.caution{--dc:var(--coral);--ds:var(--coral-soft)}
+.print-only-block{display:none}
+@media (max-width:720px){
+  .dims,.gcols,.glist.two{grid-template-columns:1fr}
+  .gmeta p{grid-template-columns:1fr;gap:0}
+  .gcard{padding:16px}
+}
+@media print{
+  .dims{gap:2mm;margin-bottom:3mm}
+  .dim{padding:5px 8px}
+  .dim-h b{font-size:10.5pt}
+  .dim p{font-size:8.5pt}
+  .session{padding:6px 8px;font-size:9.5pt;break-inside:avoid}
+  .bg-notes{font-size:8.5pt}
+  body.print-guide .print-only-block{display:block}
+  body.print-guide .gcard{box-shadow:none;padding:4mm 5mm;font-size:9.5pt}
+  body.print-guide .glist li{break-inside:avoid}
+  body.print-guide .glist b{font-size:10pt}
+  body.print-guide .glist span,body.print-guide .glist em{font-size:8.5pt}
+  body.print-guide .gcard-h h3{font-size:13pt}
+  body.print-guide .gmeta{font-size:9pt}
+  body.print-guide .stack{gap:4mm}
+}
+
+/* ---------- 事業所 ---------- */
+.facbar{background:rgba(255,255,255,.65);border-bottom:1px solid var(--line)}
+.facbar .wrap{display:flex;align-items:center;gap:10px;padding-block:8px;flex-wrap:wrap}
+.facbar-l{display:inline-flex;gap:6px;align-items:center;font-weight:700;font-size:14px;color:var(--ink-soft)}
+.facbar-l svg{width:18px;height:18px}
+.facbar select{width:auto;flex:1 1 220px;max-width:460px;padding:6px 10px;font-size:15px;font-weight:700;background:#fff}
+.facnew{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}
+#f-fac + .facnew{margin-top:6px}
+.facpick-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.facpick-row select{flex:1 1 260px;width:auto;min-width:0}
+.modal-check{display:flex;gap:10px;align-items:flex-start;text-align:left;background:var(--coral-soft);border-radius:var(--r-m);padding:10px 12px;margin:0 0 16px;cursor:pointer;font-size:15px}
+.modal-check input{width:20px;height:20px;margin-top:2px;accent-color:var(--coral-deep);flex:0 0 auto}
+.reset-card{border-color:var(--coral)}
+.cover-fac{font-size:13.5px;color:var(--pink-deep);font-weight:700;letter-spacing:.04em;margin-bottom:2px}
+.flist{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;align-items:start}
+.fcard{background:var(--surface);border:2px solid var(--line);border-radius:var(--r-l);padding:16px 18px;display:flex;flex-direction:column;gap:12px;min-width:0;box-shadow:var(--shadow)}
+.fcard.on{border-color:#9FD6B7;background:linear-gradient(180deg,var(--mint-soft),#fff 60%)}
+.fcard-h{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.fcard-h svg{width:22px;height:22px;color:var(--mint-deep)}
+.fcard-h b{font-family:var(--f-disp);font-weight:500;font-size:18px;overflow-wrap:anywhere}
+@media (max-width:720px){ .facnew,.flist{grid-template-columns:1fr} .facbar select{max-width:none} }
+@media print{ .cover-fac{font-size:10pt} }
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+/* ---------- print ---------- */
+@page{size:A4;margin:11mm 11mm 12mm}
+@media print{
+  body{background:#fff;font-size:10.5pt;line-height:1.6;padding:0}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .no-print,.hero,.nav,.formbar,.toolbar,.toast,.modal-bg,footer.foot,.reset,.edited-flag{display:none!important}
+  main{padding:0}
+  .wrap{max-width:none;padding:0}
+  .sheet{box-shadow:none;border:none;border-radius:0;padding:0;margin:0 0 6mm}
+  .sheet + .sheet{break-before:page}
+  .sheet.cover + .sheet.p1-sheet{break-before:avoid;margin-top:6mm}
+  body:not(.print-p1) .p1-sheet{display:none!important}
+  body:not(.print-p1) .sheet.cover + .p1-sheet + .sheet{break-before:page}
+  .ed{border:none!important;padding:0 2px;background:none!important;box-shadow:none!important}
+  .ed:empty::before{content:""}
+  .ed:empty{min-height:2.6em;border-bottom:1px dotted #CDB8B2!important}
+  .mark{width:46px;height:20px;border-width:1.2px;font-size:7.5pt}
+  .mark[aria-pressed="false"]{border-style:solid;border-color:#DCC9C4}
+  table.ck,table.fh{min-width:0;font-size:9pt;line-height:1.45}
+  table.ck td,table.ck th{padding:3px 6px}
+  table.ck thead th.m{width:54px;white-space:nowrap}
+  table.ck td.dom{width:96px;font-size:9.5pt}
+  table.ck td.dom svg{width:22px;height:22px}
+  table.ck td.vp .ev{font-size:7.5pt;line-height:1.35}
+  table.fh td{padding:4px}
+  .tscroll{overflow:visible}
+  .dcard,.glance .g,.kv,.oneline,tr,.dcard-h{break-inside:avoid}
+  .sub-h{break-after:avoid;margin:10px 0 5px;font-size:12pt}
+  .sheet-tag{margin-bottom:6px}
+  .sheet-tag h2{font-size:15pt}
+  .sheet-lead{font-size:9pt;margin-bottom:8px}
+  .cover-title h2{font-size:17pt}
+  .dgrid{grid-template-columns:1fr;gap:2.5mm}
+  .dcard.full{grid-column:auto}
+  .dcard{padding:7px 10px;font-size:9.5pt;line-height:1.55}
+  .dcard-h{margin-bottom:3px}
+  .dcard-h svg{width:24px;height:24px}
+  .dcard-h h3{font-size:11pt}
+  .dcard .lab{margin-top:4px;font-size:8.5pt}
+  .dgrid-sup .dsent{display:none}
+  .kv > .k,.kv > .v{padding:5px 8px;font-size:9.5pt}
+  .kv > .k{font-size:9pt}
+  .glance .g{padding:8px 12px}
+  .point,.note-app{padding:7px 10px;font-size:9pt;margin-top:8px}
+  .oneline{padding:8px 10px;font-size:10.5pt}
+  .cbox label{font-size:9.5pt}
+  .cbox input{width:14px;height:14px}
+  .info dd{font-size:11pt}
+  .info div{padding:5px 10px}
+  .p1-item dd{font-size:9.5pt}
+  .screen-only{display:none!important}
+  .print-only{display:inline-block;min-width:60mm;min-height:1.4em;border-bottom:1px dotted #CDB8B2}
+  select{border:none;padding:0;appearance:none;-webkit-appearance:none;background:none}
+  input[type=text],input[type=date]{border:none;border-bottom:1px dotted #CDB8B2;border-radius:0;padding:0 2px}
+}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="wrap hero-inner">
+    <div class="hero-text">
+      <div class="hero-eyebrow">放課後等デイサービス・児童発達支援のための</div>
+      <h1>五領域アセスメント整理アプリ</h1>
+      <p class="hero-sub">観察した事実から、強みと支援の手がかりを整理します</p>
+    </div>
+    <div class="hero-art" aria-hidden="true" id="heroArt"></div>
+  </div>
+  <svg class="hero-wave" viewBox="0 0 1200 26" preserveAspectRatio="none" aria-hidden="true"><path d="M0 14 C 150 0, 300 26, 450 13 S 750 0, 900 13 S 1100 26, 1200 10 L1200 26 L0 26 Z" fill="#FFF8F4"/></svg>
+</header>
+
+<nav class="nav no-print" aria-label="メニュー">
+  <div class="wrap" id="tabs"></div>
+</nav>
+
+<div class="facbar no-print"><div class="wrap" id="facbar"></div></div>
+
+<main>
+  <div class="wrap" id="app"></div>
+</main>
+
+<footer class="foot no-print wrap">
+  入力した内容は、この端末のブラウザの中だけに保存されます。自動表示は支援を考えるための候補です。支援者が根拠を確認して確定してください。
+</footer>
+
+<div id="formbarHost"></div>
+<div id="modalHost"></div>
+<div id="toastHost" aria-live="polite"></div>
+<script>
+"use strict";
+/* =========================================================
+   データ定義
+   ========================================================= */
+const STORE_KEY = "hohoemi-goryoiki-app-v1";
+
+const DOMAINS = [
+  { key:"kenko",  name:"健康・生活",               c:"var(--peach)", deep:"var(--peach-deep)", soft:"var(--peach-soft)", hex:"#FFDCC0", deepHex:"#A2561C" },
+  { key:"undo",   name:"運動・感覚",               c:"var(--mint)",  deep:"var(--mint-deep)",  soft:"var(--mint-soft)",  hex:"#C7EBD6", deepHex:"#2E7A55" },
+  { key:"ninchi", name:"認知・行動",               c:"var(--lav)",   deep:"var(--lav-deep)",   soft:"var(--lav-soft)",   hex:"#DDD3F5", deepHex:"#6650A6" },
+  { key:"gengo",  name:"言語・コミュニケーション", c:"var(--sky)",   deep:"var(--sky-deep)",   soft:"var(--sky-soft)",   hex:"#CFE5F8", deepHex:"#2C6A9E" },
+  { key:"ningen", name:"人間関係・社会性",         c:"var(--pink)",  deep:"var(--pink-deep)",  soft:"var(--pink-soft)",  hex:"#F8C3CF", deepHex:"#B6496C" }
+];
+const DMAP = Object.fromEntries(DOMAINS.map(d => [d.key, d]));
+
+/* 20の確認する視点（ワークシート2ページ目）
+   kw: 入力文から拾う手がかりの言葉 / goal: 目標 / hypo: 考えられる背景 / env: 環境の工夫
+   talk: 伝え方・関わり方 / choice: 本人が選べること / sTip: 強みの活かし方 */
+const VPS = [
+  { id:"k1", d:"kenko", label:"体調、疲れ、痛み、服薬などの変化", short:"体調・疲れ",
+    kw:["体調","疲れ","つかれ","だるそう","だるい","眠そう","あくび","痛い","痛み","頭痛","腹痛","お腹が痛","熱っぽ","発熱","服薬","薬","顔色","しんどい","ぐったり","横になる"],
+    weak:["休憩"],
+    goal:"体調や疲れに合わせて、無理なく過ごすこと",
+    hypo:"体調や疲れ、学校などでの負担が、行動に影響している可能性",
+    env:"来所時に体調を確かめる時間をとり、横になれる・休めるスペースを用意する",
+    talk:"「疲れたら休んでいいよ」と先に伝え、様子を言葉にして本人に確かめる",
+    choice:"休憩のタイミングと休む場所",
+    sTip:"自分の体調に気づけている力を認め、伝えられたことをほめる" },
+  { id:"k2", d:"kenko", label:"睡眠、食事、排泄などの生活リズム", short:"生活リズム",
+    kw:["睡眠","寝不足","よく眠","眠れ","夜ふかし","早起き","食事","食べ","給食","偏食","完食","残す","残した","排泄","トイレ","おもらし","便秘","水分","生活リズム"],
+    weak:["おやつ","お茶"],
+    goal:"食事・排泄・休息のリズムを整えること",
+    hypo:"睡眠や食事、排泄のリズムの乱れが、落ち着きや意欲に影響している可能性",
+    env:"おやつ・トイレ・休憩を毎回同じ流れにし、その流れを掲示する",
+    talk:"家庭と睡眠や食事の様子を共有し、声かけは短く具体的にする",
+    choice:"食べる量や順番、トイレに行くタイミング",
+    sTip:"整っている生活習慣を続けられるよう、今の流れを大きく変えずに守る" },
+  { id:"k3", d:"kenko", label:"着替え、清潔、安全などの生活スキル", short:"生活スキル",
+    kw:["着替え","着がえ","服を","靴","くつ","手洗い","手を洗","うがい","歯みがき","歯磨き","清潔","片付け","片づけ","かたづけ","身支度","支度","持ち物","荷物","安全","危ない","危険","飛び出し","ボタンを"],
+    goal:"身支度や片付けを、自分で進めること",
+    hypo:"手順が多い・見えにくいことや、手先の動かしにくさが負担になっている可能性",
+    env:"手順を写真や絵で順番に貼り、物の置き場所に印をつける",
+    talk:"一度に一つずつ伝え、できた工程をその場で認める",
+    choice:"やる順番や使う道具（袋・かごなど）",
+    sTip:"できている身支度を「お手本役」や当番にして、自信につなげる" },
+  { id:"k4", d:"kenko", label:"自分で整える、助けを求める", short:"自分で整える・助けを求める",
+    kw:["自分で","自分から","手伝って","てつだって","助けて","助けを","ヘルプ","教えて","休みたい","やすみたい"],
+    goal:"困ったときに、自分で整えたり助けを求めたりすること",
+    hypo:"困ったときの伝え方や、自分を落ち着かせる方法がまだ身についていない可能性",
+    env:"「てつだって」「やすみたい」カードを、いつでも手に取れる場所に置く",
+    talk:"助けを求められたらすぐに応じ、「言えたね」と伝えられたことを認める",
+    choice:"困ったときに使う方法（カード・言葉・手をあげる）",
+    sTip:"自分でできる力を大切にし、任せる場面を少しずつ増やす" },
+
+  { id:"u1", d:"undo", label:"姿勢、バランス、移動や運動", short:"姿勢・運動",
+    kw:["姿勢","座り方","座っていら","椅子から","離席","立ち歩","ぐにゃ","もたれ","バランス","転んで","転倒","よく転","つまず","走る","走っ","ジャンプ","跳ぶ","跳び","運動","体幹","鉄棒","縄跳び","なわとび","平均台","三輪車","自転車","階段","体を動か","からだを動か"],
+    weak:["ボール","公園","鬼ごっこ"],
+    goal:"姿勢を保ち、体を思いどおりに動かすこと",
+    hypo:"体幹やバランスの弱さから、姿勢を保つことに疲れやすい可能性",
+    env:"足が床につく椅子やクッションを使い、座る活動の前に体を動かす時間をとる",
+    talk:"「足はぺったん」など体の位置を短い言葉で伝え、姿勢が保てたらほめる",
+    choice:"座り方や、立って行うか座って行うか",
+    sTip:"体を動かす得意さを活かし、運動遊びや体を使う役割を任せる" },
+  { id:"u2", d:"undo", label:"手指の操作、道具の使い方", short:"手指の操作",
+    kw:["手指","指先","手先","はさみ","ハサミ","鉛筆","えんぴつ","箸","お箸","スプーン","書く","書け","描く","描い","塗る","塗り","筆圧","細かい","ひも通し","ボタンを留"],
+    weak:["ブロック","積み木","パズル","作品","工作","折り紙","道具","製作","制作"],
+    goal:"手指や道具を使って、作業を進めること",
+    hypo:"力加減や細かい動きの難しさから、道具の操作に負担がある可能性",
+    env:"太めの鉛筆やバネ付きはさみなど、扱いやすい道具を用意する",
+    talk:"手本を見せながら一工程ずつ伝え、できた部分を具体的にほめる",
+    choice:"使う道具や素材（2〜3つから）",
+    sTip:"手先の得意さを活かして、制作や作業の役割を任せる" },
+  { id:"u3", d:"undo", label:"見る、聞く、触るなど感覚の活用", short:"感覚の活用",
+    kw:["視線","目で追","じっと見","よく見","見比べ","見続け","話を聞","よく聞","聞き取","聞こえ","音に気づ","触って","触り","感触","手触り","触感","匂い","におい","感覚"],
+    goal:"見る・聞く・触るなどの感覚を活かして、活動に参加すること",
+    hypo:"見る・聞くなど、情報の受け取り方に得意と不得意があり、伝わり方に差がある可能性",
+    env:"話を聞くときは見る物を一つにしぼり、目と耳の両方で伝える",
+    talk:"名前を呼んで注意を向けてから、短い言葉で伝える",
+    choice:"見る・聞く・触るのうち、わかりやすい方法",
+    sTip:"得意な感覚（見る・聞く・触る）を活かした伝え方を中心にする" },
+  { id:"u4", d:"undo", label:"刺激への過敏さ・鈍さ、補助具", short:"刺激への過敏さ・鈍さ",
+    kw:["耳をふさ","耳を塞","耳ふさ","うるさ","大きな音","音が苦手","音が嫌","ざわざわ","騒がし","まぶし","眩し","過敏","鈍感","感じにく","触られるのが","口に入れ","くるくる回","イヤーマフ","ノイズキャンセ","補助具","サングラス","におい"],
+    goal:"刺激の負担を減らし、安心して過ごすこと",
+    hypo:"音・光・触感などの刺激を強く感じ（または感じにくく）、負担になっている可能性",
+    env:"静かに過ごせるスペースやイヤーマフを用意し、刺激の少ない席を選ぶ",
+    talk:"大きな音が出る前に予告し、苦手な感覚を無理に我慢させない",
+    choice:"イヤーマフを使うかどうかや、過ごす場所",
+    sTip:"感覚の鋭さを「よく気づく力」として活かし、安心できる環境を保つ" },
+
+  { id:"n1", d:"ninchi", label:"注意、記憶、順序の理解", short:"注意・記憶・順序",
+    kw:["集中","注意が","注意を向","不注意","気が散","気がそれ","よそ見","ぼんやり","忘れ","覚え","記憶","順序","手順","順番通り","聞き逃","最後まで","途中で","続かな"],
+    goal:"注意を向け、手順を覚えて取り組むこと",
+    hypo:"一度に多くの情報があると注意が続きにくく、手順を覚えておくのが難しい可能性",
+    env:"机の上は使う物だけにし、手順を番号付きで見える場所に貼る",
+    talk:"指示は一つずつ短く伝え、終わったら次を伝える",
+    choice:"取り組む順番や、休憩を入れるタイミング",
+    sTip:"集中できる活動や時間帯を活かし、そこで新しいことに取り組む" },
+  { id:"n2", d:"ninchi", label:"時間、数、形、空間などの理解", short:"時間・数・形・空間",
+    kw:["時計","何時","何分","残り時間","時間の感覚","数を","数え","数字","算数","計算","何個","図形","形を","形の","長さ","位置","左右","上下","空間","距離"],
+    goal:"時間や数、形、位置の理解を、生活や活動に活かすこと",
+    hypo:"時間や数など目に見えにくいものがつかみにくく、見通しを持ちにくい可能性",
+    env:"残り時間が見えるタイマーや、数・位置を示す印を使う",
+    talk:"「長い針が6になったら」など、具体的な言葉や物で示す",
+    choice:"タイマーの時間や、課題の量",
+    sTip:"数や形の得意さを活かし、時間や量を目で確かめる役割を任せる" },
+  { id:"n3", d:"ninchi", label:"見通し、切り替え、選択", short:"見通し・切り替え・選択",
+    kw:["見通し","切り替え","切りかえ","きりかえ","切替","次の活動","次は","予定","スケジュール","急な","急に","変更","いつもと違","終わり","おわり","おしまい","終われ","やめられ","タイマー","選ぶ","選べ","選択","迷う","迷っ"],
+    goal:"次の活動への見通しを持ち、気持ちよく切り替えること",
+    hypo:"次に何があるか・いつ終わるかの見通しが持ちにくく、切り替えが負担になっている可能性",
+    env:"絵カードやホワイトボードで予定を示し、タイマーで終わりを予告する",
+    talk:"「あと5分」「あと1回」と前もって伝え、終わったら次の楽しみを示す",
+    choice:"終わり方（あと1回・続きは次回など）や次の活動",
+    sTip:"見通しがあると取り組める強みを活かし、予定を毎回見える形で伝える" },
+  { id:"n4", d:"ninchi", label:"行動の前後、こだわり、行動の調整", short:"行動の調整・こだわり",
+    kw:["こだわ","決まった順","いつもと同じ","繰り返","くり返","パニック","かんしゃく","癇癪","怒っ","怒る","叩","たたい","投げ","蹴","飛び出","待てな","待てず","待てた","待つのが","待つことが","我慢","がまん","衝動","走り回","大声","大きな声","叫","寝転","ねころ"],
+    goal:"気持ちや行動を、自分で調整すること",
+    hypo:"思いどおりにならない場面や予定外のことで、気持ちの調整が追いつかない可能性",
+    env:"行動の前後（きっかけ・結果）を記録し、きっかけになる場面を減らす",
+    talk:"落ち着いてから短い言葉で振り返り、望ましい行動をすぐに認める",
+    choice:"クールダウンの方法や場所（本人と一緒に決めておく）",
+    sTip:"こだわりを「得意」「大切なもの」として尊重し、活動の中で活かす" },
+
+  { id:"g1", d:"gengo", label:"言葉の理解と表出", short:"言葉の理解と表出",
+    kw:["言葉","ことば","話す","話し","話せ","言えた","言えな","言えず","発語","発音","語彙","単語","二語","指示が","指示を","指示の","理解","伝えられ","伝えよう","伝えるの","伝わ","質問"],
+    weak:["説明"],
+    goal:"言葉を理解し、自分の思いを伝えること",
+    hypo:"言葉だけの指示では理解しにくい、または思いを言葉にするのが難しい可能性",
+    env:"言葉と一緒に、絵・実物・ジェスチャーを見せる",
+    talk:"短く具体的な言葉で伝え、本人の言葉をくり返して受け止める",
+    choice:"答え方（2択にして、言葉や指さしで選ぶ）",
+    sTip:"伝えられる言葉を大切にし、話したくなる場面（好きな話題）を増やす" },
+  { id:"g2", d:"gengo", label:"表情、身振り、指さし", short:"表情・身振り",
+    kw:["表情","笑顔","笑っ","にこにこ","ニコニコ","身振り","ジェスチャー","指さし","指差し","うなず","首を振","目が合","視線が合","クレーン","手を引"],
+    goal:"表情や身振りで、やり取りすること",
+    hypo:"表情や身振りで気持ちを伝えたり、相手のサインを読み取ったりすることが難しい可能性",
+    env:"気持ちの絵カードや鏡を使って、表情に気づく機会をつくる",
+    talk:"大人は表情や身振りを少し大きめにし、本人のサインに言葉を添えて返す",
+    choice:"指さしやカードで選ぶ場面",
+    sTip:"豊かな表情や身振りを受け止め、やり取りのきっかけにする" },
+  { id:"g3", d:"gengo", label:"会話のやり取り、場面に合う伝え方", short:"会話のやり取り",
+    kw:["会話","やり取り","やりとり","返事","答え","挨拶","あいさつ","ありがとう","ごめん","貸して","かして","入れて","いれて","独り言","一方的","伝え方","報告","お願い"],
+    goal:"場面に合った言葉で、やり取りすること",
+    hypo:"やり取りのルールや、場面に合う言い方がまだわかりにくい可能性",
+    env:"「かして」「いれて」などの言い方を、絵や文字で掲示する",
+    talk:"大人が見本を見せ、言えたときはすぐに応じて成功体験にする",
+    choice:"伝え方（言葉・カード・身振り）",
+    sTip:"やり取りの力を活かし、あいさつや報告の役割を任せる" },
+  { id:"g4", d:"gengo", label:"絵カード、文字、AAC、読み書き", short:"絵カード・文字・読み書き",
+    kw:["絵カード","文字","ひらがな","カタカナ","漢字","読む","読み","読め","書き取り","音読","宿題","AAC"],
+    weak:["カード","写真","絵本","本を","ホワイトボード","タブレット"],
+    goal:"絵カードや文字を使って、理解したり伝えたりすること",
+    hypo:"読み書きや記号の理解に負担があり、情報を受け取りにくい可能性",
+    env:"本人に合った絵カード・写真・文字を使い、読み書きの量を調整する",
+    talk:"読み書きは見本や一緒に読むことから始め、できた量を認める",
+    choice:"答え方（書く・なぞる・選ぶ）",
+    sTip:"絵や文字で理解できる強みを活かし、予定や手順は見える形で伝える" },
+
+  { id:"s1", d:"ningen", label:"安心できる大人との関係", short:"大人との関係",
+    kw:["甘え","抱っこ","だっこ","安心","信頼","担当の","大人に","大人と","職員に","職員と","先生に","先生と","支援員に","人見知り","スキンシップ"],
+    weak:["そばに","そばで","隣で"],
+    goal:"安心できる大人との関係を土台に過ごすこと",
+    hypo:"安心できる相手や場所がまだ少なく、緊張している可能性",
+    env:"担当職員を決め、来所時は同じ大人が迎える",
+    talk:"好きなことを一緒に楽しみ、気持ちを言葉にして受け止める",
+    choice:"困ったときに頼る大人",
+    sTip:"大人との信頼関係を土台に、新しい活動への挑戦を支える" },
+  { id:"s2", d:"ningen", label:"一人遊び、並行遊び、協同遊び", short:"遊び方",
+    kw:["一人遊び","ひとり遊び","一人で遊","ごっこ","並行","協同","一緒に遊","ルール"],
+    weak:["遊び","遊ぶ","遊ん","あそび","ゲーム","鬼ごっこ"],
+    goal:"自分に合った形で遊びを楽しみ、広げること",
+    hypo:"遊びのルールや友達との距離の取り方がわかりにくく、遊びが広がりにくい可能性",
+    env:"同じ遊びを並んでできる場所をつくり、ルールは絵で示す",
+    talk:"大人が間に入って遊びをつなぎ、楽しめた場面を言葉にする",
+    choice:"一人で遊ぶか、誰かと遊ぶか",
+    sTip:"好きな遊びを入り口に、友達と一緒に楽しめる場面をつくる" },
+  { id:"s3", d:"ningen", label:"自己理解、感情の調整", short:"自己理解・感情の調整",
+    kw:["気持ち","感情","怒り","悲し","悔し","くやし","嬉し","うれし","不安","怖","こわい","こわが","落ち着","落ちつ","クールダウン","自信","負け","泣"],
+    goal:"自分の気持ちに気づき、調整すること",
+    hypo:"気持ちに気づいたり言葉にしたりすることが難しく、感情が大きくなりやすい可能性",
+    env:"気持ちの温度計や、クールダウンできるスペースを用意する",
+    talk:"「くやしかったね」と気持ちを代弁し、落ち着いてから一緒に振り返る",
+    choice:"落ち着く方法（深呼吸・場所を移る・好きな物を持つ）",
+    sTip:"気持ちを伝えられた場面を認め、自分の得意や好きを一緒に確かめる" },
+  { id:"s4", d:"ningen", label:"仲間関係、集団への参加", short:"仲間関係・集団参加",
+    kw:["友達","友だち","ともだち","仲間","他児","他の子","ほかの子","集団","グループ","順番を待","順番を守","順番を譲","譲","トラブル","輪に","参加","当番","年下","年上"],
+    weak:["みんな","周りの子","まわりの子"],
+    goal:"友達と関わり、集団に参加すること",
+    hypo:"集団の音や動き、ルールが負担になり、参加しにくい可能性",
+    env:"少人数から始め、役割や立ち位置をはっきりさせる",
+    talk:"参加の仕方を前もって伝え、少しでも参加できたら認める",
+    choice:"参加する時間や役割、見学から始めるかどうか",
+    sTip:"友達と関わる力を活かし、ペアやグループでの役割を任せる" }
+];
+const VMAP = Object.fromEntries(VPS.map(v => [v.id, v]));
+
+/* 文の向き（強み／困り）を判断する手がかり */
+const NEG_CUES = ["できない","できな","できず","出来な","出来ず","られず","られな","難しい","難し","むずかし","苦手","嫌が","いやが","嫌い","イヤ","拒否","拒ん","困っ","困り","パニック","泣","怒","叩","たたい","投げ","蹴","飛び出","離席","立ち歩","止まら","やめられ","時間がかか","忘れ","気が散","よそ見","大声","大きな声","叫","トラブル","固ま","逃げ","耳をふさ","耳を塞","負担","しんどい","疲れ","寝転","避けたい","不安","怖","こわが","落ち着かな","続かな","わからな","分からな","伝わらな","返事がな","一方的","独り言","偏食","残し","痛","ぐったり","まだ！","まだやる","嫌","いや！"];
+const POS_CUES = ["できた","できる","できて","できま","出来た","出来る","上手","じょうず","得意","好き","楽しそう","楽しん","楽しい","笑顔","にこにこ","ニコニコ","最後まで","自分で","自分から","集中して","落ち着いて","落ちついて","取り組","成功","ほめ","褒め","喜","満足","積極","スムーズ","守れ","待てた","言えた","伝えられ","座れた","完成","助けを求め","うまくいった","よかった","良かった","安心して"];
+
+/* 手がかりの前に取りのぞく言葉（誤判定を防ぐ） */
+const NEUTRAL_WORDS = ["イヤーマフ","イヤホン"];
+const PRE_POS = ["ご機嫌","機嫌よく","機嫌が良","機嫌がよ"];
+
+/* 入力欄（ワークシート1ページ目） mode: pos=強み欄 / neg=困り欄 / cue=文の手がかりで判断 / wish=意向 */
+const TEXT_FIELDS = [
+  { key:"when",         label:"いつ・どこで何をしていた場面か", short:"場面", hint:"いつ・どこで、何をしていた場面か", mode:"cue", group:"facts" },
+  { key:"before",       label:"直前にあったこと",               short:"直前",   hint:"声かけ、環境、人の動きなど", mode:"cue", group:"facts" },
+  { key:"behavior",     label:"本人の行動と言葉",               short:"本人の行動", hint:"回数、時間、表情、身振りも事実で", mode:"cue", group:"facts" },
+  { key:"after",        label:"直後にあったこと",               short:"直後",   hint:"周囲の反応と、その後の変化", mode:"cue", group:"facts" },
+  { key:"wishChild",    label:"本人の意向",                     short:"本人の意向", hint:"したい、避けたい", mode:"wish", group:"wish" },
+  { key:"wishFamily",   label:"家族の意向",                     short:"家族の意向", hint:"大切にしたい生活", mode:"wish", group:"wish" },
+  { key:"strengths",    label:"強み・できたこと",               short:"強み",   hint:"得意、好き、成功", mode:"pos", group:"wish" },
+  { key:"difficulties", label:"困りや負担",                     short:"困り",   hint:"本人の負担を含む", mode:"neg", group:"wish" },
+  { key:"conditions",   label:"うまくいった条件",               short:"うまくいった条件", hint:"人、場所、手順、道具", mode:"pos", group:"wish" }
+];
+const FMAP = Object.fromEntries(TEXT_FIELDS.map(f => [f.key, f]));
+const SCENES = ["来所時","活動","学習","遊び","食事","送迎","その他"];
+
+/* 支援メニュー（はじめから入っているもの）。内容は「支援メニュー」画面で書きかえられます */
+const PRESET_SUPPORTS = [
+  { id:"braingym", name:"ブレインジム®", desc:"簡単な動きで、からだ・こころ・あたまのバランスを整える",
+    d:{ kenko:"水を飲む・ブレインボタンで体を整えてから活動に入る（PACEの流れ）",
+        undo:"クロスクロール、レイジーエイト、グラウンダーで、体の中心線をこえる動きとバランスを育てる",
+        ninchi:"活動の前にPACE（水・ブレインボタン・クロスクロール・フックアップ）で準備を整える。切り替えの前はフックアップで気持ちを落ち着ける",
+        gengo:"シンキングキャップやエレファントで聞く準備を整え、エナジーヨーンで口まわりをゆるめて話しやすくする",
+        ningen:"フックアップやポジティブポイントで気持ちを落ち着け、安心して人と関われる状態をつくる" } },
+  { id:"bba", name:"BBA（ビルディング・ブロック・アクティビティ）", desc:"やさしいタッチや受け身の動きで、発達の土台となる動きをおさらいする",
+    d:{ kenko:"来所時や休憩時に、やさしいタッチ（マッサージ・タッピング）で体を落ち着け、休息のリズムを整える",
+        undo:"発達の動きのパターンをおさらいする受け身の動きで、姿勢やバランスの土台を育てる",
+        ninchi:"学習や集団活動の前にBBAで体を整え、落ち着いて取り組める準備をつくる",
+        gengo:"1対1でタッチを交わす時間を、目線や声のやり取りのきっかけにする",
+        ningen:"やさしいタッチを通して、安心できる大人との関係を育てる。ブレインジムが難しい子の準備段階としても行う" } },
+  { id:"structure", name:"構造化・視覚支援", desc:"場所・時間・手順を目に見える形にして、わかりやすくする",
+    d:{ kenko:"手洗いや身支度の手順を、写真カードで順番に貼る",
+        undo:"活動する場所をマットやテープで区切り、どこで何をするかをはっきりさせる",
+        ninchi:"絵カードのスケジュール、タイマー、「おわりの箱」で見通しと終わりを伝える",
+        gengo:"選択ボードや絵カードで、伝える方法を目に見える形にする",
+        ningen:"順番表や遊びのルールを絵で示し、友達との遊びをわかりやすくする" } },
+  { id:"sensory", name:"感覚統合あそび", desc:"揺れ・押す・触るなどの感覚を、遊びの中でたっぷり使う",
+    d:{ kenko:"重い物を運ぶお手伝いなど、力を使う活動で体を目覚めさせる",
+        undo:"トランポリン、バランスボード、ブランコ、トンネルくぐりで、揺れや体の位置の感覚を育てる",
+        ninchi:"座る活動の前に、押す・引く・跳ぶ遊びで気持ちと体の状態を整える",
+        gengo:"遊びの中で「もっと」「おしまい」を伝える場面をつくる",
+        ningen:"大人と一緒に揺れ遊びやふれあい遊びを楽しみ、安心感とやり取りを育てる" } },
+  { id:"vision", name:"ビジョントレーニング", desc:"見る力（目の動き・形のとらえ方・目と手の協調）を育てる",
+    d:{ kenko:"",
+        undo:"風船やボールを目で追う遊び、線なぞり、的当てで、目と手の協調を育てる",
+        ninchi:"点つなぎ、間違い探し、形の模写で、形や位置をとらえる力を育てる",
+        gengo:"文字を指でなぞりながら読む、読む行を示すガイドを使うなど、読みやすい工夫をする",
+        ningen:"" } },
+  { id:"sst", name:"SST（ソーシャルスキルトレーニング）", desc:"人との関わり方を、見本とロールプレイで練習する",
+    d:{ kenko:"「てつだって」「やすみたい」を伝える練習をする",
+        undo:"",
+        ninchi:"困りやすい場面の前に「こんなときどうする？」を一緒に考え、練習する",
+        gengo:"「かして」「いれて」「ありがとう」などの言い方を、ロールプレイで練習する",
+        ningen:"少人数のゲームで、順番を待つ・勝ち負けを受け止める経験を重ねる" } },
+  { id:"aba", name:"ABA（応用行動分析）の考え方", desc:"行動のきっかけと結果を見て、望ましい行動を増やす",
+    d:{ kenko:"身支度を小さなステップに分け、できたらすぐにほめる",
+        undo:"",
+        ninchi:"行動の前後（きっかけ・行動・結果）を記録し、望ましい行動にすぐ注目してほめる",
+        gengo:"要求の言葉やサインを教え、伝えられたらすぐに応じる",
+        ningen:"友達への良い関わりを見つけて、その場で具体的に認める" } },
+  { id:"motor", name:"運動あそび", desc:"サーキットやボール遊びで、体の使い方と調整する力を育てる",
+    d:{ kenko:"体を動かしてから座る活動に移る流れをつくる",
+        undo:"サーキット（くぐる・またぐ・ジャンプ）、ボール運動、リズム運動を行う",
+        ninchi:"「止まる・動く」のルールがある運動遊びで、行動を調整する力を育てる",
+        gengo:"動きの合図を出す役を任せ、言葉で伝える機会をつくる",
+        ningen:"友達と協力するゲーム（ボール運び、しっぽ取りなど）で関わりを広げる" } },
+  { id:"music", name:"リトミック・音楽あそび", desc:"歌やリズムに合わせて、楽しく体と気持ちを動かす",
+    d:{ kenko:"",
+        undo:"リズムに合わせて歩く・止まる・跳ぶ",
+        ninchi:"音が止まったら止まる遊びで、注意と切り替えの力を育てる",
+        gengo:"手遊び歌や、呼びかけと返事の歌でやり取りを楽しむ",
+        ningen:"輪になって同じ動きをし、みんなと一緒の楽しさを感じる" } },
+  { id:"life", name:"生活スキル練習", desc:"身支度・片付け・お手伝いを、毎日の流れの中で練習する",
+    d:{ kenko:"手洗い、着替え、片付けを、毎回同じ手順で練習する",
+        undo:"配膳、洗濯ばさみ、ボタンなど、手を使うお手伝いを取り入れる",
+        ninchi:"手順表を見ながら、自分で順番に進める",
+        gengo:"終わったら「できました」と報告する流れをつくる",
+        ningen:"当番活動で、みんなの役に立つ経験を重ねる" } },
+  { id:"aac", name:"絵カード・AAC", desc:"絵カードやタブレットで、伝える手段を増やす",
+    d:{ kenko:"「トイレ」「やすみたい」などのカードを、いつでも使えるようにする",
+        undo:"",
+        ninchi:"2〜3枚のカードから選ぶ場面をつくり、選ぶ力を育てる",
+        gengo:"絵カードの受け渡しやタブレットで要求を伝え、伝わる経験を重ねる",
+        ningen:"友達にカードで「いれて」を伝える場面を、大人が支える" } },
+  { id:"emotion", name:"気持ちの学び", desc:"気持ちの温度計などで、気持ちに気づき整える方法を学ぶ",
+    d:{ kenko:"疲れたときに休憩を求めるサインを決めておく",
+        undo:"",
+        ninchi:"クールダウンの方法をいくつか用意し、自分で選べるようにする",
+        gengo:"気持ちカードで、今の気持ちを言葉やカードで伝える練習をする",
+        ningen:"気持ちの温度計で気持ちの大きさに気づき、落ち着く方法を一緒に試す" } }
+];
+const DEFAULT_SELECTED = ["braingym","bba","structure"];
+
+/* 記入例（架空の例） */
+const SAMPLE = {
+  name:"ひなたさん（記入例）", age:"小学2年", recorder:"山田",
+  scenes:["遊び","活動"], sceneOther:"",
+  when:"自由遊び（ブロック）から、集団活動の「おやつ」に移る場面。",
+  before:"職員が「あと5分で片付けです」と口頭で1回伝えた。周りの子が片付け始め、部屋がざわざわしていた。",
+  behavior:"ブロックを抱えて「まだやる！」と大声で2回言った。床に寝転び、約3分耳をふさいでいた。",
+  after:"職員がそばで静かに待ち、絵カードで「おしまい→おやつ」を見せると、自分でブロックを箱に入れた。その後、おやつの席に座れた。",
+  wishChild:"ブロックの作品を最後まで完成させたい。大きな音の中にいるのは避けたい。",
+  wishFamily:"家でも切り替えがスムーズになってほしい。好きなことは大切にしたい。",
+  strengths:"ブロックで細かい作品を作るのが得意。絵カードを見ると理解できた。自分で片付けられた。",
+  difficulties:"急な終わりの声かけでは、気持ちの切り替えが難しい。ざわざわした音が苦手で、耳をふさぐ。",
+  conditions:"職員がそばで静かに待つ。絵カードで次の予定を見せる。作品は棚に置いて、続きができると伝える。"
+};
+
+/* =========================================================
+   イラスト（オリジナル SVG）
+   ========================================================= */
+const ART = {
+  chick(size){ return `<svg viewBox="0 0 120 120" ${size?`width="${size}" height="${size}"`:""} aria-hidden="true">
+    <ellipse cx="60" cy="110" rx="32" ry="5" fill="#F2D6CF"/>
+    <path d="M59 27 C 52 16, 56 8, 64 7 C 65 15, 63 22, 59 27 Z" fill="#8FD0A8"/>
+    <path d="M60 27 C 67 18, 76 17, 82 22 C 76 28, 68 29, 60 27 Z" fill="#B3E2C4"/>
+    <circle cx="60" cy="67" r="40" fill="#FFE69E"/>
+    <ellipse cx="60" cy="78" rx="25" ry="21" fill="#FFF3CC"/>
+    <path d="M22 70 C 13 76, 14 88, 22 90 C 27 84, 28 76, 22 70 Z" fill="#FFD774"/>
+    <path d="M98 70 C 107 76, 106 88, 98 90 C 93 84, 92 76, 98 70 Z" fill="#FFD774"/>
+    <circle cx="47" cy="59" r="4.6" fill="#57464F"/><circle cx="73" cy="59" r="4.6" fill="#57464F"/>
+    <circle cx="48.6" cy="57.4" r="1.5" fill="#fff"/><circle cx="74.6" cy="57.4" r="1.5" fill="#fff"/>
+    <ellipse cx="38" cy="69" rx="6.5" ry="4" fill="#F9B4C4" opacity=".85"/><ellipse cx="82" cy="69" rx="6.5" ry="4" fill="#F9B4C4" opacity=".85"/>
+    <path d="M54.5 65 Q60 64 65.5 65 Q62 71.5 60 72 Q58 71.5 54.5 65 Z" fill="#F4A66A"/>
+    <path d="M50 105 v5 M70 105 v5" stroke="#F4A66A" stroke-width="4" stroke-linecap="round"/>
+  </svg>`; },
+  hero(){ return `<svg viewBox="0 0 260 190" aria-hidden="true">
+    <g fill="none" stroke-width="9" stroke-linecap="round">
+      <path d="M30 160 A 100 100 0 0 1 230 160" stroke="#F9C6D2"/>
+      <path d="M43 160 A 87 87 0 0 1 217 160" stroke="#FFDDBF"/>
+      <path d="M56 160 A 74 74 0 0 1 204 160" stroke="#FFEFAE"/>
+      <path d="M69 160 A 61 61 0 0 1 191 160" stroke="#CDEFD9"/>
+      <path d="M82 160 A 48 48 0 0 1 178 160" stroke="#D3E8FA"/>
+    </g>
+    <g fill="#fff"><ellipse cx="34" cy="150" rx="26" ry="15"/><ellipse cx="54" cy="142" rx="20" ry="16"/><ellipse cx="18" cy="158" rx="16" ry="11"/></g>
+    <g fill="#fff"><ellipse cx="228" cy="152" rx="24" ry="14"/><ellipse cx="210" cy="146" rx="17" ry="14"/><ellipse cx="246" cy="158" rx="14" ry="10"/></g>
+    <g transform="translate(88 70) scale(.78)">${ART.chickInner()}</g>
+    <g transform="translate(206 40)"><circle r="5" fill="#FFF3CC"/><g fill="#F9C6D2"><circle cx="0" cy="-8" r="5"/><circle cx="7.6" cy="-2.5" r="5"/><circle cx="4.7" cy="6.5" r="5"/><circle cx="-4.7" cy="6.5" r="5"/><circle cx="-7.6" cy="-2.5" r="5"/></g><circle r="4" fill="#FFE69E"/></g>
+    <g transform="translate(40 58) scale(.7)"><g fill="#CDEFD9"><circle cx="0" cy="-8" r="5"/><circle cx="7.6" cy="-2.5" r="5"/><circle cx="4.7" cy="6.5" r="5"/><circle cx="-4.7" cy="6.5" r="5"/><circle cx="-7.6" cy="-2.5" r="5"/></g><circle r="4" fill="#FFE69E"/></g>
+    <g fill="#FFE69E"><path d="M178 26 l2.4 5.6 5.6 2.4 -5.6 2.4 -2.4 5.6 -2.4 -5.6 -5.6 -2.4 5.6 -2.4z"/><path d="M70 22 l1.8 4 4 1.8 -4 1.8 -1.8 4 -1.8 -4 -4 -1.8 4 -1.8z"/></g>
+  </svg>`; },
+  chickInner(){ return `<ellipse cx="60" cy="110" rx="32" ry="5" fill="#F2D6CF"/>
+    <path d="M59 27 C 52 16, 56 8, 64 7 C 65 15, 63 22, 59 27 Z" fill="#8FD0A8"/>
+    <path d="M60 27 C 67 18, 76 17, 82 22 C 76 28, 68 29, 60 27 Z" fill="#B3E2C4"/>
+    <circle cx="60" cy="67" r="40" fill="#FFE69E"/>
+    <ellipse cx="60" cy="78" rx="25" ry="21" fill="#FFF3CC"/>
+    <path d="M22 70 C 13 76, 14 88, 22 90 C 27 84, 28 76, 22 70 Z" fill="#FFD774"/>
+    <path d="M98 70 C 107 76, 106 88, 98 90 C 93 84, 92 76, 98 70 Z" fill="#FFD774"/>
+    <circle cx="47" cy="59" r="4.6" fill="#57464F"/><circle cx="73" cy="59" r="4.6" fill="#57464F"/>
+    <circle cx="48.6" cy="57.4" r="1.5" fill="#fff"/><circle cx="74.6" cy="57.4" r="1.5" fill="#fff"/>
+    <ellipse cx="38" cy="69" rx="6.5" ry="4" fill="#F9B4C4" opacity=".85"/><ellipse cx="82" cy="69" rx="6.5" ry="4" fill="#F9B4C4" opacity=".85"/>
+    <path d="M54.5 65 Q60 64 65.5 65 Q62 71.5 60 72 Q58 71.5 54.5 65 Z" fill="#F4A66A"/>
+    <path d="M50 105 v5 M70 105 v5" stroke="#F4A66A" stroke-width="4" stroke-linecap="round"/>`; },
+  domain(key){
+    const D = DMAP[key], s = D.deepHex, f = D.hex;
+    const bg = `<circle cx="24" cy="24" r="23" fill="${f}"/>`;
+    const g = {
+      kenko:`<path d="M12.5 24 L24 13.5 L35.5 24" fill="none" stroke="${s}" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/><rect x="15.5" y="22" width="17" height="14" rx="3" fill="#fff" stroke="${s}" stroke-width="2.4"/><path d="M24 33 C 19.6 30, 19 27.6, 20.3 26.2 C 21.6 24.9, 23.3 25.4, 24 26.7 C 24.7 25.4, 26.4 24.9, 27.7 26.2 C 29 27.6, 28.4 30, 24 33 Z" fill="#F4A0B4"/>`,
+      undo:`<circle cx="26" cy="25" r="10" fill="#fff" stroke="${s}" stroke-width="2.4"/><path d="M16.6 22.5 Q26 28.5 35.4 22.5" fill="none" stroke="${s}" stroke-width="2"/><path d="M26 15 Q20.5 25 26 35" fill="none" stroke="${s}" stroke-width="2"/><path d="M6.5 20 h5 M5.5 25.5 h6 M7.5 31 h4" stroke="${s}" stroke-width="2.2" stroke-linecap="round"/>`,
+      ninchi:`<circle cx="24" cy="21" r="9" fill="#fff" stroke="${s}" stroke-width="2.4"/><rect x="20" y="29" width="8" height="6.5" rx="2" fill="${s}"/><path d="M21.5 21 q2.5 3 5 0" fill="none" stroke="#F4A66A" stroke-width="2" stroke-linecap="round"/><path d="M24 6.5 v3 M35.5 10 l-2 2 M12.5 10 l2 2 M40 21 h-3 M8 21 h3" stroke="${s}" stroke-width="2.2" stroke-linecap="round"/>`,
+      gengo:`<rect x="7" y="10.5" width="22" height="15" rx="7.5" fill="#fff" stroke="${s}" stroke-width="2.3"/><path d="M13 25 l-2 5 l6.5 -5" fill="#fff" stroke="${s}" stroke-width="2.3" stroke-linejoin="round"/><circle cx="13.5" cy="18" r="1.6" fill="${s}"/><circle cx="18" cy="18" r="1.6" fill="${s}"/><circle cx="22.5" cy="18" r="1.6" fill="${s}"/><rect x="20" y="21.5" width="21" height="14" rx="7" fill="${s}"/><path d="M34 35 l2 4.5 l-6 -4.5" fill="${s}"/><path d="M25 28.5 q5.5 3 11 0" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"/>`,
+      ningen:`<circle cx="17.5" cy="19.5" r="5" fill="#fff" stroke="${s}" stroke-width="2.3"/><circle cx="30.5" cy="19.5" r="5" fill="#fff" stroke="${s}" stroke-width="2.3"/><path d="M9.5 37.5 q0 -11 8 -11 q8 0 8 11" fill="#fff" stroke="${s}" stroke-width="2.3" stroke-linejoin="round"/><path d="M22.5 37.5 q0 -11 8 -11 q8 0 8 11" fill="#fff" stroke="${s}" stroke-width="2.3" stroke-linejoin="round"/><path d="M24 12 C 21.4 10.2, 21 8.8, 21.8 8 C 22.6 7.2, 23.6 7.5, 24 8.3 C 24.4 7.5, 25.4 7.2, 26.2 8 C 27 8.8, 26.6 10.2, 24 12 Z" fill="#F4A0B4"/>`
+    };
+    return `<svg viewBox="0 0 48 48" aria-hidden="true">${bg}${g[key]}</svg>`;
+  },
+  notebook(){ return `<svg viewBox="0 0 200 150" aria-hidden="true">
+    <ellipse cx="100" cy="140" rx="70" ry="6" fill="#F2D6CF"/>
+    <rect x="46" y="22" width="100" height="112" rx="12" fill="#FFF3CC" stroke="#EBC96A" stroke-width="3"/>
+    <rect x="58" y="22" width="88" height="112" rx="10" fill="#fff" stroke="#EBC96A" stroke-width="3"/>
+    <path d="M74 50 h54 M74 68 h54 M74 86 h40" stroke="#F3D9D2" stroke-width="4" stroke-linecap="round"/>
+    <g transform="translate(118 104)"><g fill="#F9C6D2"><circle cx="0" cy="-9" r="6"/><circle cx="8.6" cy="-2.8" r="6"/><circle cx="5.3" cy="7.3" r="6"/><circle cx="-5.3" cy="7.3" r="6"/><circle cx="-8.6" cy="-2.8" r="6"/></g><circle r="4.6" fill="#FFE69E"/></g>
+    <g transform="translate(150 30) rotate(35)"><rect x="-5" y="0" width="10" height="56" rx="2" fill="#CDEFD9" stroke="#8FC9A6" stroke-width="2"/><path d="M-5 56 L0 68 L5 56 Z" fill="#FFE0C4" stroke="#8FC9A6" stroke-width="2" stroke-linejoin="round"/></g>
+  </svg>`; },
+  bulb(){ return `<svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="14" r="8" fill="#FFEBA6"/><rect x="12.5" y="21" width="7" height="5" rx="1.5" fill="#E7C862"/><path d="M16 2.5 v2.5 M26 6 l-1.8 1.8 M6 6 l1.8 1.8" stroke="#E7C862" stroke-width="2" stroke-linecap="round"/></svg>`; },
+  flower(c="#F9C6D2"){ return `<svg viewBox="-12 -12 24 24" width="18" height="18" aria-hidden="true"><g fill="${c}"><circle cx="0" cy="-6" r="4"/><circle cx="5.7" cy="-1.9" r="4"/><circle cx="3.5" cy="4.9" r="4"/><circle cx="-3.5" cy="4.9" r="4"/><circle cx="-5.7" cy="-1.9" r="4"/></g><circle r="3" fill="#FFE69E"/></svg>`; },
+  icon(name){
+    const P = {
+      pen:`<path d="M4 20l4-1 11-11-3-3L5 16l-1 4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>`,
+      book:`<path d="M4 5c3-1 6-1 8 1 2-2 5-2 8-1v14c-3-1-6-1-8 1-2-2-5-2-8-1z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M12 6v14" stroke="currentColor" stroke-width="2"/>`,
+      heart:`<path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>`,
+      print:`<path d="M7 9V4h10v5M7 17H5a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><rect x="7" y="14" width="10" height="6" rx="1" fill="none" stroke="currentColor" stroke-width="2"/>`,
+      back:`<path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>`,
+      plus:`<path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>`,
+      spark:`<path d="M12 3l2 6 6 2-6 2-2 6-2-6-6-2 6-2z" fill="currentColor"/>`,
+      list:`<path d="M9 6h11M9 12h11M9 18h11" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="4.5" cy="6" r="1.5" fill="currentColor"/><circle cx="4.5" cy="12" r="1.5" fill="currentColor"/><circle cx="4.5" cy="18" r="1.5" fill="currentColor"/>`,
+      save:`<path d="M5 4h11l3 3v13H5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M8 4v5h7V4M8 20v-6h8v6" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>`,
+      upload:`<path d="M12 16V4M7 9l5-5 5 5M5 20h14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`,
+      trash:`<path d="M5 7h14M10 7V4h4v3M7 7l1 13h8l1-13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`,
+      home:`<path d="M4 11l8-7 8 7v9h-5v-6H9v6H4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>`,
+      eraser:`<path d="M15.5 4.5l4 4L10 18H6l-2-2 11.5-11.5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M9 11l4 4M10 18h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>`,
+      copy:`<rect x="8" y="8" width="12" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3" fill="none" stroke="currentColor" stroke-width="2"/>`
+    };
+    return `<svg viewBox="0 0 24 24" aria-hidden="true">${P[name]||""}</svg>`;
+  }
+};
+</script>
+<script>
+"use strict";
+/* =========================================================
+   ブレインジム・BBA（講座資料：ブレインジム170コース／MBL101 BBA講座 より）
+   ========================================================= */
+const DIMS = {
+  focus:{ name:"フォーカス次元", axis:"前と後ろ（参加正中線）", intel:"注目に関わる知性", skill:"コンプリヘンション（理解）",
+    q:"私は空間の中でどこにいるのか？", aff:"私は安全だ", bgGroup:"レングスニング・アクティビティ",
+    items:"感覚への反応、安心感、筋肉の自己受容感覚、リラックス、身体の境界の感覚",
+    when:["言葉の発達がゆっくり","力加減のコントロールが難しい","周りが見えていない","集中できない","活動に参加しようとしない"],
+    c:"var(--coral)", soft:"var(--coral-soft)", deep:"var(--coral-deep)" },
+  centering:{ name:"センタリング次元", axis:"上と下（安定正中線）", intel:"情動に関わる知性", skill:"オーガニゼーション（まとめる力）",
+    q:"人や場所、物との関係で私はどこにいるのか？", aff:"私は繋がる", bgGroup:"エナジー・エクササイズ／ディープニング・アティテュード",
+    items:"バランス感覚、体の中心を感じる力、気持ちを自分のものとして落ち着かせる力、繋がっている感覚、目と手の協調",
+    when:["頭の中でまとめられない","記憶できない","気持ちの切り替えが難しい","なかなか寝付けない","体の動きがぎこちない"],
+    c:"var(--sky)", soft:"var(--sky-soft)", deep:"var(--sky-deep)" },
+  laterality:{ name:"ラテラリティ次元", axis:"右と左（処理正中線）", intel:"情報に関わる知性", skill:"コミュニケーション",
+    q:"私は誰か？それは何か？", aff:"私は自分自身のことをわかっている", bgGroup:"ミッドライン・ムーブメント",
+    items:"体の両側の協調、両目で見る力、正中線を越えて目で追う力、音を聞き分ける力、発話と言語",
+    when:["コミュニケーションが苦手","本読み・文字を書くことが苦手","聞いたことをすぐ忘れる","手先が不器用","球技や水泳など全身の動きが苦手"],
+    c:"var(--sun)", soft:"var(--sun-soft)", deep:"var(--sun-deep)" }
+};
+
+/* t: bg=ブレインジム / bba=BBA / play=講座で紹介された遊び
+   p: ねらい（資料の説明をやさしく言いかえたもの） / c: 注意 / mid: ミッドライン・ムーブメント / ear: 耳ポッピング */
+const ACTS = {
+  /* ブレインジム：レングスニング・アクティビティ（フォーカス） */
+  owl:{ t:"bg", dim:"focus", n:"アウル", p:"聞くことの正中線を越え、聞く注意・知覚・記憶を支える" },
+  arm:{ t:"bg", dim:"focus", n:"アーム・アクティベーション", p:"話すこと・ことば、書くことを支える" },
+  footflex:{ t:"bg", dim:"focus", n:"フット・フレックス", p:"前後の統合と、話すこと・ことばを支える" },
+  calf:{ t:"bg", dim:"focus", n:"カーフ・ポンプ", p:"前後の統合と、話すこと・ことばを支える" },
+  glider:{ t:"bg", dim:"focus", n:"グラビティ・グライダー", p:"平衡感覚と協調性を高める" },
+  grounder:{ t:"bg", dim:"focus", n:"グラウンダー", p:"参加の正中線を越え、周りを見る・集中する・参加する力を支える" },
+  /* エナジー・エクササイズ／ディープニング・アティテュード（センタリング） */
+  water:{ t:"bg", dim:"centering", n:"水", p:"脳と神経系の働きがスムーズになるよう整える" },
+  brainbtn:{ t:"bg", dim:"centering", n:"ブレイン・ボタン", p:"脳への血流を促し、目覚めさせる" },
+  earthbtn:{ t:"bg", dim:"centering", n:"アース・ボタン", p:"自分の中心を感じて落ち着き、近くを見る準備をする" },
+  balancebtn:{ t:"bg", dim:"centering", n:"バランス・ボタン", p:"平衡感覚を刺激し、目覚めてフォーカスする" },
+  spacebtn:{ t:"bg", dim:"centering", n:"スペース・ボタン", p:"自分の中心を感じ、神経系をリラックスさせる" },
+  yawn:{ t:"bg", dim:"centering", n:"エナジー・ヨーン", p:"口まわりをゆるめ、発声と咀嚼を支える" },
+  thinkcap:{ t:"bg", dim:"centering", n:"シンキング・キャップ", p:"聞く力（聞き分け・注意・記憶）を高める" },
+  hookup:{ t:"bg", dim:"centering", n:"フック・アップ", p:"気持ちを落ち着け、注意力を高める" },
+  posipoint:{ t:"bg", dim:"centering", n:"ポジティブ・ポイント", p:"ストレスの中で考えずに動いてしまう反射をやわらげる" },
+  /* ミッドライン・ムーブメント（ラテラリティ） */
+  crosscrawl:{ t:"bg", dim:"laterality", n:"クロス・クロール", p:"体の左右を協調させ、見る・聞く・動くをつなぐ", mid:true },
+  lazy8:{ t:"bg", dim:"laterality", n:"レイジー・エイト", p:"見ることの正中線を越え、読むことを支える", mid:true },
+  doodle:{ t:"bg", dim:"laterality", n:"ダブル・ドゥードゥル", p:"両手と目の協調を育てる", mid:true },
+  alpha8:{ t:"bg", dim:"laterality", n:"アルファベット・エイト", p:"書くことの正中線を越え、書くことを楽にする", mid:true },
+  elephant:{ t:"bg", dim:"laterality", n:"エレファント", p:"聞く注意・聞き分け・記憶を支える", mid:true },
+  neckroll:{ t:"bg", dim:"laterality", n:"ネック・ロール", p:"両目で見る力と、正中領域で読み書きする力を支える", mid:true },
+  rocker:{ t:"bg", dim:"laterality", n:"ロッカー", p:"自分の中心を感じ、座って正中領域で作業する力を支える", mid:true },
+  belly:{ t:"bg", dim:"laterality", n:"ベリー・ブリージング", p:"自分の中心を感じ、落ち着く", mid:true },
+  ccsitup:{ t:"bg", dim:"laterality", n:"クロス・クロール・シット・アップ", p:"左右の統合と、コア・姿勢の筋肉への意識を高める", mid:true },
+  energizer:{ t:"bg", dim:"laterality", n:"エナジャイザー", p:"中枢神経系をリラックスさせる", mid:true },
+  thinkx:{ t:"bg", dim:"laterality", n:"Xを思い浮かべる", p:"両目で見る・両耳で聞くことを支える", mid:true },
+  /* バランス調整・再パターン化 */
+  dlr:{ t:"bg", dim:"laterality", n:"DLR（デニソン左右再パターン化）", p:"水泳や球技など、全身の動きを支える", mid:true },
+  threedr:{ t:"bg", dim:"all", n:"3DR（3つの次元の再パターン化）", p:"歌・ダンス・お遊戯など、リズムのある動きを支える", mid:true },
+  fast:{ t:"bg", dim:"centering", n:"F.A.S.T.アクション・バランス", p:"嵐のような大きな感情をしずめる" },
+
+  /* BBA（ビルディング・ブロック・アクティビティ） */
+  foot:{ t:"bba", dim:"focus", n:"足の動きの再教育（足裏のばし）", p:"足からの感覚を整えて全身の緊張をゆるめ、話すこと・ことばも支える" },
+  spine:{ t:"bba", dim:"focus", n:"脊椎散歩", p:"背中への意識を育て、参加する力と気持ちの落ち着きを支える", c:"背中や首を嫌がるときは、ボール・ヨガマット・コート越しに行う" },
+  core:{ t:"bba", dim:"centering", n:"コアの活性化（骨盤エイト・肩と胴のばし）", p:"前庭系を目覚めさせ、注意力・集中力を支える" },
+  cranial:{ t:"bba", dim:"centering", n:"頭蓋骨タッピング", p:"タイミング・リズム・流れの感覚を高め、まとめる力・記憶・見る・聞くを支える" },
+  navel:{ t:"bba", dim:"centering", n:"へそ放射", p:"体の中心と手足のつながりを感じ、動きの土台をつくる。寝つきやぎこちない動きにも" },
+  eyes:{ t:"bba", dim:"laterality", n:"目の活性化", p:"目をリラックスさせ、見る力と体のバランスを支える", c:"メガネは外し、触れるポイントは本人に2択で選んでもらう" },
+  flash:{ t:"bba", dim:"laterality", n:"懐中電灯ゲーム", p:"目を楽に使い、目で追う力を育てる", c:"光を目に当てない" },
+  ear:{ t:"bba", dim:"laterality", n:"耳ポッピング", p:"リズム・タイミングの感覚を高め、聞き分け・記憶・平衡感覚を支える", c:"発作のある子、風邪・鼻づまり・感染症のとき、耳に器具がある子には行わない", ear:true },
+
+  /* 講座で紹介された遊び */
+  g_back:{ t:"play", n:"背中を意識する遊び（手遊び歌）", p:"背中へのやさしい刺激に慣れ、体の後ろ側に気づく" },
+  g_gcp:{ t:"play", n:"グー・チョキ・パー", p:"手と足の動きを合わせ、リズムと協調を楽しむ" },
+  g_colorpic:{ t:"play", n:"色か？絵か？", p:"「色」「絵」の合図で動きを切り替え、見る・聞く注意を育てる" },
+  g_seeno:{ t:"play", n:"せーの！ゲーム", p:"手と足で数字を出し合い、注目と数を楽しむ" },
+  g_diff:{ t:"play", n:"動くまちがいさがし", p:"見比べて違いに気づき、集中を楽しむ" },
+  g_memory:{ t:"play", n:"記憶力ゲーム", p:"見たものを覚えて、すばやく動く" },
+  g_animal:{ t:"play", n:"動物と鳴き声ゲーム", p:"聞いたことばと動きを結びつけ、やり取りを楽しむ" },
+  g_tissue:{ t:"play", n:"ティッシュゲーム", p:"ふわっと落ちるティッシュを目で追ってつかむ" },
+  g_cup:{ t:"play", n:"カップゲーム", p:"紙コップをそっと積み、力加減を練習する" },
+  g_otedama:{ t:"play", n:"お手玉", p:"リズムよく投げて受け、目と手を協調させる" },
+  g_tony:{ t:"play", n:"トニー・チェスナッツ・ダンス", p:"歌に合わせて体の部位にふれ、ことばと体をつなぐ" },
+  g_ball:{ t:"play", n:"ボール遊び", p:"投げる・受ける・転がすで、全身の協調を育てる" }
+};
+
+/* 20の視点ごとの手がかり：次元・ブレインジム・BBA・遊び・講座のバランス調整 */
+const VP_BGBBA = {
+  k1:{ dim:"centering", bg:["water","belly","energizer"], bba:["foot","navel"], play:[], bal:"PACEで体と気持ちを整える" },
+  k2:{ dim:"centering", bg:["water","yawn","hookup"], bba:["navel","foot"], play:[], bal:"PACEで体と気持ちを整える" },
+  k3:{ dim:"centering", bg:["balancebtn","hookup","crosscrawl"], bba:["core","navel"], play:[], bal:"オーガニゼーションのためのセンタリング次元のバランス調整" },
+  k4:{ dim:"centering", bg:["hookup","posipoint","belly"], bba:["spine","cranial"], play:[], bal:"オーガニゼーションのためのセンタリング次元のバランス調整" },
+  u1:{ dim:"centering", bg:["glider","balancebtn","ccsitup","rocker","dlr"], bba:["core","spine","navel"], play:["g_ball","g_otedama"], bal:"全身の動きのためのアクション・バランス（DLR）" },
+  u2:{ dim:"laterality", bg:["arm","doodle","alpha8","energizer","yawn"], bba:["navel","eyes"], play:["g_cup"], bal:"書くことと微細運動のためのアクション・バランス" },
+  u3:{ dim:"laterality", bg:["lazy8","neckroll","thinkcap","elephant","thinkx"], bba:["eyes","ear","flash","cranial"], play:["g_tissue","g_colorpic"], bal:"正中領域で見ることと作業するためのアクション・バランス" },
+  u4:{ dim:"focus", bg:["hookup","spacebtn","footflex","grounder"], bba:["foot","spine"], play:["g_back"], bal:"コンプリヘンション（理解）のためのフォーカス次元のバランス調整" },
+  n1:{ dim:"centering", bg:["thinkcap","elephant","owl","rocker","balancebtn"], bba:["cranial","ear","core"], play:["g_colorpic","g_memory","g_diff"], bal:"聞くことと短期記憶のためのアクション・バランス" },
+  n2:{ dim:"focus", bg:["lazy8","grounder","earthbtn"], bba:["spine","eyes","flash"], play:["g_seeno","g_ball"], bal:"コンプリヘンション（理解）のためのフォーカス次元のバランス調整" },
+  n3:{ dim:"centering", bg:["hookup","posipoint","brainbtn"], bba:["cranial","core"], play:["g_colorpic"], bal:"オーガニゼーションのためのセンタリング次元のバランス調整" },
+  n4:{ dim:"centering", bg:["hookup","posipoint","belly","fast"], bba:["spine","navel"], play:[], bal:"F.A.S.T.アクション・バランス（嵐のような感情を変化させる）" },
+  g1:{ dim:"focus", bg:["footflex","calf","arm","grounder"], bba:["foot","spine"], play:["g_tony","g_animal"], bal:"コンプリヘンション・発話・言語のためのフォーカス次元のバランス調整" },
+  g2:{ dim:"focus", bg:["yawn","hookup"], bba:["spine","navel","eyes"], play:["g_back"], bal:"コンプリヘンション・発話・言語のためのフォーカス次元のバランス調整" },
+  g3:{ dim:"laterality", bg:["crosscrawl","lazy8","elephant","neckroll"], bba:["ear","eyes","flash"], play:["g_animal"], bal:"コミュニケーションのためのラテラリティ次元のバランス調整" },
+  g4:{ dim:"laterality", bg:["lazy8","neckroll","brainbtn","alpha8","doodle"], bba:["cranial","eyes","flash"], play:["g_tissue"], bal:"正中領域で見ることと作業するためのアクション・バランス" },
+  s1:{ dim:"centering", bg:["hookup","water"], bba:["spine","navel","cranial"], play:["g_back"], bal:"PACEを一緒に行い、安心できる関係をつくる" },
+  s2:{ dim:"laterality", bg:["threedr","crosscrawl"], bba:["core"], play:["g_gcp","g_seeno","g_otedama"], bal:"3DR（3つの次元の再パターン化）" },
+  s3:{ dim:"centering", bg:["hookup","posipoint","belly","fast"], bba:["spine","navel","core"], play:[], bal:"F.A.S.T.アクション・バランス（嵐のような感情を変化させる）" },
+  s4:{ dim:"focus", bg:["grounder","hookup"], bba:["spine","core"], play:["g_seeno","g_tony"], bal:"コンプリヘンション（理解）のためのフォーカス次元のバランス調整" }
+};
+
+/* 講座資料にもとづく、はじめから入っている文章（ブレインジム・BBA） */
+Object.assign(PRESET_SUPPORTS.find(s => s.id === "braingym"), {
+  desc:"簡単な動きで脳と体の統合を促す。3つの次元（フォーカス・センタリング・ラテラリティ）から選ぶ",
+  d:{ kenko:"活動の前にPACE（水・ブレイン・ボタン・クロス・クロール・フック・アップ）で体と気持ちを整える",
+      undo:"グラビティ・グライダーやバランス・ボタンで平衡感覚を、クロス・クロールで左右の協調を育てる",
+      ninchi:"シンキング・キャップやエレファントで聞く準備を整え、切り替えの前はフック・アップで落ち着く",
+      gengo:"フット・フレックスやカーフ・ポンプで話すことを、レイジー・エイトやネック・ロールで読むことを支える",
+      ningen:"フック・アップやポジティブ・ポイントで気持ちを落ち着け、グラウンダーで参加する力を支える" } });
+Object.assign(PRESET_SUPPORTS.find(s => s.id === "bba"), {
+  desc:"受け身の動きやタッピングで、発達の動きのパターンをおさらいする（ブレインジムが難しい子の準備にも）",
+  d:{ kenko:"へそ放射や足の動きの再教育（足裏のばし）で全身の緊張をゆるめ、休息のリズムを整える",
+      undo:"コアの活性化、脊椎散歩、へそ放射で、姿勢とバランス、動きの土台を育てる",
+      ninchi:"頭蓋骨タッピングでまとめる力を、コアの活性化で注意力・集中力を支える",
+      gengo:"足の動きの再教育で話すこと・ことばを、耳ポッピングや目の活性化で聞く・見る力を支える",
+      ningen:"脊椎散歩で背中への意識と気持ちの落ち着きを育て、ことばによらないやり取りで安心感をつくる" } });
+</script>
+<script>
+"use strict";
+/* =========================================================
+   小さな道具
+   ========================================================= */
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c]));
+const z2 = n => String(n).padStart(2, "0");
+const iso = d => `${d.getFullYear()}-${z2(d.getMonth() + 1)}-${z2(d.getDate())}`;
+const todayISO = () => iso(new Date());
+function addMonths(s, m){ const [y, mo, da] = s.split("-").map(Number); return iso(new Date(y, mo - 1 + m, da)); }
+function fmtDate(s, dow = true){
+  if (!s) return "";
+  const [y, m, d] = String(s).split("-").map(Number);
+  if (!y || !m || !d) return String(s);
+  const w = "日月火水木金土"[new Date(y, m - 1, d).getDay()];
+  return `${y}年${m}月${d}日${dow ? `（${w}）` : ""}`;
+}
+const fmtPeriod = (a, b) => (!a && !b) ? "" : `${fmtDate(a, false)} 〜 ${fmtDate(b, false)}`;
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const clone = o => JSON.parse(JSON.stringify(o));
+const trunc = (s, n) => (s.length > n ? s.slice(0, n) + "…" : s);
+const CE = (() => { try { const d = document.createElement("div"); d.contentEditable = "plaintext-only"; return d.contentEditable === "plaintext-only" ? "plaintext-only" : "true"; } catch (e) { return "true"; } })();
+
+/* =========================================================
+   保存（この端末のブラウザの中だけ）
+   ========================================================= */
+let storageOK = true;
+const defaultDb = () => ({
+  settings:{ setupDone:false, selected:[...DEFAULT_SELECTED], custom:[], overrides:{}, recorder:"", printP1:false, facilities:[], currentFacility:"" },
+  records:[], draft:null
+});
+let db = defaultDb();
+function load(){
+  try {
+    const raw = localStorage.getItem(STORE_KEY);
+    if (raw) {
+      const d = JSON.parse(raw), base = defaultDb();
+      db = { ...base, ...d, settings:{ ...base.settings, ...(d.settings || {}) }, records:Array.isArray(d.records) ? d.records : [] };
+    }
+  } catch (e) { storageOK = false; }
+}
+function persist(){
+  try { localStorage.setItem(STORE_KEY, JSON.stringify(db)); storageOK = true; }
+  catch (e) { storageOK = false; toast("この端末に保存できませんでした。ブラウザの設定を確認してください"); }
+}
+let saveTimer = null;
+function persistSoon(){ clearTimeout(saveTimer); saveTimer = setTimeout(persist, 350); }
+
+/* =========================================================
+   支援メニュー
+   ========================================================= */
+function allSupports(){
+  const pres = PRESET_SUPPORTS.map(p => {
+    const o = db.settings.overrides[p.id] || {};
+    return { id:p.id, name:p.name, desc:p.desc, d:{ ...p.d, ...o }, custom:false, edited:Object.keys(o).length > 0 };
+  });
+  const cus = (db.settings.custom || []).map(c => ({ ...c, d:{ ...c.d }, custom:true }));
+  return [...pres, ...cus];
+}
+const supMap = () => Object.fromEntries(allSupports().map(s => [s.id, s]));
+
+/* =========================================================
+   事業所
+   ========================================================= */
+const FAC_TYPES = ["放課後等デイサービス", "児童発達支援事業所", "多機能型（児童発達支援・放課後等デイサービス）", "その他"];
+const facList = () => (Array.isArray(db.settings.facilities) ? db.settings.facilities : (db.settings.facilities = []));
+const facById = id => facList().find(f => f.id === id) || null;
+const curFac = () => facById(db.settings.currentFacility) || facList()[0] || null;
+const facLabel = f => f ? `${f.type && f.type !== "その他" ? f.type + "　" : ""}${f.name}` : "";
+const countRecs = id => db.records.filter(r => r.input.facilityId === id).length;
+function recFac(rec){
+  const f = facById(rec.input.facilityId);
+  if (f) return f;
+  return rec.input.facilityName ? { id:rec.input.facilityId || "", name:rec.input.facilityName, type:rec.input.facilityType || "" } : null;
+}
+function addFacility(name, type){
+  name = String(name || "").trim(); if (!name) return null;
+  const ex = facList().find(f => f.name === name);
+  if (ex) { if (type && !ex.type) ex.type = type; return ex; }
+  const first = facList().length === 0;
+  const f = { id:"f_" + uid(), name, type:type || "", recorder:"" };
+  facList().push(f);
+  /* はじめての登録のときは、それまでの記録をこの事業所に入れる */
+  if (first) db.records.forEach(r => { if (!r.input.facilityId) { r.input.facilityId = f.id; r.input.facilityName = f.name; r.input.facilityType = f.type; } });
+  if (first || !facById(db.settings.currentFacility)) db.settings.currentFacility = f.id;
+  return f;
+}
+
+/* =========================================================
+   下書き
+   ========================================================= */
+function newDraft(base = {}){
+  const t = todayISO(), f = curFac();
+  return { id:null, name:"", date:t, periodStart:t, periodEnd:addMonths(t, 1), age:"", recorder:(f && f.recorder) || db.settings.recorder || "",
+    facilityId:f ? f.id : "", newFacName:"", newFacType:"",
+    scenes:[], sceneOther:"", supports:[...db.settings.selected], safetySeizure:false, safetyEar:false,
+    when:"", before:"", behavior:"", after:"", wishChild:"", wishFamily:"", strengths:"", difficulties:"", conditions:"", ...base };
+}
+const draftHasContent = d => !!(d && (String(d.name || "").trim() || TEXT_FIELDS.some(f => String(d[f.key] || "").trim())));
+
+/* =========================================================
+   自動整理（キーワード判定）
+   ========================================================= */
+function sentences(text){
+  /* 。！？で区切る（「」や（）の中では区切らない） */
+  const out = []; let buf = "", depth = 0;
+  for (const ch of String(text || "")) {
+    if ("「『（(【".includes(ch)) depth++;
+    else if ("」』）)】".includes(ch)) depth = Math.max(0, depth - 1);
+    if (ch === "\n") { if (buf.trim()) out.push(buf.trim()); buf = ""; depth = 0; continue; }
+    buf += ch;
+    if (depth === 0 && "。！？!?".includes(ch)) { if (buf.trim()) out.push(buf.trim()); buf = ""; }
+  }
+  if (buf.trim()) out.push(buf.trim());
+  return out;
+}
+function polarity(sent, mode){
+  if (mode === "pos") return "pos";
+  if (mode === "neg") return "neg";
+  let rest = sent, neg = 0, pos = 0;
+  NEUTRAL_WORDS.forEach(c => { rest = rest.split(c).join("＿"); });
+  PRE_POS.forEach(c => { if (rest.includes(c)) { pos++; rest = rest.split(c).join("＿"); } });
+  NEG_CUES.forEach(c => { if (rest.includes(c)) { neg++; rest = rest.split(c).join("＿"); } });
+  if (mode === "wish") return neg ? "neg" : "neu";   /* 意向は「〜したい」なので強みにはしない */
+  POS_CUES.forEach(c => { if (rest.includes(c)) pos++; });
+  if (neg && !pos) return "neg";
+  if (pos && !neg) return "pos";
+  if (pos && neg) return "mix";
+  return "neu";
+}
+const FIELD_PRIORITY = ["difficulties", "strengths", "behavior", "conditions", "after", "before", "when", "wishChild", "wishFamily"];
+/* 手がかりの言葉のまわりだけを短く見せる */
+function snippet(e, n = 30){
+  const t = e.t, i = e.k ? t.indexOf(e.k) : -1;
+  if (t.length <= n || i < 0) return trunc(t, n);
+  let a = Math.max(0, i - 10), b = Math.min(t.length, a + n);
+  a = Math.max(0, b - n);
+  return (a > 0 ? "…" : "") + t.slice(a, b) + (b < t.length ? "…" : "");
+}
+function analyze(input){
+  const res = {};
+  VPS.forEach(v => { res[v.id] = { pos:[], neg:[], neu:[] }; });
+  TEXT_FIELDS.forEach(f => {
+    sentences(input[f.key]).forEach(s => {
+      const strong = VPS.filter(v => v.kw.some(k => s.includes(k)));
+      const weakOnly = VPS.filter(v => !strong.includes(v) && (v.weak || []).some(k => s.includes(k)));
+      if (!strong.length && !weakOnly.length) return;
+      const p = polarity(s, f.mode);
+      const add = v => {
+        const it = { t:s, f:f.key, k:v.kw.find(k => s.includes(k)) };
+        if (p === "pos") res[v.id].pos.push(it);
+        else if (p === "neg") res[v.id].neg.push(it);
+        else if (p === "mix") { res[v.id].pos.push(it); res[v.id].neg.push(it); }
+        else res[v.id].neu.push(it);
+      };
+      strong.forEach(add);
+      /* 物や場所の名前だけ（ブロック・遊び など）は、うまくいった文のときだけ強みとして数える */
+      if (p === "pos" || p === "mix") weakOnly.forEach(v => res[v.id].pos.push({ t:s, f:f.key, k:v.weak.find(k => s.includes(k)) }));
+    });
+  });
+  const pri = f => FIELD_PRIORITY.indexOf(f);
+  VPS.forEach(v => ["pos", "neg", "neu"].forEach(t => res[v.id][t].sort((a, b) => pri(a.f) - pri(b.f))));
+  return res;
+}
+function autoMarks(an){
+  const m = {};
+  VPS.forEach(v => {
+    const a = an[v.id], s = a.pos.length > 0, k = a.neg.length > 0, c = !s && !k && a.neu.length > 0;
+    if (s || k || c) m[v.id] = { s, k, c };
+  });
+  return m;
+}
+function derive(rec){
+  const an = analyze(rec.input), marks = rec.marks || {};
+  const doms = {};
+  DOMAINS.forEach(D => {
+    const vps = VPS.filter(v => v.d === D.key);
+    const s = [], k = [], c = [];
+    vps.forEach(v => { const m = marks[v.id] || {}; if (m.s) s.push(v); if (m.k) k.push(v); if (m.c) c.push(v); });
+    const negW = v => an[v.id].neg.reduce((n, e) => n + (e.f === "difficulties" ? 3 : 1), 0);
+    const byNeg = (a, b) => negW(b) - negW(a);
+    const byPos = (a, b) => an[b.id].pos.length - an[a.id].pos.length;
+    k.sort(byNeg); s.sort(byPos);
+    const seen = new Set(), ev = [];
+    const push = (it, type) => { if (seen.has(it.t)) return; seen.add(it.t); ev.push({ ...it, type }); };
+    vps.forEach(v => an[v.id].neg.forEach(it => push(it, "neg")));
+    vps.forEach(v => an[v.id].pos.forEach(it => push(it, "pos")));
+    vps.forEach(v => an[v.id].neu.forEach(it => push(it, "neu")));
+    doms[D.key] = { D, s, k, c, ev, score:k.length * 3 + c.length + s.length, has:(s.length + k.length + c.length) > 0 };
+  });
+  const ranked = DOMAINS.map(D => doms[D.key]).filter(x => x.score > 0)
+    .sort((a, b) => b.score - a.score || b.k.length - a.k.length || b.ev.length - a.ev.length);
+  const kList = [], sList = [], cList = [];
+  ranked.forEach(dd => { kList.push(...dd.k); sList.push(...dd.s); cList.push(...dd.c); });
+  return { an, doms, ranked, main:ranked[0] || null, related:ranked.slice(1), kList, sList, cList };
+}
+
+/* ---------- 文章づくり ---------- */
+const qjoin = vps => vps.map(v => `「${v.short}」`).join("や");
+const firstClause = t => String(t || "").split("。")[0];
+const evLine = e => `・${e.t}（${FMAP[e.f].short}）`;
+function domSentence(dd){
+  const p = [];
+  if (dd.s.length) p.push(`${qjoin(dd.s)}に強みが見られます。`);
+  if (dd.k.length) p.push(`${qjoin(dd.k)}に困りや負担が見られます。`);
+  if (dd.c.length) p.push(`${qjoin(dd.c)}は、強みか困りかをもう少し確かめたいところです。`);
+  return p.length ? p.join("") : "今回の記録からは、この領域の様子は見つかりませんでした。";
+}
+function domTips(dd){
+  if (!dd.has) return "今回の記録には、この領域の様子がありません。次の観察で見てみましょう。";
+  const L = [];
+  dd.k.slice(0, 2).forEach(v => { L.push(`・${v.env}`); L.push(`・${v.talk}`); });
+  dd.s.slice(0, dd.k.length ? 1 : 2).forEach(v => L.push(`・強みを活かす：${v.sTip}`));
+  dd.c.slice(0, 2).forEach(v => L.push(`・確かめる：「${v.short}」の様子を、ほかの場面でも観察する`));
+  return L.join("\n");
+}
+/* ---------- ブレインジム・BBA の提案 ---------- */
+const safetyOf = inp => ({ seizure:!!(inp && inp.safetySeizure), ear:!!(inp && inp.safetyEar) });
+function actsFor(v, type, safety){
+  const m = VP_BGBBA[v.id]; if (!m) return [];
+  const ids = type === "bg" ? m.bg : type === "bba" ? m.bba : m.play;
+  const out = ids.map(id => ({ id, ...ACTS[id] })).filter(a => a.n && !(a.ear && (safety.seizure || safety.ear)));
+  if (safety.seizure) out.sort((a, b) => (a.mid ? 1 : 0) - (b.mid ? 1 : 0));
+  return out;
+}
+function actText(a, safety){
+  const notes = [];
+  if (a.c && !a.ear) notes.push(a.c);
+  if (a.ear) notes.push(a.c);
+  if (safety.seizure && a.mid) notes.push("発作に配慮し、はじめは控えめに");
+  return `${a.n}：${a.p}${notes.length ? `（※${notes.join("。")}）` : ""}`;
+}
+const BG_LABEL = { braingym:"ブレインジム", bba:"BBA" };
+function domSupports(dd, ids, SUP, safety){
+  if (!dd.has) return "";
+  const L = [];
+  const fromStrength = !dd.k.length && !dd.c.length;
+  const focusVps = dd.k.length ? dd.k.slice(0, 2) : dd.c.length ? dd.c.slice(0, 1) : dd.s.slice(0, 1);
+  (ids || []).forEach(id => {
+    const s = SUP[id]; if (!s) return;
+    const txt = String(s.d[dd.D.key] || "").trim();
+    const ov = db.settings.overrides[id];
+    if (BG_LABEL[id] && !(ov && ov[dd.D.key] !== undefined) && focusVps.length) {
+      const used = new Set();
+      const lines = focusVps.map(v => {
+        const acts = actsFor(v, id === "braingym" ? "bg" : "bba", safety).filter(a => !used.has(a.id)).slice(0, 2);
+        acts.forEach(a => used.add(a.id));
+        return acts.length ? `【${BG_LABEL[id]}】「${v.short}」${fromStrength ? "の強みを伸ばすなら" : "に"}\n${acts.map(a => `　・${a.n}：${a.p}`).join("\n")}` : "";
+      }).filter(Boolean);
+      if (lines.length) { L.push(...lines); return; }
+    }
+    if (txt) L.push(`【${BG_LABEL[id] || s.name}】${txt}`);
+  });
+  if ((ids || []).some(id => BG_LABEL[id]) && focusVps.length) {
+    const play = actsFor(focusVps[0], "play", safety)[0];
+    if (play) L.push(`【講座のあそび】${play.n}：${play.p}`);
+  }
+  return L.join("\n");
+}
+function bgSession(inp, X){
+  const sel = inp.supports || [], hasBG = sel.includes("braingym"), hasBBA = sel.includes("bba");
+  if (!hasBG && !hasBBA) return null;
+  const safety = safetyOf(inp);
+  const vps = X.kList.length ? X.kList.slice(0, 2) : (X.cList.length ? X.cList.slice(0, 2) : X.sList.slice(0, 1));
+  if (!vps.length) return null;
+  const score = { focus:0, centering:0, laterality:0 };
+  X.kList.forEach(v => { score[VP_BGBBA[v.id].dim] += 2; });
+  X.cList.forEach(v => { score[VP_BGBBA[v.id].dim] += 1; });
+  if (!X.kList.length && !X.cList.length) X.sList.forEach(v => { score[VP_BGBBA[v.id].dim] += 1; });
+  const topDim = Object.keys(score).sort((a, b) => score[b] - score[a])[0];
+  const pick = (type, n) => {
+    const seen = new Set(), out = [];
+    vps.forEach(v => actsFor(v, type, safety).forEach(a => { if (!seen.has(a.id)) { seen.add(a.id); out.push(a); } }));
+    if (safety.seizure) out.sort((a, b) => (a.mid ? 1 : 0) - (b.mid ? 1 : 0));
+    return out.slice(0, n);
+  };
+  const bba = hasBBA ? pick("bba", 3) : [], bg = hasBG ? pick("bg", 3) : [], play = pick("play", 2);
+  const v0 = vps[0];
+  const pace = !hasBG ? "水を飲み、深呼吸をして体と気持ちを整える"
+    : safety.seizure ? "水 → ブレイン・ボタン（片側ずつ）→ ホモラテラル・クロール（パペット・クロールなど）→ フック・アップ"
+    : "水 → ブレイン・ボタン → クロス・クロール → フック・アップ";
+  const L = [
+    `1. ${hasBG ? "PACE" : "準備"}：${pace}`,
+    `2. 目標：${v0.goal}（本人と一緒に、ことばや絵で決める）`,
+    `3. プレ・アクティビティ：目標に関わる活動を少しやってみて、からだ・気持ち・考えの様子に気づく`,
+    `4. 学びのメニュー（本人と一緒に2〜3個選ぶ）`,
+    ...bba.map(a => `　・【BBA】${actText(a, safety)}`),
+    ...bg.map(a => `　・【ブレインジム】${actText(a, safety)}`),
+    ...play.map(a => `　・【あそび】${a.n}：${a.p}`),
+    `　参考になるバランス：${VP_BGBBA[v0.id].bal}`,
+    `5. ポスト・アクティビティ：同じ活動をもう一度やって変化に気づき、一息ついてお祝いする`
+  ];
+  const notes = ["ブレインジムに処方箋はありません。子どもの気づきと反応を見ながら、本人と一緒に選びます。"];
+  if (hasBBA) notes.push("BBAは、講座で学んだ職員が行います。");
+  if (safety.seizure) notes.push("発作がある子：主治医と連携し、発作が起きたときは医療手順に従います。落ち着いたらフック・アップをしてポジティブ・ポイントに触れます。はじめはミッドライン・ムーブメントを減らし、BBAやホモラテラルな動きから始めます。耳ポッピングは行いません。");
+  else if (safety.ear) notes.push("風邪・鼻づまり・耳の治療中のため、耳ポッピングは提案から外しています。");
+  return { score, topDim, text:L.join("\n"), notes, acts:{ bba, bg, play } };
+}
+function whenPhrase(inp, withDe = true){
+  const sc = (inp.scenes || []).filter(s => s !== "その他");
+  if ((inp.scenes || []).includes("その他") && String(inp.sceneOther || "").trim()) sc.push(inp.sceneOther.trim());
+  let w;
+  if (sc.length) w = `${sc.join("・")}の場面`;
+  else { const f = sentences(inp.when)[0]; w = f ? f.replace(/[。．.]$/, "") : "活動の場面"; }
+  return withDe ? `${w}で` : w;
+}
+function missingInfo(inp, X){
+  const out = [];
+  const emp = TEXT_FIELDS.filter(f => !["wishChild", "wishFamily"].includes(f.key) && !String(inp[f.key] || "").trim());
+  if (emp.length) out.push(`未記入：${emp.map(f => `「${f.label}」`).join("")}`);
+  if (String(inp.behavior || "").trim() && !/([0-9０-９]+\s*(回|分|秒|度|時間|人|個|枚|日))|([一二三四五六七八九十]+(回|分|秒|度))/.test(inp.behavior))
+    out.push("本人の行動に、回数や時間などの数字があると、変化を比べやすくなります");
+  const none = DOMAINS.filter(D => !X.doms[D.key].has);
+  if (none.length && none.length < 5) out.push(`${none.map(D => `「${D.name}」`).join("")}の様子は、今回の記録からは読み取れませんでした。別の場面も観察してみましょう`);
+  X.cList.slice(0, 3).forEach(v => out.push(`「${v.short}」が強みか困りか、ほかの場面でも確かめましょう`));
+  if (!String(inp.wishChild || "").trim()) out.push("本人の「したい・避けたい」を、言葉やカードで聞いてみましょう");
+  if (!String(inp.wishFamily || "").trim()) out.push("家族が大切にしたい生活を、送迎時や連絡帳で確認しましょう");
+  return out;
+}
+function factRows(inp, X){
+  const conds = [...sentences(inp.conditions), ...sentences(inp.strengths)];
+  const rows = [], used = new Set();
+  for (const v of X.kList) {
+    if (rows.length >= 3) break;
+    const negs = X.an[v.id].neg, ev = negs.find(e => !used.has(e.t));
+    if (negs.length && !ev) continue;          /* 同じ事実のくり返しは省く */
+    if (ev) used.add(ev.t);
+    rows.push({
+      fact: ev ? ev.t : "",
+      str: conds.length ? conds[rows.length % conds.length] : "",
+      bg: `${v.hypo}（仮説）`,
+      pt: `${v.env}。${v.talk}`
+    });
+  }
+  if (!rows.length) {
+    const v = X.sList[0];
+    rows.push({
+      fact: sentences(inp.behavior)[0] || sentences(inp.when)[0] || "",
+      str: conds[0] || "",
+      bg: v ? "強みが発揮できる条件がそろっていた可能性（仮説）" : "",
+      pt: v ? v.sTip : ""
+    });
+  }
+  return rows;
+}
+function oneLine(inp, X, SUP){
+  const v = X.kList[0] || X.sList[0];
+  if (!v) return "";
+  let s = `${whenPhrase(inp)}、${v.goal}に向けて、${X.kList[0] ? v.env : v.sTip}。`;
+  const safety = safetyOf(inp), sel = inp.supports || [];
+  const parts = [];
+  if (sel.includes("bba")) { const a = actsFor(v, "bba", safety)[0]; if (a) parts.push(`【BBA】${a.n}`); }
+  if (sel.includes("braingym")) { const a = actsFor(v, "bg", safety)[0]; if (a) parts.push(`【ブレインジム】${a.n}`); }
+  if (parts.length) { s += `あわせて${parts.join("と")}を取り入れる。`; return s; }
+  const sup = sel.map(id => SUP[id]).find(x => x && String(x.d[v.d] || "").trim());
+  if (sup) s += `あわせて【${sup.name}】${firstClause(sup.d[v.d])}。`;
+  return s;
+}
+function autoTexts(rec, X){
+  const inp = rec.input, SUP = supMap(), T = {};
+  T["p3.main"] = X.main ? X.main.D.name : "（入力内容からは判断できませんでした）";
+  T["p3.related"] = X.related.length ? X.related.map(d => d.D.name).join("、") : "なし";
+  T["p3.evidence"] = X.main ? X.main.ev.slice(0, 3).map(evLine).join("\n") : "";
+  T["p3.missing"] = missingInfo(inp, X).map(s => `・${s}`).join("\n");
+  DOMAINS.forEach(D => {
+    const dd = X.doms[D.key];
+    T[`memo.${D.key}`] = [domSentence(dd), ...dd.ev.slice(0, 3).map(evLine)].join("\n");
+    T[`tip.${D.key}`] = domTips(dd);
+    T[`sup.${D.key}`] = domSupports(dd, inp.supports, SUP, safetyOf(inp));
+  });
+  factRows(inp, X).forEach((r, i) => {
+    T[`fh.${i}.fact`] = r.fact; T[`fh.${i}.str`] = r.str; T[`fh.${i}.bg`] = r.bg; T[`fh.${i}.pt`] = r.pt;
+  });
+  T._rows = factRows(inp, X).length;
+  T["plan.oneline"] = oneLine(inp, X, SUP);
+  const ses = bgSession(inp, X);
+  T._session = ses;
+  T["bg.session"] = ses ? ses.text : "";
+  const ks = X.kList.slice(0, 2);
+  T["plan.when"] = [whenPhrase(inp, false), ...(sentences(inp.when)[0] && (inp.scenes || []).length ? [sentences(inp.when)[0]] : [])].join("\n");
+  T["plan.who"] = String(inp.recorder || "").trim() ? `${inp.recorder.trim()}（記録者）と担当職員` : "担当職員";
+  if (ks.length) {
+    T["plan.env"] = ks.map(v => `・${v.env}`).join("\n");
+    T["plan.talk"] = ks.map(v => `・${v.talk}`).join("\n");
+    T["plan.choice"] = ks.map(v => `・${v.choice}`).join("\n");
+  } else {
+    const ss = X.sList.slice(0, 2);
+    T["plan.env"] = ss.length ? ss.map(v => `・${v.sTip}`).join("\n") : "";
+    T["plan.talk"] = ss.length ? "・できたことを具体的な言葉にして認める" : "";
+    T["plan.choice"] = ss.length ? "・取り組む活動や順番" : "";
+  }
+  T["plan.share"] = "保護者、担当職員、児童発達支援管理責任者";
+  T["plan.period"] = fmtPeriod(inp.periodStart, inp.periodEnd);
+  T["plan.review"] = inp.periodEnd ? fmtDate(inp.periodEnd) : "";
+  const st = sentences(inp.strengths);
+  T["gl.strength"] = (st.length ? st : X.sList.map(v => X.an[v.id].pos[0]?.t).filter(Boolean)).slice(0, 3).map(s => `・${s}`).join("\n")
+    || "強みの欄に書くと、ここに表示されます";
+  return T;
+}
+
+/* =========================================================
+   画面の状態
+   ========================================================= */
+const state = { view:"form", currentId:null, formErr:null, hQuery:"", hFilter:"", hFac:"", facEdit:false };
+let modalOk = null;
+
+function go(view, id){
+  state.facEdit = false;
+  state.view = view;
+  if (id !== undefined) state.currentId = id;
+  render();
+  window.scrollTo({ top:0 });
+}
+function currentRecord(){ return db.records.find(r => r.id === state.currentId) || null; }
+
+/* =========================================================
+   部品
+   ========================================================= */
+const dchip = (key, small) => { const D = DMAP[key]; return `<span class="dchip" style="background:${D.soft};color:${D.deep}${small ? ";font-size:13px" : ""}">${ART.domain(key)}${esc(D.name)}</span>`; };
+function statusPills(dd){
+  const p = [];
+  if (dd.s.length) p.push(`<span class="pill s">強み ${dd.s.length}</span>`);
+  if (dd.k.length) p.push(`<span class="pill k">困り ${dd.k.length}</span>`);
+  if (dd.c.length) p.push(`<span class="pill c">要確認 ${dd.c.length}</span>`);
+  return p.length ? p.join(" ") : `<span class="pill n">情報なし</span>`;
+}
+function editable(rec, key, auto, ph = "", opt = {}){
+  const has = rec.edits && Object.prototype.hasOwnProperty.call(rec.edits, key);
+  const v = has ? rec.edits[key] : (auto || "");
+  return `<div class="edwrap"><div class="ed" contenteditable="${CE}" data-edit="${esc(key)}" data-ph="${esc(ph)}" spellcheck="false" role="textbox" aria-multiline="true" aria-label="${esc(opt.label || ph || "書きかえられる文章")}">${esc(v)}</div>${has && !opt.noReset ? `<button type="button" class="reset no-print" data-reset="${esc(key)}">↺ 自動の文に戻す</button>` : ""}</div>`;
+}
+function toast(msg){
+  const h = $("#toastHost");
+  h.innerHTML = `<div class="toast">${esc(msg)}</div>`;
+  clearTimeout(toast._t);
+  toast._t = setTimeout(() => { h.innerHTML = ""; }, 2600);
+}
+function confirmBox(msg, okLabel, onOk, danger){
+  modalOk = onOk;
+  $("#modalHost").innerHTML = `<div class="modal-bg" role="dialog" aria-modal="true" aria-label="確認"><div class="modal">${ART.chick()}<p>${msg}</p><div class="row"><button type="button" class="btn" data-modal="cancel">やめる</button><button type="button" class="btn ${danger ? "btn-danger" : "btn-main"}" data-modal="ok">${esc(okLabel)}</button></div></div></div>`;
+  setTimeout(() => $('[data-modal="cancel"]')?.focus(), 30);
+}
+function closeModal(){ $("#modalHost").innerHTML = ""; modalOk = null; }
+
+/* =========================================================
+   タブ
+   ========================================================= */
+function renderTabs(){
+  const cur = state.view === "result" ? "history" : state.view;
+  const tabs = [
+    ["form", "記録を書く", "pen", ""],
+    ["history", "保存した記録", "book", `<span class="count">${curFac() ? countRecs(curFac().id) : db.records.length}</span>`],
+    ["supports", "支援メニュー", "heart", ""],
+    ["guide", "ブレインジム・BBA早見表", "spark", ""]
+  ];
+  $("#tabs").innerHTML = tabs.map(([v, l, ic, extra]) =>
+    `<button type="button" class="tab" data-go="${v}" ${cur === v ? 'aria-current="page"' : ""}>${ART.icon(ic)}${l}${extra}</button>`).join("");
+}
+
+/* =========================================================
+   ① 入力画面（ワークシート1ページ目）
+   ========================================================= */
+function renderForm(){
+  if (!db.draft) db.draft = newDraft();
+  const d = db.draft, E = state.formErr || {};
+  const editing = d.id ? db.records.find(r => r.id === d.id) : null;
+  if (d.id && !editing) d.id = null;
+  const sups = allSupports();
+  const ta = (key, rows = 3) => { const f = FMAP[key]; return `<div class="field"><label for="f-${key}">${esc(f.label)}<span class="hint">${esc(f.hint)}</span></label><textarea id="f-${key}" data-f="${key}" rows="${rows}" placeholder="${esc("例：" + trunc(firstClause(SAMPLE[key]).replace(/（記入例）/, ""), 34))}">${esc(d[key])}</textarea></div>`; };
+  const domInputs = prefix => `<div class="dom-inputs">${DOMAINS.map(D => `<div class="field"><label class="dlabel" for="${prefix}-${D.key}"><i style="background:${D.c}"></i>${D.name}</label><textarea id="${prefix}-${D.key}" rows="2" placeholder="この領域で行うこと（空欄なら表示しません）"></textarea></div>`).join("")}</div>`;
+
+  return `
+  ${!storageOK ? `<div class="banner pink" style="margin-bottom:16px">${ART.bulb()}<p>この環境では記録を保存できません（プライベートモードなど）。まとめの表示と印刷・PDFは使えます。</p></div>` : ""}
+  ${editing ? `<div class="banner pink no-print" style="margin-bottom:16px">${ART.bulb()}<div><p><b>${esc(editing.input.name)}</b>さんの記録（${esc(fmtDate(editing.input.date, false))}）を直しています。</p><p class="small muted">「まとめを作り直す」を押すと、保存されている記録が新しい内容に更新されます。</p><p style="margin-top:6px"><button type="button" class="linkish" data-act="new">新しい記録をはじめる</button></p></div></div>` : ""}
+  <div class="stack">
+    <div class="row" style="justify-content:space-between">
+      <p class="muted">1ページ目を入力して<b>「まとめを作る」</b>を押すと、2〜4ページ目のまとめが自動で表示されます。</p>
+      <div class="row">
+        <button type="button" class="btn btn-sm btn-ghost" data-act="new">${ART.icon("plus")}新しい記録</button>
+        <button type="button" class="btn btn-sm btn-sun" data-act="sample">${ART.icon("spark")}記入例を入れる</button>
+        <button type="button" class="btn btn-sm btn-danger" data-act="clear-all">${ART.icon("eraser")}全てクリア</button>
+      </div>
+    </div>
+
+    <section class="card" aria-labelledby="h-basic">
+      <div class="sec-head"><span class="num" style="background:#E98FA7">1</span><div><h2 id="h-basic">基本情報</h2><p>事業所名・子どもの名前・日付・期間を入れます</p></div></div>
+      <div class="grid2">
+        ${facField(d, E)}
+        <div class="field ${E.name ? "has-err" : ""}">
+          <label for="f-name">子どもの名前 <span class="req">必須</span></label>
+          <input type="text" id="f-name" data-f="name" value="${esc(d.name)}" placeholder="例：ひなたさん" autocomplete="off">
+          ${E.name ? `<span class="err">子どもの名前を入れてください（ニックネームやイニシャルでも大丈夫です）</span>` : `<span class="hint small muted">外部に渡すPDFでは、イニシャルや児童コードがおすすめです</span>`}
+        </div>
+        <div class="field"><label for="f-age">年齢・学年</label><input type="text" id="f-age" data-f="age" value="${esc(d.age)}" placeholder="例：小学2年・7歳"></div>
+        <div class="field"><label for="f-date">日付（記録日）</label><input type="date" id="f-date" data-f="date" value="${esc(d.date)}"></div>
+        <div class="field"><label for="f-recorder">記録者</label><input type="text" id="f-recorder" data-f="recorder" value="${esc(d.recorder)}" placeholder="例：山田"></div>
+        <div class="field span2"><span class="lbl" id="lbl-period">期間<span class="hint">支援を試して振り返る期間</span></span>
+          <div class="period" role="group" aria-labelledby="lbl-period"><input type="date" id="f-ps" data-f="periodStart" value="${esc(d.periodStart)}" aria-label="期間のはじめ"><span>〜</span><input type="date" id="f-pe" data-f="periodEnd" value="${esc(d.periodEnd)}" aria-label="期間のおわり"></div>
+        </div>
+        <div class="field span2"><span class="lbl">場面<span class="hint">あてはまるものを選びます（複数可）</span></span>
+          <div class="chips">${SCENES.map(s => `<label class="chip"><input type="checkbox" data-scene="${s}" ${d.scenes.includes(s) ? "checked" : ""}><span>${s}</span></label>`).join("")}</div>
+          <input type="text" id="f-sceneOther" data-f="sceneOther" value="${esc(d.sceneOther)}" placeholder="「その他」の内容（例：買い物練習）" class="${d.scenes.includes("その他") ? "" : "hidden"}" style="margin-top:6px">
+        </div>
+      </div>
+    </section>
+
+    <section class="card" aria-labelledby="h-sup">
+      <div class="sec-head"><span class="num" style="background:#6FBF95">2</span><div><h2 id="h-sup">使う支援を選ぶ</h2><p>選んだ支援が、五領域ごとの具体的な支援としてまとめに出てきます</p></div></div>
+      <div class="chips">${sups.map(s => `<label class="chip sup"><input type="checkbox" data-sup="${esc(s.id)}" ${d.supports.includes(s.id) ? "checked" : ""}><span>${esc(s.name)}</span></label>`).join("")}</div>
+      <div class="safety">
+        <p class="lbl">ブレインジム・BBAを行う前の確認<span class="hint">あてはまるときだけチェックします</span></p>
+        <div class="cbox">
+          <label><input type="checkbox" data-safety="safetySeizure" ${d.safetySeizure ? "checked" : ""}>発作（てんかん・けいれん）がある、または以前あった</label>
+          <label><input type="checkbox" data-safety="safetyEar" ${d.safetyEar ? "checked" : ""}>風邪・鼻づまりがある、耳の治療中（鼓膜チューブなど）</label>
+        </div>
+        <p class="small muted">チェックすると、提案を安全に配慮した形にします（耳ポッピングを外す、PACEを発作に配慮した形にする など）。</p>
+      </div>
+      <details class="addbox" id="addboxForm">
+        <summary>${ART.icon("plus").replace("<svg", '<svg width="18" height="18"')}自分で支援を追加する</summary>
+        <div class="stack" style="gap:12px">
+          <div class="field"><label for="fs-name">支援の名前</label><input type="text" id="fs-name" placeholder="例：コミュニケーション脳トレーニング"></div>
+          <p class="small muted">五領域それぞれで行うことを書きます。書いた領域にだけ表示されます。</p>
+          ${domInputs("fs")}
+          <div><button type="button" class="btn btn-mint" data-act="addsup-form">${ART.icon("plus")}追加して選ぶ</button> <button type="button" class="linkish" data-go="supports" style="margin-left:10px">支援の内容を書きかえる</button></div>
+        </div>
+      </details>
+    </section>
+
+    <section class="card" aria-labelledby="h-fact">
+      <div class="sec-head"><span class="num" style="background:#8FB8E0">3</span><div><h2 id="h-fact">観察した事実</h2><p>一つの場面を、見たこと・聞いたことのまま書きます</p></div></div>
+      <div class="grid2">${ta("when")}${ta("before")}${ta("behavior")}${ta("after")}</div>
+    </section>
+
+    <section class="card" aria-labelledby="h-wish">
+      <div class="sec-head"><span class="num" style="background:#B59BE0">4</span><div><h2 id="h-wish">意向と強み</h2><p>本人と家族の思い、強みと困りを書きます</p></div></div>
+      <div class="grid2">${ta("wishChild")}${ta("wishFamily")}${ta("strengths")}${ta("difficulties")}<div class="span2">${ta("conditions", 2)}</div></div>
+      ${E.text ? `<p class="err" style="margin-top:10px">観察した事実か、意向と強みを、1つ以上入力してください</p>` : ""}
+      <div class="tipbox" style="margin-top:16px">${ART.bulb()}<p>「〜できた」「〜が苦手」「耳をふさぐ」などの言葉を手がかりに、五領域の強み・困りを自動で整理します。事実をそのまま書くほど、整理の精度が上がります。</p></div>
+    </section>
+  </div>`;
+}
+function facField(d, E){
+  const facs = facList();
+  if (facs.length && d.facilityId !== "__new" && !facById(d.facilityId)) d.facilityId = curFac().id;
+  const isNew = !facs.length || d.facilityId === "__new";
+  const sel = isNew ? null : facById(d.facilityId);
+  const typeOpts = cur => FAC_TYPES.map(t => `<option ${cur === t ? "selected" : ""}>${t}</option>`).join("");
+  if (state.facEdit && sel) return `<div class="field span2">
+    <label for="fe-name">事業所名を直す</label>
+    <div class="facnew"><input type="text" id="fe-name" value="${esc(sel.name)}"><select id="fe-type" aria-label="事業所の種類"><option value="">種類を選ぶ（任意）</option>${typeOpts(sel.type)}</select></div>
+    <div class="row" style="margin-top:8px"><button type="button" class="btn btn-sm btn-main" data-act="fac-save" data-id="${sel.id}">保存する</button><button type="button" class="btn btn-sm" data-act="fac-cancel">やめる</button><span class="small muted">保存した記録の事業所名も、新しい名前になります。</span></div>
+  </div>`;
+  return `<div class="field span2 ${E.fac ? "has-err" : ""}">
+    <label for="${facs.length ? "f-fac" : "f-facname"}">事業所名 <span class="req">必須</span><span class="hint">一度入れると、次からは自動で入ります</span></label>
+    ${facs.length ? `<div class="facpick-row"><select id="f-fac" data-facpick>${facs.map(f => `<option value="${f.id}" ${d.facilityId === f.id ? "selected" : ""}>${esc(facLabel(f))}</option>`).join("")}<option value="__new" ${isNew ? "selected" : ""}>＋ 新しい事業所を追加する</option></select>${sel ? `<button type="button" class="btn btn-sm" data-act="fac-edit">${ART.icon("pen")}名前を直す</button><button type="button" class="btn btn-sm btn-danger" data-act="fac-del" data-id="${sel.id}">${ART.icon("trash")}削除</button>` : ""}</div>` : ""}
+    <div class="facnew ${isNew ? "" : "hidden"}" id="facnew">
+      <input type="text" id="f-facname" data-f="newFacName" value="${esc(d.newFacName || "")}" placeholder="例：ひだまり" autocomplete="organization">
+      <select id="f-factype" data-f="newFacType" aria-label="事業所の種類"><option value="">種類を選ぶ（任意）</option>${typeOpts(d.newFacType)}</select>
+    </div>
+    ${E.fac ? `<span class="err">事業所名を入れてください</span>` : ""}
+  </div>`;
+}
+function renderFormbar(){
+  const host = $("#formbarHost");
+  if (state.view !== "form") { host.innerHTML = ""; return; }
+  const d = db.draft, rec = d && d.id ? db.records.find(r => r.id === d.id) : null;
+  const hasEdits = rec && rec.edits && Object.keys(rec.edits).length > 0;
+  host.innerHTML = `<div class="formbar no-print"><div class="wrap">
+    <p class="note">${hasEdits ? "作り直すと、まとめ画面で書きかえた文章は新しい内容になります（確定欄と実施後の記録は残ります）" : "入力中の内容は自動で保存されます"}</p>
+    <div class="row">
+    <button type="button" class="btn btn-danger" data-act="clear-all">${ART.icon("eraser")}全てクリア</button>
+    <button type="button" class="btn btn-main btn-big" data-act="generate">${ART.icon("spark")}${rec ? "まとめを作り直す" : "まとめを作る"}</button>
+    </div>
+  </div></div>`;
+}
+
+/* =========================================================
+   ② まとめ画面（ワークシート2〜4ページ目）
+   ========================================================= */
+function renderResult(){
+  const rec = currentRecord();
+  if (!rec) return `<div class="card empty">${ART.notebook()}<p>記録が見つかりませんでした。</p><p style="margin-top:12px"><button type="button" class="btn" data-go="history">保存した記録へ</button></p></div>`;
+  if (!rec.marks) rec.marks = autoMarks(analyze(rec.input));
+  rec.edits = rec.edits || {}; rec.confirm = rec.confirm || { main:"", related:[], by:"", date:"", checks:{} }; rec.final = rec.final || {};
+  const inp = rec.input, X = derive(rec), T = autoTexts(rec, X), SUP = supMap();
+  const E = (k, ph, opt) => editable(rec, k, T[k], ph, opt);
+  const val = k => Object.prototype.hasOwnProperty.call(rec.edits, k) ? rec.edits[k] : (T[k] || "");
+  const rf = recFac(rec);
+  const who = `${rf ? esc(rf.name) + "｜" : ""}${esc(inp.name)}｜記録日 ${esc(fmtDate(inp.date, false))}`;
+  const tag = (n, title, color) => `<div class="sheet-tag"><div class="pno"><b style="background:${color}">${n}</b><h2>${title}</h2></div><div class="who">${who}</div></div>`;
+  const supNames = (inp.supports || []).map(id => SUP[id]).filter(Boolean);
+  const scenesTxt = [...(inp.scenes || []).filter(s => s !== "その他"), ...((inp.scenes || []).includes("その他") ? [inp.sceneOther || "その他"] : [])].join("・");
+  const conf = rec.confirm;
+
+  const toolbar = pos => `<div class="toolbar no-print" ${pos === "bottom" ? 'style="margin-top:4px"' : ""}>
+      <div class="left">
+        <button type="button" class="btn btn-sm" data-act="edit-input">${ART.icon("back")}入力に戻って直す</button>
+        <button type="button" class="btn btn-sm" data-go="history">${ART.icon("list")}保存した記録</button>
+      </div>
+      <div class="right">
+        <label class="printopt"><input type="checkbox" class="p1opt" ${db.settings.printP1 ? "checked" : ""}>1ページ目（入力内容）も印刷する</label>
+        <button type="button" class="btn btn-main" data-act="print">${ART.icon("print")}PDFで保存・印刷</button>
+      </div>
+    </div>`;
+
+  /* 表紙：ひとめでわかるまとめ */
+  const mainChip = conf.main ? `${dchip(conf.main)} <span class="pill c">確定</span>` : (X.main ? dchip(X.main.D.key) : `<span class="muted">判断できる情報がまだありません</span>`);
+  const relKeys = conf.main ? (conf.related || []) : X.related.map(d => d.D.key);
+  const cover = `<section class="sheet cover">
+    <div class="cover-title">${ART.chick()}<div>${rf ? `<p class="cover-fac">${esc(facLabel(rf))}</p>` : ""}<h2>五領域アセスメント まとめ</h2><p>観察した事実から、強みと支援の手がかりを整理しました</p></div></div>
+    <dl class="info">
+      <div><dt>子どもの名前</dt><dd>${esc(inp.name)}</dd></div>
+      <div><dt>年齢・学年</dt><dd>${esc(inp.age) || "—"}</dd></div>
+      <div><dt>日付（記録日）</dt><dd>${esc(fmtDate(inp.date)) || "—"}</dd></div>
+      <div><dt>期間</dt><dd>${esc(fmtPeriod(inp.periodStart, inp.periodEnd)) || "—"}</dd></div>
+      <div><dt>記録者</dt><dd>${esc(inp.recorder) || "—"}</dd></div>
+      <div><dt>場面</dt><dd>${esc(scenesTxt) || "—"}</dd></div>
+    </dl>
+    <div class="glance">
+      <div class="g g-main"><h3>主に関係する領域${conf.main ? "" : "（候補）"}</h3><div class="row" style="gap:6px">${mainChip}</div>
+        ${relKeys.length ? `<p class="small" style="margin-top:8px">あわせて確認：${relKeys.map(k => esc(DMAP[k].name)).join("、")}</p>` : ""}</div>
+      <div class="g g-str"><h3>見えてきた強み</h3><p style="white-space:pre-wrap">${esc(T["gl.strength"])}</p></div>
+      <div class="g g-plan full"><h3>明日から試す支援</h3><p id="gl-plan" style="white-space:pre-wrap">${esc(val("plan.oneline")) || "困りや強みが見つかると、ここに表示されます"}</p></div>
+      <div class="g g-sup full"><h3>使う支援</h3><div class="row" style="gap:6px">${supNames.length ? supNames.map(s => `<span class="pill sup">${esc(s.name)}</span>`).join("") : `<span class="muted small">選ばれていません（入力画面の「使う支援を選ぶ」で選べます）</span>`}</div></div>
+    </div>
+  </section>`;
+
+  /* 1ページ目（入力内容） */
+  const p1 = `<section class="sheet p1-sheet">
+    ${tag(1, "観察した事実と意向（入力内容）", "var(--peach)")}
+    <p class="sheet-lead no-print">この部分は「1ページ目も印刷する」にチェックしたときだけ印刷されます。</p>
+    <dl class="p1-grid">${TEXT_FIELDS.map(f => `<div class="p1-item"><dt>${esc(f.label)}</dt><dd>${esc(inp[f.key]) || "—"}</dd></div>`).join("")}</dl>
+  </section>`;
+
+  /* 2ページ目：五領域の視点で整理する */
+  const rows = DOMAINS.map(D => {
+    const vps = VPS.filter(v => v.d === D.key);
+    return vps.map((v, i) => {
+      const m = rec.marks[v.id] || {}, a = X.an[v.id];
+      const ev = a.neg[0] || a.pos[0] || a.neu[0];
+      const mk = (t, l) => `<td class="mk"><button type="button" class="mark ${t}" data-mark="${v.id}:${t}" aria-pressed="${!!m[t]}" aria-label="${esc(v.label)}：${l}">${l}</button></td>`;
+      return `<tr>${i === 0 ? `<td class="dom" rowspan="4" style="background:${D.soft};color:${D.deep}"><div class="di">${ART.domain(D.key)}<span>${esc(D.name)}</span></div></td>` : ""}
+        <td class="vp">${esc(v.label)}${ev ? `<span class="ev">「${esc(snippet(ev))}」</span>` : ""}</td>${mk("s", "強み")}${mk("k", "困り")}${mk("c", "要確認")}</tr>`;
+    }).join("");
+  }).join("");
+  const p2 = `<section class="sheet">
+    ${tag(2, "五領域の視点で整理する", "var(--mint)")}
+    <p class="sheet-lead">入力内容から「強み」「困り」「要確認」を自動でつけています。<span class="no-print">丸をタップすると切り替えられ、3・4ページ目のまとめも変わります。</span></p>
+    <div class="tscroll"><table class="ck"><thead><tr><th>領域</th><th>確認する視点</th><th class="m">強み</th><th class="m">困り</th><th class="m">要確認</th></tr></thead><tbody>${rows}</tbody></table></div>
+    <div class="point"><b>確認のポイント</b><span>同じ姿が複数の領域に関係することがあります。チェック数だけで主領域を決めません。</span></div>
+  </section>`;
+
+  /* 3ページ目：領域の候補と根拠 */
+  const memoCards = DOMAINS.map((D, i) => {
+    const dd = X.doms[D.key];
+    return `<div class="dcard ${i === 4 ? "full" : ""}" style="border-color:${D.c};background:${D.soft}">
+      <div class="dcard-h">${ART.domain(D.key)}<h3 style="color:${D.deep}">${esc(D.name)}</h3><div>${statusPills(dd)}</div></div>
+      ${E(`memo.${D.key}`, "根拠となる事実をメモします", { label:`${D.name}の根拠メモ` })}
+    </div>`;
+  }).join("");
+  const p3 = `<section class="sheet">
+    ${tag(3, "領域の候補と根拠", "var(--lav)")}
+    <p class="sheet-lead">候補を根拠となる事実と一緒に確認し、支援者が最終判断します。<span class="no-print">点線の枠はタップして書きかえられます。</span></p>
+    <h3 class="sub-h">1 候補を確認する</h3>
+    <div class="kv">
+      <div class="k">主に関係する領域</div><div class="v">${E("p3.main", "", { label:"主に関係する領域" })}</div>
+      <div class="k">あわせて確認する領域</div><div class="v">${E("p3.related", "", { label:"あわせて確認する領域" })}</div>
+      <div class="k">根拠となる事実</div><div class="v">${E("p3.evidence", "根拠となる事実", { label:"根拠となる事実" })}</div>
+      <div class="k">不足している情報</div><div class="v">${E("p3.missing", "不足している情報", { label:"不足している情報" })}</div>
+    </div>
+    <h3 class="sub-h">2 領域別の根拠メモ</h3>
+    <div class="dgrid">${memoCards}</div>
+    <h3 class="sub-h">3 支援者が確認して確定する</h3>
+    <div class="confirm-grid">
+      <div class="field"><label for="c-main">確定した主領域</label>
+        <select id="c-main" data-conf="main" class="screen-only"><option value="">（選んでください）</option>${DOMAINS.map(D => `<option value="${D.key}" ${conf.main === D.key ? "selected" : ""}>${D.name}</option>`).join("")}</select><span class="print-only pv">${conf.main ? esc(DMAP[conf.main].name) : ""}</span></div>
+      <div class="field"><span class="lbl">確認者と確認日</span>
+        <div class="period screen-only"><input type="text" id="c-by" data-conf="by" value="${esc(conf.by)}" placeholder="確認者" aria-label="確認者"><input type="date" id="c-date" data-conf="date" value="${esc(conf.date)}" aria-label="確認日"></div><span class="print-only pv">${esc(conf.by)}${conf.by && conf.date ? "　" : ""}${esc(fmtDate(conf.date, false))}</span></div>
+      <div class="field span2"><span class="lbl">確定した関連領域</span>
+        <div class="cbox">${DOMAINS.map(D => `<label><input type="checkbox" data-conf-rel="${D.key}" ${(conf.related || []).includes(D.key) ? "checked" : ""}>${D.name}</label>`).join("")}</div></div>
+    </div>
+    <div class="field" style="margin-top:14px"><span class="lbl">確認</span>
+      <div class="cbox">${[["c1", "本人と家族の意向を反映した"], ["c2", "複数領域の重なりを確認した"], ["c3", "不足情報を確認した"]].map(([k, l]) => `<label><input type="checkbox" data-chk="${k}" ${conf.checks && conf.checks[k] ? "checked" : ""}>${l}</label>`).join("")}</div></div>
+    <div class="note-app"><b>アプリの考え方</b><span>自動表示は支援を考えるための候補です。診断や評価の確定には使わず、支援者が根拠を確認します。</span></div>
+  </section>`;
+
+  /* 4ページ目：支援ポイントを決める */
+  const fhRows = Array.from({ length:T._rows }, (_, i) => `<tr>
+      <td>${E(`fh.${i}.fact`, "観察した事実", { label:"観察した事実" })}</td>
+      <td>${E(`fh.${i}.str`, "強み・うまくいった条件", { label:"強み・うまくいった条件" })}</td>
+      <td>${E(`fh.${i}.bg`, "考えられる背景", { label:"考えられる背景" })}</td>
+      <td>${E(`fh.${i}.pt`, "支援のポイント", { label:"支援のポイント" })}</td></tr>`).join("");
+  const supCards = DOMAINS.map((D, i) => {
+    const dd = X.doms[D.key];
+    return `<div class="dcard ${i === 4 ? "full" : ""}" style="border-color:${D.c};background:#fff">
+      <div class="dcard-h">${ART.domain(D.key)}<h3 style="color:${D.deep}">${esc(D.name)}</h3><div>${statusPills(dd)}</div></div>
+      <p class="small dsent">${esc(domSentence(dd))}</p>
+      <div class="lab" style="color:${D.deep}">この子へのポイント</div>
+      ${E(`tip.${D.key}`, "", { label:`${D.name}：この子へのポイント` })}
+      ${dd.has ? `<div class="lab" style="color:${D.deep}">選んだ支援から</div>${T[`sup.${D.key}`] || rec.edits[`sup.${D.key}`] ? E(`sup.${D.key}`, "", { label:`${D.name}：選んだ支援から` }) : `<p class="small muted">この領域に合う支援が選ばれていません。入力画面の「使う支援を選ぶ」で追加できます。</p>`}` : ""}
+    </div>`;
+  }).join("");
+  const ses = T._session;
+  const sessionHtml = !ses ? "" : `
+    <h3 class="sub-h">3 ブレインジム・BBAで試す流れ</h3>
+    <p class="sheet-lead">講座で学ぶ3つの次元と「楽な学びのための5つのステップ」に沿って、この子に合いそうなアクティビティを並べています。</p>
+    <div class="dims">${Object.keys(DIMS).map(k => { const Dm = DIMS[k], top = k === ses.topDim && ses.score[k] > 0;
+      return `<div class="dim ${top ? "top" : ""}" style="--dc:${Dm.c};--ds:${Dm.soft};--dd:${Dm.deep}">
+        <div class="dim-h"><b>${Dm.name}</b>${top ? '<span class="pill" style="background:var(--dc);color:#4a3a40">今回の手がかり</span>' : ""}</div>
+        <p class="small">${Dm.axis}／${Dm.skill}</p>
+        <p class="dim-q">「${Dm.q}」</p>
+      </div>`; }).join("")}</div>
+    <div class="session">${E("bg.session", "", { label:"ブレインジム・BBAで試す流れ" })}</div>
+    <ul class="bg-notes">${ses.notes.map(n => `<li>${esc(n)}</li>`).join("")}</ul>`;
+  const kvPlan = [["plan.when", "いつ・場面"], ["plan.who", "誰が"], ["plan.env", "環境の工夫"], ["plan.talk", "伝え方・関わり方"], ["plan.choice", "本人が選べること"], ["plan.share", "共有する相手"], ["plan.period", "試す期間"], ["plan.review", "見直し日"]]
+    .map(([k, l]) => `<div class="k">${l}</div><div class="v">${E(k, "", { label:l })}</div>`).join("");
+  const nexts = ["続ける", "少し変える", "いったんやめる"];
+  const finals = [["f1", "事実と仮説を分けた"], ["f2", "本人と家族の意向を入れた"], ["f3", "強みを書いた"], ["f4", "複数領域の重なりを確認した"], ["f5", "個人情報の扱いを確認した"]];
+  const p4 = `<section class="sheet">
+    ${tag(4, "支援ポイントを決める", "var(--sun)")}
+    <p class="sheet-lead">事実と仮説を分け、明日試せる支援を一つ決めます。</p>
+    <h3 class="sub-h">1 事実と仮説を分ける</h3>
+    <div class="tscroll"><table class="fh"><thead><tr><th>観察した事実</th><th>強み・うまくいった条件</th><th>考えられる背景</th><th>支援のポイント</th></tr></thead><tbody>${fhRows}</tbody></table></div>
+    <h3 class="sub-h">2 五領域別の必要な支援</h3>
+    <p class="sheet-lead">この子の様子と、選んだ支援${supNames.length ? `（${supNames.map(s => esc(s.name)).join("・")}）` : ""}から組み立てています。</p>
+    <div class="dgrid dgrid-sup">${supCards}</div>
+    ${sessionHtml}
+    <h3 class="sub-h">${ses ? 4 : 3} 支援を一文で書く</h3>
+    <p class="katachi">型 <span>いつ・どこで</span><span>何を</span><span>どのように支援するか</span></p>
+    <div class="oneline">${E("plan.oneline", "例：自由遊びから集団活動に移る場面で、…", { label:"支援を一文で" })}</div>
+    <h3 class="sub-h">${ses ? 5 : 4} 試す支援</h3>
+    <div class="kv kv2">${kvPlan}</div>
+    <h3 class="sub-h">${ses ? 6 : 5} 実施後の記録</h3>
+    <div class="kv">
+      <div class="k">本人の反応と変化</div><div class="v">${E("after.reaction", "支援を試したあとに記入します", { label:"本人の反応と変化", noReset:true })}</div>
+      <div class="k">次の判断</div><div class="v"><div class="cbox" style="margin:4px 0">${nexts.map(n => `<label><input type="radio" name="next-${rec.id}" data-next="${n}" ${rec.next === n ? "checked" : ""}>${n}</label>`).join("")}</div></div>
+    </div>
+    <div class="field" style="margin-top:14px"><span class="lbl">最終確認</span>
+      <div class="cbox">${finals.map(([k, l]) => `<label><input type="checkbox" data-final="${k}" ${rec.final[k] ? "checked" : ""}>${l}</label>`).join("")}</div></div>
+    <p class="small muted" style="margin-top:14px">参考：こども家庭庁「放課後等デイサービスガイドライン」（令和6年7月）の五領域の考え方をもとに整理しています。</p>
+  </section>`;
+
+  return `${toolbar("top")}
+    <div class="banner mint no-print" style="margin-bottom:18px">${ART.bulb()}<p class="small">点線の枠をタップすると、まとめの文章をその場で書きかえられます（自動で保存）。「PDFで保存・印刷」を押し、印刷画面の送信先で<b>「PDFに保存」</b>を選ぶとPDFになります。</p></div>
+    ${cover}${p1}${p2}${p3}${p4}${toolbar("bottom")}`;
+}
+
+/* =========================================================
+   ③ 保存した記録
+   ========================================================= */
+function historyData(){
+  const cf = curFac(), facFilter = state.hFac === "all" || !cf ? null : cf.id;
+  const all = db.records.filter(r => !facFilter || r.input.facilityId === facFilter).sort((a, b) => String(b.input.date || "").localeCompare(String(a.input.date || "")) || (b.updatedAt || 0) - (a.updatedAt || 0));
+  const q = state.hQuery.trim();
+  const list = all.filter(r => (!state.hFilter || r.input.name === state.hFilter) &&
+    (!q || [r.input.name, r.input.recorder, r.input.age, ...TEXT_FIELDS.map(f => r.input[f.key])].join(" ").includes(q)));
+  return { all, list };
+}
+function renderHistoryList(){
+  const { list } = historyData();
+  if (!list.length) return `<div class="card empty"><p>条件に合う記録はありません。</p></div>`;
+  const SUP = supMap();
+  return `<div class="hlist">${list.map(r => {
+    const X = derive(r), mk = (r.confirm && r.confirm.main) || (X.main && X.main.D.key);
+    const D = mk ? DMAP[mk] : null, sups = (r.input.supports || []).map(id => SUP[id]).filter(Boolean);
+    return `<article class="hcard">
+      <div class="hcard-top"><div class="avatar" style="background:${D ? D.c : "var(--sun)"}">${esc((r.input.name || "？").trim().charAt(0))}</div>
+        <div style="min-width:0"><h3>${esc(r.input.name)}${r.input.age ? `<span class="small muted" style="font-family:var(--f-body)">　${esc(r.input.age)}</span>` : ""}</h3>
+        <p class="hmeta">${facList().length > 1 && recFac(r) ? `${esc(recFac(r).name)}<br>` : ""}記録日 ${esc(fmtDate(r.input.date))}${r.input.periodStart || r.input.periodEnd ? `<br>期間 ${esc(fmtPeriod(r.input.periodStart, r.input.periodEnd))}` : ""}</p></div></div>
+      <div class="row" style="gap:6px">${D ? dchip(D.key, true) : `<span class="pill n">領域の候補なし</span>`}${sups.slice(0, 3).map(s => `<span class="pill sup">${esc(s.name.split("（")[0])}</span>`).join("")}${sups.length > 3 ? `<span class="pill n">ほか${sups.length - 3}</span>` : ""}</div>
+      <div class="acts">
+        <button type="button" class="btn btn-sm btn-main" data-hview="${r.id}">まとめを見る</button>
+        <button type="button" class="btn btn-sm" data-hprint="${r.id}">${ART.icon("print")}PDF・印刷</button>
+        <button type="button" class="btn btn-sm" data-hedit="${r.id}">入力を直す</button>
+        <button type="button" class="btn btn-sm" data-hnext="${r.id}">${ART.icon("plus")}この子の次の記録</button>
+        <button type="button" class="btn btn-sm btn-ghost btn-danger" data-hdel="${r.id}">削除</button>
+      </div>
+    </article>`;
+  }).join("")}</div>`;
+}
+function renderHistory(){
+  const { all } = historyData();
+  const names = [...new Set(all.map(r => r.input.name).filter(Boolean))].sort((a, b) => a.localeCompare(b, "ja"));
+  if (state.hFilter && !names.includes(state.hFilter)) state.hFilter = "";
+  return `<div class="stack">
+    <div class="row" style="justify-content:space-between;align-items:flex-end">
+      <div><h2 style="font-size:24px">保存した記録</h2><p class="muted small">${curFac() ? `<b>${esc(state.hFac === "all" ? "すべての事業所" : curFac().name)}</b>の記録です。` : ""}これまでに作ったまとめを、いつでも見返して印刷・PDFにできます。</p></div>
+      <button type="button" class="btn btn-main" data-act="new">${ART.icon("pen")}新しく記録する</button>
+    </div>
+    ${facList().length > 1 ? `<div class="hist-tools"><select id="hfac" aria-label="事業所で絞りこむ"><option value="">この事業所（${esc(curFac().name)}）</option><option value="all" ${state.hFac === "all" ? "selected" : ""}>すべての事業所</option></select></div>` : ""}
+    ${all.length ? `<div class="hist-tools">
+      <select id="hfilter" aria-label="子どもで絞りこむ"><option value="">すべての子ども（${all.length}件）</option>${names.map(n => `<option value="${esc(n)}" ${state.hFilter === n ? "selected" : ""}>${esc(n)}（${all.filter(r => r.input.name === n).length}件）</option>`).join("")}</select>
+      <input type="text" id="hq" value="${esc(state.hQuery)}" placeholder="ことばで探す（例：切り替え）" aria-label="ことばで探す">
+    </div>
+    <div id="hresults">${renderHistoryList()}</div>`
+    : `<div class="card empty">${ART.notebook()}<h3 style="font-size:19px">まだ記録がありません</h3><p class="muted" style="margin-top:6px">「記録を書く」から1ページ目を入力して、まとめを作ってみましょう。</p><p style="margin-top:14px"><button type="button" class="btn btn-main" data-act="new">${ART.icon("pen")}記録を書く</button></p></div>`}
+    <section class="card backup">
+      <h3 style="font-size:18px;margin-bottom:6px">バックアップ</h3>
+      <p class="small muted">記録はこの端末のブラウザの中だけに保存されます。ブラウザの履歴やサイトデータを消すと記録も消えるため、ときどきファイルに保存しておきましょう。別のパソコンへ移すときにも使えます。</p>
+      <div class="row" style="margin-top:12px">
+        <button type="button" class="btn btn-sm" data-act="export">${ART.icon("save")}記録をファイルに保存${facList().length > 1 ? "（すべての事業所）" : ""}</button>
+        ${facList().length > 1 ? `<button type="button" class="btn btn-sm" data-act="export-fac">${ART.icon("save")}この事業所の記録だけ保存</button>` : ""}
+        <label class="btn btn-sm" for="importFile" style="cursor:pointer">${ART.icon("upload")}ファイルから読みこむ</label>
+        <input type="file" id="importFile" accept=".json,application/json" class="sr">
+      </div>
+    </section>
+  </div>`;
+}
+
+/* =========================================================
+   ④ 支援メニュー
+   ========================================================= */
+function renderSupports(){
+  const first = !db.settings.setupDone, sups = allSupports(), sel = db.settings.selected;
+  const domInputs = prefix => `<div class="dom-inputs">${DOMAINS.map(D => `<div class="field"><label class="dlabel" for="${prefix}-${D.key}"><i style="background:${D.c}"></i>${D.name}</label><textarea id="${prefix}-${D.key}" rows="2" placeholder="この領域で行うこと（空欄なら表示しません）"></textarea></div>`).join("")}</div>`;
+  return `<div class="stack">
+    ${first ? `<div class="banner" style="align-items:center">${ART.chick()}<div><h2 style="font-size:21px">はじめに、事業所名と使う支援を登録しましょう</h2><p class="small" style="margin-top:4px">事業所名は一度入れると、次からは自動で入ります。オンにした支援が、まとめの「五領域別の必要な支援」に出てきます。ブレインジム、BBAなどの内容は事業所に合わせて書きかえたり、新しい支援を追加したりできます。あとからいつでも変更できます。</p></div></div>
+      ${facList().length ? "" : `<section class="card"><div class="grid2">
+        <div class="field"><label for="setup-fac">事業所名</label><input type="text" id="setup-fac" placeholder="例：ひだまり"></div>
+        <div class="field"><label for="setup-factype">種類</label><select id="setup-factype"><option value="">種類を選ぶ（任意）</option>${FAC_TYPES.map(t => `<option>${t}</option>`).join("")}</select></div>
+      </div><p class="small muted" style="margin-top:8px">2つ以上の事業所がある場合は、あとから「事業所の管理」で追加できます。</p></section>`}`
+      : `<div><h2 style="font-size:24px">支援メニュー</h2><p class="muted small">オンにした支援は、新しい記録で最初から選ばれた状態になります。内容は事業所に合わせて書きかえられます。</p></div>`}
+    <details class="addbox" id="addboxMenu">
+      <summary>${ART.icon("plus").replace("<svg", '<svg width="18" height="18"')}新しい支援を追加する</summary>
+      <div class="stack" style="gap:12px">
+        <div class="grid2">
+          <div class="field"><label for="ns-name">支援の名前</label><input type="text" id="ns-name" placeholder="例：コミュニケーション脳トレーニング"></div>
+          <div class="field"><label for="ns-desc">ひとことの説明</label><input type="text" id="ns-desc" placeholder="例：脳の特性に合わせた伝え方を工夫する"></div>
+        </div>
+        <p class="small muted">五領域それぞれで行うことを書きます。書いた領域にだけ表示されます。</p>
+        ${domInputs("ns")}
+        <div><button type="button" class="btn btn-mint" data-act="addsup-menu">${ART.icon("plus")}追加する</button></div>
+      </div>
+    </details>
+    <div class="slist">${sups.map(s => {
+      const on = sel.includes(s.id);
+      return `<div class="scard ${on ? "on" : ""}" data-scard="${esc(s.id)}">
+        <div class="scard-h"><h3>${esc(s.name)}${s.custom ? '<span class="badge-custom">追加</span>' : ""}</h3>
+          <label class="toggle"><input type="checkbox" data-sel="${esc(s.id)}" ${on ? "checked" : ""} aria-label="${esc(s.name)}を使う"><span class="sw"></span><span class="tlabel">${on ? "使う" : "使わない"}</span></label></div>
+        ${s.desc ? `<p class="small muted">${esc(s.desc)}</p>` : ""}
+        <div class="sdoms">${DOMAINS.filter(D => String(s.d[D.key] || "").trim()).map(D => `<span class="pill" style="background:${D.soft};color:${D.deep}">${D.name}</span>`).join("")}</div>
+        <details><summary>内容を見る・書きかえる</summary>
+          <div class="stack" style="gap:10px">
+            ${s.custom ? `<div class="field"><label for="sn-${esc(s.id)}">支援の名前</label><input type="text" id="sn-${esc(s.id)}" data-supname="${esc(s.id)}" value="${esc(s.name)}"></div>` : ""}
+            <div class="dom-inputs">${DOMAINS.map(D => `<div class="field"><label class="dlabel" for="se-${esc(s.id)}-${D.key}"><i style="background:${D.c}"></i>${D.name}</label><textarea id="se-${esc(s.id)}-${D.key}" rows="2" data-supedit="${esc(s.id)}|${D.key}" placeholder="空欄ならこの領域には表示しません">${esc(s.d[D.key])}</textarea></div>`).join("")}</div>
+            <div class="row">${s.custom ? `<button type="button" class="btn btn-sm btn-danger" data-supdel="${esc(s.id)}">この支援を削除</button>` : (s.edited ? `<button type="button" class="btn btn-sm" data-supreset="${esc(s.id)}">はじめの内容に戻す</button>` : `<span class="small muted">書きかえた内容は自動で保存されます</span>`)}</div>
+          </div>
+        </details>
+      </div>`;
+    }).join("")}</div>
+    <div class="row" style="justify-content:center;margin-top:6px">
+      ${first ? `<button type="button" class="btn btn-main btn-big" data-act="finish-setup">${ART.icon("spark")}この支援ではじめる</button>` : `<button type="button" class="btn btn-main" data-go="form">${ART.icon("pen")}記録を書く</button>`}
+    </div>
+  </div>`;
+}
+
+/* =========================================================
+   ⑤ ブレインジム・BBA 早見表（講座資料より）
+   ========================================================= */
+function renderGuide(){
+  const SPECIAL = ["dlr", "threedr", "fast"];
+  const list = (dim, type) => Object.entries(ACTS).filter(([id, a]) => a.t === type && a.dim === dim && !SPECIAL.includes(id));
+  const li = ([, a]) => `<li><b>${esc(a.n)}</b><span>${esc(a.p)}</span>${a.c ? `<em>※${esc(a.c)}</em>` : ""}</li>`;
+  const dimCards = Object.keys(DIMS).map(k => {
+    const Dm = DIMS[k];
+    return `<section class="gcard" style="--dc:${Dm.c};--ds:${Dm.soft};--dd:${Dm.deep}">
+      <div class="gcard-h"><h3>${Dm.name}</h3><span class="small">${Dm.axis}</span></div>
+      <div class="gmeta">
+        <p><span class="gk">知性</span>${Dm.intel}／${Dm.skill}</p>
+        <p><span class="gk">問い</span>「${Dm.q}」</p>
+        <p><span class="gk">アファメーション</span>「${Dm.aff}」</p>
+        <p><span class="gk">含まれること</span>${Dm.items}</p>
+        <p><span class="gk">こんなときに</span>${Dm.when.join("、")}</p>
+      </div>
+      <div class="gcols">
+        <div><h4>ブレインジム（${Dm.bgGroup}）</h4><ul class="glist">${list(k, "bg").map(li).join("")}</ul></div>
+        <div><h4>BBA（ビルディング・ブロック・アクティビティ）</h4><ul class="glist">${list(k, "bba").map(li).join("")}</ul></div>
+      </div>
+    </section>`;
+  }).join("");
+  const other = SPECIAL.map(id => [id, ACTS[id]]);
+  const plays = Object.entries(ACTS).filter(([, a]) => a.t === "play");
+  return `<div class="stack">
+    <div class="toolbar no-print" style="margin-bottom:0">
+      <div class="left"><div><h2 style="font-size:24px">ブレインジム・BBA 早見表</h2><p class="muted small">ブレインジム170コース・MBL101（BBA）講座の資料をもとに、ねらいを3つの次元ごとにまとめました。</p></div></div>
+      <div class="right"><button type="button" class="btn btn-main" data-act="print-guide">${ART.icon("print")}PDFで保存・印刷</button></div>
+    </div>
+    <h2 class="print-only-block" style="font-size:18pt">ブレインジム・BBA 早見表</h2>
+    <section class="gcard steps">
+      <div class="gcard-h"><h3>楽な学びのための5つのステップ</h3></div>
+      <ol class="gsteps">
+        <li><b>PACE</b>水 → ブレイン・ボタン → クロス・クロール → フック・アップ。楽に学ぶための準備です。</li>
+        <li><b>目標</b>本人と一緒に、ことばや絵で目標を決めます。</li>
+        <li><b>プレ・アクティビティ</b>目標に関わる活動を少しやってみて、からだ（感覚）・気持ち（感情）・考え（認知）に気づきます。</li>
+        <li><b>学びのメニュー</b>下の表から、本人と一緒にアクティビティを選んで行います。</li>
+        <li><b>ポスト・アクティビティ</b>同じ活動をもう一度やって変化に気づき、一息ついてお祝いします。</li>
+      </ol>
+      <p class="small muted">ブレインジムの核心は「気づき」です。評価や決めつけではなく、尊重する眼差しで、子どもの機能レベルに合った解決策に注目します。</p>
+    </section>
+    ${dimCards}
+    <section class="gcard">
+      <div class="gcard-h"><h3>再パターン化・アクション・バランス</h3></div>
+      <ul class="glist">${other.map(li).join("")}
+        <li><b>正中領域で見ることと作業するためのアクション・バランス</b><span>本読み・文字を書く・ハサミ・キャッチボールが苦手なとき</span></li>
+        <li><b>聞くことと短期記憶のためのアクション・バランス</b><span>何度言っても伝わらない、言われたことをすぐ忘れるとき</span></li>
+        <li><b>書くことと微細運動のためのアクション・バランス</b><span>筆圧が強い・弱い、手先が不器用なとき</span></li>
+      </ul>
+    </section>
+    <section class="gcard">
+      <div class="gcard-h"><h3>講座で紹介された遊び</h3></div>
+      <ul class="glist two">${plays.map(li).join("")}</ul>
+    </section>
+    <section class="gcard caution">
+      <div class="gcard-h"><h3>安全のために</h3></div>
+      <ul class="glist">
+        <li><b>ブレインジムに処方箋はありません</b><span>子どもの気づきと反応を観察しながら、本人と一緒に選びます。BBAは講座で学んだ職員が行います。</span></li>
+        <li><b>発作（てんかん・けいれん）がある子</b><span>主治医と連携し、発作が起きたときは医療手順に従います。落ち着いたらフック・アップをしてポジティブ・ポイントに触れます。PACEは「水・ブレイン・ボタンを片側ずつ・ホモラテラル・クロール・フック・アップ」の形で行い、はじめはミッドライン・ムーブメントを減らしてBBAやホモラテラルな動きから始めます。</span></li>
+        <li><b>耳ポッピング</b><span>発作のある子、鼻づまり・風邪・感染症のとき、耳に器具がある子には行いません。副鼻腔炎や鼓膜チューブがある場合は医師に相談します。</span></li>
+        <li><b>目の活性化・懐中電灯ゲーム</b><span>メガネやコンタクトは外します。触れるポイントは本人に2択で選んでもらいます。光は目に当てません。</span></li>
+        <li><b>脊椎散歩</b><span>背中や首を嫌がるときは、ボール・ヨガマット・ミニカー・コート越しに行います。</span></li>
+      </ul>
+    </section>
+    <p class="small muted">BRAIN GYM®（ブレインジム）は教育キネシオロジー財団／ブレインジム・インターナショナルの登録商標です。BBA（ビルディング・ブロック・アクティビティ）はセシリア・ケスター氏（MBL）が考案したものです。この表は講座で学んだ内容を現場で思い出すための要約です。</p>
+  </div>`;
+}
+
+/* =========================================================
+   描画
+   ========================================================= */
+function renderFacbar(){
+  const facs = facList(), f = curFac(), host = $("#facbar");
+  if (!host) return;
+  host.innerHTML = `<span class="facbar-l">${ART.icon("home")}事業所</span>` + (facs.length
+    ? `<select id="facSwitch" aria-label="事業所を切り替える">${facs.map(x => `<option value="${x.id}" ${f && f.id === x.id ? "selected" : ""}>${esc(facLabel(x))}（${countRecs(x.id)}件）</option>`).join("")}</select>
+       <button type="button" class="btn btn-sm" data-go="facilities">事業所の管理</button>`
+    : `<span class="small muted">まだ登録されていません</span><button type="button" class="btn btn-sm" data-go="facilities">事業所を登録する</button>`);
+}
+function renderFacilities(){
+  const facs = facList(), cur = curFac();
+  const typeOpts = sel => `<option value="">（選ばない）</option>${FAC_TYPES.map(t => `<option ${sel === t ? "selected" : ""}>${t}</option>`).join("")}`;
+  return `<div class="stack">
+    <div class="row" style="justify-content:space-between;align-items:flex-end">
+      <div><h2 style="font-size:24px">事業所の管理</h2><p class="muted small">2つ以上の事業所を運営している場合は、事業所ごとに記録を分けて管理できます。画面上の「事業所」で切り替えると、保存した記録も新しい記録も、その事業所のものになります。</p></div>
+      <button type="button" class="btn btn-main" data-go="form">${ART.icon("pen")}記録を書く</button>
+    </div>
+    <section class="card">
+      <h3 style="font-size:18px;margin-bottom:10px">事業所を追加する</h3>
+      <div class="grid2">
+        <div class="field"><label for="nf-name">事業所名</label><input type="text" id="nf-name" placeholder="例：ひだまり 第2教室"></div>
+        <div class="field"><label for="nf-type">種類</label><select id="nf-type">${typeOpts("")}</select></div>
+      </div>
+      <div style="margin-top:12px"><button type="button" class="btn btn-mint" data-act="add-fac">${ART.icon("plus")}追加する</button></div>
+    </section>
+    ${facs.length ? `<div class="flist">${facs.map(f => { const on = cur && cur.id === f.id, n = countRecs(f.id);
+      return `<div class="fcard ${on ? "on" : ""}">
+        <div class="fcard-h">${ART.icon("home")}<b>${esc(f.name)}</b>${on ? '<span class="pill sup">表示中</span>' : ""}<span class="small muted" style="margin-left:auto">記録 ${n}件</span></div>
+        <div class="grid2">
+          <div class="field"><label for="fn-${f.id}">事業所名</label><input type="text" id="fn-${f.id}" data-facname="${f.id}" value="${esc(f.name)}"></div>
+          <div class="field"><label for="ft-${f.id}">種類</label><select id="ft-${f.id}" data-factype="${f.id}">${typeOpts(f.type)}</select></div>
+        </div>
+        <div class="row">${on ? "" : `<button type="button" class="btn btn-sm btn-main" data-facuse="${f.id}">この事業所に切り替える</button>`}<button type="button" class="btn btn-sm btn-ghost btn-danger" data-facdel="${f.id}">削除</button></div>
+      </div>`; }).join("")}</div>`
+    : `<div class="card empty">${ART.notebook()}<p class="muted">まだ事業所が登録されていません。上の欄から追加するか、記録を書くときに事業所名を入れてください。</p></div>`}
+    <section class="card reset-card">
+      <h3 style="font-size:18px;margin-bottom:6px">このアプリを初期状態に戻す</h3>
+      <p class="small muted">事業所名・保存した記録・入力中の内容・支援メニューの設定をすべて消して、はじめて開いたときの状態に戻します。お試しで入れた内容を消したいときや、この端末を別の方に使ってもらうときに使います。</p>
+      <p class="small" style="margin-top:6px">※ アプリのファイル（HTML）を別の方に渡しても、入力した内容や事業所名は一緒に渡りません。記録は、それぞれの端末のブラウザの中だけに保存されます。</p>
+      <div style="margin-top:12px"><button type="button" class="btn btn-sm btn-danger" data-act="reset-all">${ART.icon("trash")}すべて消して初期状態に戻す</button></div>
+    </section>
+  </div>`;
+}
+function render(){
+  renderTabs();
+  renderFacbar();
+  const app = $("#app");
+  if (state.view === "form") app.innerHTML = renderForm();
+  else if (state.view === "result") app.innerHTML = renderResult();
+  else if (state.view === "history") app.innerHTML = renderHistory();
+  else if (state.view === "guide") app.innerHTML = renderGuide();
+  else if (state.view === "facilities") app.innerHTML = renderFacilities();
+  else app.innerHTML = renderSupports();
+  renderFormbar();
+}
+function rerenderKeepScroll(){ const y = window.scrollY; render(); window.scrollTo({ top:y }); }
+
+/* =========================================================
+   操作
+   ========================================================= */
+function deleteFacility(id){
+  const f = facById(id); if (!f) return;
+  db.records = db.records.filter(r => r.input.facilityId !== f.id);
+  db.settings.facilities = facList().filter(x => x.id !== f.id);
+  if (db.settings.currentFacility === f.id) db.settings.currentFacility = facList()[0] ? facList()[0].id : "";
+  if (db.draft) {
+    if (db.draft.id && !db.records.some(r => r.id === db.draft.id)) db.draft.id = null;
+    if (db.draft.facilityId === f.id) db.draft.facilityId = curFac() ? curFac().id : "";
+  }
+  if (state.currentId && !db.records.some(r => r.id === state.currentId)) state.currentId = null;
+  state.hFac = ""; state.facEdit = false;
+}
+function confirmDeleteFacility(id){
+  const f = facById(id); if (!f) return;
+  const n = countRecs(f.id);
+  confirmBox(`事業所名「${esc(f.name)}」を削除しますか？`
+    + (n ? `<br><span class="small" style="color:var(--coral-deep)">この事業所の保存した記録（${n}件）も消えます。</span><br><span class="small muted">名前をまちがえただけなら「名前を直す」を使うと、記録は残ります。</span>`
+         : `<br><span class="small muted">削除したあと、正しい事業所名を入れ直せます。</span>`),
+    n ? "記録ごと削除する" : "削除する", () => {
+      deleteFacility(f.id); persist(); rerenderKeepScroll(); toast("事業所名を削除しました");
+    }, true);
+}
+function saveFacilityEdit(id){
+  const f = facById(id); if (!f) return;
+  const name = ($("#fe-name")?.value || "").trim();
+  if (!name) { toast("事業所名を入れてください"); $("#fe-name")?.focus(); return; }
+  if (facList().some(x => x.id !== f.id && x.name === name)) { toast("同じ名前の事業所がすでにあります"); return; }
+  f.name = name; f.type = $("#fe-type")?.value || "";
+  db.records.forEach(r => { if (r.input.facilityId === f.id) { r.input.facilityName = f.name; r.input.facilityType = f.type; } });
+  state.facEdit = false; persist(); rerenderKeepScroll(); toast("事業所名を直しました");
+}
+function resetAll(){
+  try { localStorage.removeItem(STORE_KEY); } catch (e) {}
+  db = defaultDb(); db.draft = newDraft();
+  Object.assign(state, { currentId:null, formErr:null, hQuery:"", hFilter:"", hFac:"", facEdit:false });
+  persist(); go("supports"); toast("はじめて開いたときの状態に戻しました");
+}
+function switchFacility(id){
+  const f = facById(id); if (!f) return;
+  db.settings.currentFacility = f.id;
+  state.hFac = ""; state.hFilter = "";
+  if (db.draft && !db.draft.id) { db.draft.facilityId = f.id; if (f.recorder && !String(db.draft.recorder || "").trim()) db.draft.recorder = f.recorder; }
+  persist();
+  if (state.view === "result") { const r = currentRecord(); if (r && r.input.facilityId !== f.id) state.view = "history"; }
+  rerenderKeepScroll();
+  toast(`「${f.name}」に切り替えました`);
+}
+function startNew(base){
+  const doIt = () => { db.draft = newDraft(base || {}); state.formErr = null; persist(); go("form"); };
+  const d = db.draft;
+  if (d && !d.id && draftHasContent(d)) confirmBox("入力中の内容があります。消して新しい記録をはじめますか？", "新しくはじめる", doIt);
+  else doIt();
+}
+function generate(){
+  const d = db.draft;
+  const needNewFac = !facList().length || d.facilityId === "__new" || !facById(d.facilityId);
+  const err = { fac:needNewFac && !String(d.newFacName || "").trim(), name:!String(d.name || "").trim(), text:!TEXT_FIELDS.some(f => String(d[f.key] || "").trim()) };
+  if (err.fac || err.name || err.text) {
+    state.formErr = err; render();
+    const el = err.fac ? $("#f-facname") : err.name ? $("#f-name") : $("#f-when");
+    el?.scrollIntoView({ block:"center", behavior:"smooth" }); el?.focus({ preventScroll:true });
+    return;
+  }
+  state.formErr = null;
+  const fac = needNewFac ? addFacility(d.newFacName, d.newFacType) : facById(d.facilityId);
+  d.facilityId = fac.id; d.newFacName = ""; d.newFacType = "";
+  db.settings.currentFacility = fac.id;
+  const input = clone(d); delete input.id; delete input.newFacName; delete input.newFacType;
+  input.facilityName = fac.name; input.facilityType = fac.type || "";
+  const marks = autoMarks(analyze(input)), now = Date.now();
+  let rec = d.id ? db.records.find(r => r.id === d.id) : null;
+  if (rec) { rec.input = input; rec.marks = marks; rec.edits = {}; rec.updatedAt = now; }
+  else {
+    rec = { id:uid(), createdAt:now, updatedAt:now, input, marks, edits:{}, confirm:{ main:"", related:[], by:"", date:"", checks:{} }, next:"", final:{} };
+    db.records.push(rec); d.id = rec.id;
+  }
+  db.settings.recorder = input.recorder || db.settings.recorder;
+  if (input.recorder) fac.recorder = input.recorder;
+  persist();
+  toast("まとめを作りました。自動で保存されています");
+  go("result", rec.id);
+}
+function editInput(rec){
+  const doIt = () => { db.draft = { ...clone(rec.input), id:rec.id }; state.formErr = null; persist(); go("form"); };
+  const d = db.draft;
+  if (d && d.id !== rec.id && !d.id && draftHasContent(d)) confirmBox("入力中の内容があります。この記録の内容に置きかえますか？", "置きかえる", doIt);
+  else doIt();
+}
+function printRecord(){
+  const rec = currentRecord(); if (!rec) return;
+  if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
+  const old = document.title;
+  const safe = s => String(s || "").replace(/[\\/:*?"<>|\s]/g, "");
+  document.title = `五領域アセスメント_${safe(rec.input.name) || "記録"}_${rec.input.date || todayISO()}`;
+  document.body.classList.toggle("print-p1", !!db.settings.printP1);
+  const restore = () => { document.title = old; window.removeEventListener("afterprint", restore); };
+  window.addEventListener("afterprint", restore);
+  setTimeout(() => { try { window.print(); } catch (e) { toast("この環境では印刷画面を開けませんでした。ブラウザで開き直してください"); } setTimeout(restore, 1500); }, 60);
+}
+function addSupport(prefix, selectInDraft){
+  const name = ($(`#${prefix}-name`)?.value || "").trim();
+  if (!name) { toast("支援の名前を入れてください"); $(`#${prefix}-name`)?.focus(); return; }
+  const d = {}; DOMAINS.forEach(D => { d[D.key] = ($(`#${prefix}-${D.key}`)?.value || "").trim(); });
+  if (!Object.values(d).some(Boolean)) { toast("どれか1つの領域に、行うことを書いてください"); $(`#${prefix}-kenko`)?.focus(); return; }
+  const s = { id:"c_" + uid(), name, desc:($(`#${prefix}-desc`)?.value || "").trim(), d };
+  db.settings.custom.push(s);
+  if (!db.settings.selected.includes(s.id)) db.settings.selected.push(s.id);
+  if (selectInDraft && db.draft && !db.draft.supports.includes(s.id)) db.draft.supports.push(s.id);
+  persist();
+  toast(`「${name}」を追加しました`);
+  rerenderKeepScroll();
+}
+function exportBackup(onlyFac){
+  try {
+    const f = onlyFac ? curFac() : null;
+    const settings = f ? { ...db.settings, facilities:[f], currentFacility:f.id } : db.settings;
+    const records = f ? db.records.filter(r => r.input.facilityId === f.id) : db.records;
+    const blob = new Blob([JSON.stringify({ app:"goryoiki-assessment", version:2, exportedAt:new Date().toISOString(), settings, records }, null, 2)], { type:"application/json" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = `五領域アセスメント_バックアップ_${f ? f.name.replace(/[\\/:*?"<>|\s]/g, "") + "_" : ""}${todayISO()}.json`;
+    document.body.appendChild(a); a.click();
+    setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 800);
+    toast("バックアップファイルを保存しました");
+  } catch (e) { toast("ファイルを保存できませんでした"); }
+}
+function importBackup(file){
+  const fr = new FileReader();
+  fr.onload = () => {
+    try {
+      const data = JSON.parse(fr.result);
+      if (!data || !Array.isArray(data.records)) throw new Error("bad");
+      /* 事業所：同じ名前はひとつにまとめる */
+      const idMap = {};
+      ((data.settings && data.settings.facilities) || []).forEach(f => {
+        if (!f || !f.id || !f.name) return;
+        const ex = facById(f.id) || facList().find(x => x.name === f.name);
+        if (ex) idMap[f.id] = ex.id;
+        else { facList().push({ id:f.id, name:f.name, type:f.type || "", recorder:f.recorder || "" }); idMap[f.id] = f.id; }
+      });
+      if (!db.settings.currentFacility && facList().length) db.settings.currentFacility = facList()[0].id;
+      let n = 0;
+      data.records.forEach(r => {
+        if (!r || !r.id || !r.input) return;
+        if (r.input.facilityId && idMap[r.input.facilityId]) r.input.facilityId = idMap[r.input.facilityId];
+        if (!r.input.facilityId && curFac()) { r.input.facilityId = curFac().id; r.input.facilityName = curFac().name; }
+        const i = db.records.findIndex(x => x.id === r.id);
+        if (i >= 0) db.records[i] = r; else db.records.push(r);
+        n++;
+      });
+      if (data.settings && Array.isArray(data.settings.custom)) {
+        data.settings.custom.forEach(c => { if (c && c.id && !db.settings.custom.some(x => x.id === c.id)) db.settings.custom.push(c); });
+      }
+      persist(); render();
+      toast(`${n}件の記録を読みこみました`);
+    } catch (e) { toast("読みこめませんでした。このアプリで保存したバックアップファイルを選んでください"); }
+  };
+  fr.readAsText(file);
+}
+
+/* ---------- クリック ---------- */
+document.addEventListener("click", e => {
+  const t = e.target.closest("button, [data-go]");
+  if (!t) return;
+  const ds = t.dataset;
+  if (ds.modal) {
+    if (ds.modal === "ok" && modalOk) {
+      const f = modalOk, opts = {};
+      $$("#modalHost input[type=checkbox]").forEach(x => { opts[x.id] = x.checked; });
+      closeModal(); f(opts);
+    } else closeModal();
+    return;
+  }
+  if (ds.go) { go(ds.go); return; }
+  if (ds.mark) {
+    const rec = currentRecord(); if (!rec) return;
+    const [id, k] = ds.mark.split(":");
+    const m = rec.marks[id] || (rec.marks[id] = { s:false, k:false, c:false });
+    m[k] = !m[k]; rec.updatedAt = Date.now();
+    persist(); rerenderKeepScroll(); return;
+  }
+  if (ds.reset) {
+    const rec = currentRecord(); if (!rec) return;
+    delete rec.edits[ds.reset]; persist(); rerenderKeepScroll(); return;
+  }
+  if (ds.facuse) { switchFacility(ds.facuse); return; }
+  if (ds.facdel) { confirmDeleteFacility(ds.facdel); return; }
+  if (ds.hview) { go("result", ds.hview); return; }
+  if (ds.hprint) { go("result", ds.hprint); setTimeout(printRecord, 250); return; }
+  if (ds.hedit) { const r = db.records.find(x => x.id === ds.hedit); if (r) editInput(r); return; }
+  if (ds.hnext) {
+    const r = db.records.find(x => x.id === ds.hnext);
+    if (r) startNew({ name:r.input.name, age:r.input.age, recorder:r.input.recorder || db.settings.recorder, supports:[...(r.input.supports || [])], facilityId:facById(r.input.facilityId) ? r.input.facilityId : (curFac() ? curFac().id : "") });
+    return;
+  }
+  if (ds.hdel) {
+    const r = db.records.find(x => x.id === ds.hdel); if (!r) return;
+    confirmBox(`「${esc(r.input.name)}」さんの ${esc(fmtDate(r.input.date, false))} の記録を削除しますか？<br><span class="small muted">削除すると元に戻せません。</span>`, "削除する", () => {
+      db.records = db.records.filter(x => x.id !== r.id);
+      if (db.draft && db.draft.id === r.id) db.draft.id = null;
+      persist(); render(); toast("記録を削除しました");
+    }, true);
+    return;
+  }
+  if (ds.supdel) {
+    const s = db.settings.custom.find(x => x.id === ds.supdel); if (!s) return;
+    confirmBox(`「${esc(s.name)}」を支援メニューから削除しますか？`, "削除する", () => {
+      db.settings.custom = db.settings.custom.filter(x => x.id !== s.id);
+      db.settings.selected = db.settings.selected.filter(x => x !== s.id);
+      if (db.draft) db.draft.supports = db.draft.supports.filter(x => x !== s.id);
+      persist(); rerenderKeepScroll(); toast("削除しました");
+    }, true);
+    return;
+  }
+  if (ds.supreset) { delete db.settings.overrides[ds.supreset]; persist(); rerenderKeepScroll(); toast("はじめの内容に戻しました"); return; }
+  switch (ds.act) {
+    case "generate": generate(); break;
+    case "new": startNew(); break;
+    case "clear-all": {
+      const editing = db.draft && db.draft.id;
+      const f = (db.draft && facById(db.draft.facilityId)) || curFac();
+      const n = f ? countRecs(f.id) : 0;
+      confirmBox(`入力した内容を全て消して、まっさらな状態にしますか？<br><span class="small muted">${editing ? "保存済みのまとめは消えずに残ります。" : "消した内容は元に戻せません。"}</span>`
+        + (f ? `<label class="modal-check"><input type="checkbox" id="clr-fac"><span>事業所名「${esc(f.name)}」も消す${n ? `<br><span class="small" style="color:var(--coral-deep)">この事業所の保存した記録（${n}件）も消えます</span>` : ""}</span></label>` : ""),
+        "全てクリアする", opts => {
+          const withFac = f && opts["clr-fac"];
+          if (withFac) deleteFacility(f.id);
+          db.draft = newDraft({ recorder:"" });
+          state.formErr = null; persist(); go("form");
+          toast(withFac ? "入力と事業所名をクリアしました" : "入力をすべてクリアしました");
+        }, true);
+      break;
+    }
+    case "fac-edit": state.facEdit = true; rerenderKeepScroll(); setTimeout(() => $("#fe-name")?.focus(), 30); break;
+    case "fac-cancel": state.facEdit = false; rerenderKeepScroll(); break;
+    case "fac-save": saveFacilityEdit(ds.id); break;
+    case "fac-del": confirmDeleteFacility(ds.id); break;
+    case "reset-all":
+      confirmBox("このアプリに入っている事業所名・保存した記録・入力中の内容・支援メニューの設定を、すべて消しますか？", "次へ", () => {
+        confirmBox(`本当にすべて消しますか？<br><span class="small" style="color:var(--coral-deep)">消した内容は元に戻せません。</span><br><span class="small muted">残したい記録がある場合は、先に「保存した記録」からファイルに保存してください。</span>`, "すべて消す", resetAll, true);
+      }, true);
+      break;
+    case "sample": {
+      const doIt = () => {
+        const keep = { id:db.draft ? db.draft.id : null };
+        db.draft = newDraft({ ...clone(SAMPLE), ...keep });
+        state.formErr = null; persist(); rerenderKeepScroll(); toast("記入例を入れました（架空の例です）");
+      };
+      if (draftHasContent(db.draft)) confirmBox("入力中の内容を、記入例に置きかえますか？", "置きかえる", doIt); else doIt();
+      break;
+    }
+    case "print": printRecord(); break;
+    case "print-guide": {
+      const old = document.title; document.title = "ブレインジム・BBA早見表";
+      document.body.classList.add("print-guide");
+      setTimeout(() => { try { window.print(); } catch (e) {} setTimeout(() => { document.title = old; document.body.classList.remove("print-guide"); }, 1500); }, 60);
+      break;
+    }
+    case "edit-input": { const r = currentRecord(); if (r) editInput(r); break; }
+    case "addsup-form": addSupport("fs", true); break;
+    case "addsup-menu": addSupport("ns", false); break;
+    case "finish-setup":
+      if ($("#setup-fac") && $("#setup-fac").value.trim()) addFacility($("#setup-fac").value, $("#setup-factype").value);
+      db.settings.setupDone = true;
+      if (db.draft && !db.draft.id && curFac()) db.draft.facilityId = curFac().id;
+      if (!db.draft || (!db.draft.id && !draftHasContent(db.draft))) db.draft = newDraft();
+      persist(); go("form"); toast("準備ができました。記録を書いてみましょう"); break;
+    case "export": exportBackup(false); break;
+    case "export-fac": exportBackup(true); break;
+    case "add-fac": {
+      const name = ($("#nf-name")?.value || "").trim();
+      if (!name) { toast("事業所名を入れてください"); $("#nf-name")?.focus(); break; }
+      if (facList().some(f => f.name === name)) { toast("同じ名前の事業所がすでにあります"); break; }
+      const f = addFacility(name, $("#nf-type")?.value || "");
+      persist(); rerenderKeepScroll(); toast(`「${f.name}」を追加しました`);
+      break;
+    }
+  }
+});
+
+/* ---------- 入力 ---------- */
+document.addEventListener("input", e => {
+  const t = e.target, ds = t.dataset;
+  if (ds.f && db.draft) {
+    db.draft[ds.f] = t.value;
+    if (state.formErr && t.value.trim() && (ds.f === "name" || ds.f === "newFacName" || FMAP[ds.f])) {
+      state.formErr = null;
+      $$(".err").forEach(x => x.remove()); $$(".has-err").forEach(x => x.classList.remove("has-err"));
+    }
+    persistSoon(); return;
+  }
+  if (ds.edit !== undefined && t.hasAttribute("data-edit")) {
+    const rec = currentRecord(); if (!rec) return;
+    rec.edits[ds.edit] = t.innerText.replace(/\n$/, "");
+    rec.updatedAt = Date.now();
+    if (ds.edit === "plan.oneline") { const g = $("#gl-plan"); if (g) g.textContent = rec.edits[ds.edit]; }
+    persistSoon(); return;
+  }
+  if (ds.supedit) {
+    const [id, key] = ds.supedit.split("|");
+    const c = db.settings.custom.find(x => x.id === id);
+    if (c) c.d[key] = t.value;
+    else {
+      const p = PRESET_SUPPORTS.find(x => x.id === id); if (!p) return;
+      const o = db.settings.overrides[id] || (db.settings.overrides[id] = {});
+      if (t.value === p.d[key]) delete o[key]; else o[key] = t.value;
+      if (!Object.keys(o).length) delete db.settings.overrides[id];
+    }
+    persistSoon(); return;
+  }
+  if (ds.facname) {
+    const f = facById(ds.facname);
+    if (f && t.value.trim()) {
+      f.name = t.value.trim();
+      db.records.forEach(r => { if (r.input.facilityId === f.id) r.input.facilityName = f.name; });
+      persistSoon(); renderFacbar();
+    }
+    return;
+  }
+  if (ds.supname) { const c = db.settings.custom.find(x => x.id === ds.supname); if (c) { c.name = t.value; persistSoon(); } return; }
+  if (ds.conf && t.type === "text") { const rec = currentRecord(); if (rec) { rec.confirm[ds.conf] = t.value; persistSoon(); } return; }
+  if (t.id === "hq") { state.hQuery = t.value; const h = $("#hresults"); if (h) h.innerHTML = renderHistoryList(); }
+});
+
+document.addEventListener("change", e => {
+  const t = e.target, ds = t.dataset;
+  if (ds.scene && db.draft) {
+    const s = new Set(db.draft.scenes); t.checked ? s.add(ds.scene) : s.delete(ds.scene);
+    db.draft.scenes = SCENES.filter(x => s.has(x));
+    if (ds.scene === "その他") $("#f-sceneOther")?.classList.toggle("hidden", !t.checked);
+    persistSoon(); return;
+  }
+  if (ds.facpick !== undefined && t.hasAttribute("data-facpick") && db.draft) {
+    db.draft.facilityId = t.value;
+    if (t.value !== "__new") {
+      db.settings.currentFacility = t.value;
+      const f = facById(t.value);
+      if (f && f.recorder && !String(db.draft.recorder || "").trim()) db.draft.recorder = f.recorder;
+    }
+    persist(); rerenderKeepScroll();
+    if (t.value === "__new") $("#f-facname")?.focus();
+    return;
+  }
+  if (ds.factype) { const f = facById(ds.factype); if (f) { f.type = t.value; persist(); renderFacbar(); } return; }
+  if (t.id === "facSwitch") { switchFacility(t.value); return; }
+  if (t.id === "hfac") { state.hFac = t.value; render(); return; }
+  if (ds.safety && db.draft) { db.draft[ds.safety] = t.checked; persistSoon(); return; }
+  if (ds.sup && db.draft) {
+    const s = new Set(db.draft.supports); t.checked ? s.add(ds.sup) : s.delete(ds.sup);
+    db.draft.supports = allSupports().map(x => x.id).filter(id => s.has(id));
+    persistSoon(); return;
+  }
+  if (ds.sel) {
+    const s = new Set(db.settings.selected); t.checked ? s.add(ds.sel) : s.delete(ds.sel);
+    db.settings.selected = allSupports().map(x => x.id).filter(id => s.has(id));
+    const card = t.closest(".scard"); card?.classList.toggle("on", t.checked);
+    const lab = card?.querySelector(".tlabel"); if (lab) lab.textContent = t.checked ? "使う" : "使わない";
+    if (db.draft && !db.draft.id && !draftHasContent(db.draft)) db.draft.supports = [...db.settings.selected];
+    persistSoon(); return;
+  }
+  const rec = currentRecord();
+  if (ds.conf && rec) {
+    rec.confirm[ds.conf] = t.value; persist();
+    const pv = t.closest(".field")?.querySelector(".pv");
+    if (pv && ds.conf !== "main") pv.textContent = [rec.confirm.by, fmtDate(rec.confirm.date, false)].filter(Boolean).join("　");
+    if (ds.conf === "main") rerenderKeepScroll();
+    return;
+  }
+  if (ds.confRel && rec) {
+    const s = new Set(rec.confirm.related || []); t.checked ? s.add(ds.confRel) : s.delete(ds.confRel);
+    rec.confirm.related = DOMAINS.map(D => D.key).filter(k => s.has(k)); persist(); rerenderKeepScroll(); return;
+  }
+  if (ds.chk && rec) { rec.confirm.checks = rec.confirm.checks || {}; rec.confirm.checks[ds.chk] = t.checked; persist(); return; }
+  if (ds.next && rec) { rec.next = ds.next; persist(); return; }
+  if (ds.final && rec) { rec.final[ds.final] = t.checked; persist(); return; }
+  if (t.classList.contains("p1opt")) {
+    db.settings.printP1 = t.checked; $$(".p1opt").forEach(x => { x.checked = t.checked; }); persist(); return;
+  }
+  if (t.id === "hfilter") { state.hFilter = t.value; render(); return; }
+  if (t.id === "importFile" && t.files && t.files[0]) { importBackup(t.files[0]); t.value = ""; }
+});
+
+/* 書きかえ欄への貼りつけは文字だけにする */
+document.addEventListener("paste", e => {
+  const t = e.target.closest && e.target.closest("[data-edit]");
+  if (!t || CE === "plaintext-only") return;
+  e.preventDefault();
+  const text = (e.clipboardData || window.clipboardData).getData("text");
+  document.execCommand("insertText", false, text);
+});
+document.addEventListener("keydown", e => { if (e.key === "Escape" && $("#modalHost").innerHTML) closeModal(); });
+window.addEventListener("beforeprint", () => { if (state.view === "result") document.body.classList.toggle("print-p1", !!db.settings.printP1); });
+
+/* =========================================================
+   はじまり
+   ========================================================= */
+load();
+$("#heroArt").innerHTML = ART.hero();
+if (!db.draft) db.draft = newDraft();
+state.view = db.settings.setupDone ? "form" : "supports";
+render();
+</script>
+</body>
+</html>
