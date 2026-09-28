@@ -81,6 +81,9 @@ main{padding-block:22px 120px}
 .btn-mint{background:var(--mint);border-color:#A9DDBE;box-shadow:0 4px 0 #9CD3B3;color:#2B4A3A}
 .btn-mint:hover{background:#B9E5CB}
 .btn-sun{background:var(--sun);border-color:#F3D878;box-shadow:0 4px 0 #EDCF6A;color:#4F4210}
+.btn-sky{background:var(--sky);border-color:#A9CFEF;box-shadow:0 4px 0 #9CC4E8;color:#1F4766}
+.btn-sky:hover{background:#BEDCF5}
+.btn-sky:active{box-shadow:0 2px 0 #9CC4E8;transform:translateY(2px)}
 .btn-big{font-size:17px;padding:13px 26px}
 .btn-sm{font-size:13.5px;padding:5px 12px;border-width:1.5px}
 .btn-ghost{border-color:transparent;background:transparent}
@@ -880,6 +883,7 @@ const ART = {
       list:`<path d="M9 6h11M9 12h11M9 18h11" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="4.5" cy="6" r="1.5" fill="currentColor"/><circle cx="4.5" cy="12" r="1.5" fill="currentColor"/><circle cx="4.5" cy="18" r="1.5" fill="currentColor"/>`,
       save:`<path d="M5 4h11l3 3v13H5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M8 4v5h7V4M8 20v-6h8v6" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>`,
       upload:`<path d="M12 16V4M7 9l5-5 5 5M5 20h14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`,
+      word:`<path d="M6 3h8l4 4v14H6z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M8.5 11l1.3 5 1.7-4 1.7 4 1.3-5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>`,
       trash:`<path d="M5 7h14M10 7V4h4v3M7 7l1 13h8l1-13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`,
       home:`<path d="M4 11l8-7 8 7v9h-5v-6H9v6H4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>`,
       eraser:`<path d="M15.5 4.5l4 4L10 18H6l-2-2 11.5-11.5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M9 11l4 4M10 18h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>`,
@@ -1013,6 +1017,267 @@ Object.assign(PRESET_SUPPORTS.find(s => s.id === "bba"), {
       ninchi:"頭蓋骨タッピングでまとめる力を、コアの活性化で注意力・集中力を支える",
       gengo:"足の動きの再教育で話すこと・ことばを、耳ポッピングや目の活性化で聞く・見る力を支える",
       ningen:"脊椎散歩で背中への意識と気持ちの落ち着きを育て、ことばによらないやり取りで安心感をつくる" } });
+</script>
+<script>
+"use strict";
+/* =========================================================
+   Word（.docx）書き出し：ブラウザの中だけで作ります（外部サービス不要）
+   ========================================================= */
+const WX = {
+  esc: s => String(s ?? "").replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, "")
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"),
+  run(text, o = {}){
+    const rp = [];
+    if (o.b) rp.push("<w:b/><w:bCs/>");
+    if (o.color) rp.push(`<w:color w:val="${String(o.color).replace("#", "")}"/>`);
+    if (o.sz) rp.push(`<w:sz w:val="${o.sz}"/><w:szCs w:val="${o.sz}"/>`);
+    if (o.shd) rp.push(`<w:shd w:val="clear" w:color="auto" w:fill="${o.shd}"/>`);
+    return `<w:r>${rp.length ? `<w:rPr>${rp.join("")}</w:rPr>` : ""}<w:t xml:space="preserve">${WX.esc(text)}</w:t></w:r>`;
+  },
+  p(runs, o = {}){
+    const pp = [];
+    if (o.style) pp.push(`<w:pStyle w:val="${o.style}"/>`);
+    if (o.keepNext) pp.push("<w:keepNext/>");
+    if (o.pageBreakBefore) pp.push("<w:pageBreakBefore/>");
+    if (o.shd) pp.push(`<w:shd w:val="clear" w:color="auto" w:fill="${o.shd}"/>`);
+    if (o.sp) pp.push(`<w:spacing w:before="${o.sp[0]}" w:after="${o.sp[1]}"/>`);
+    if (o.hang) pp.push(`<w:ind w:left="${o.hang}" w:hanging="${o.hang}"/>`);
+    if (o.jc) pp.push(`<w:jc w:val="${o.jc}"/>`);
+    return `<w:p>${pp.length ? `<w:pPr>${pp.join("")}</w:pPr>` : ""}${Array.isArray(runs) ? runs.join("") : (runs || "")}</w:p>`;
+  },
+  /* 改行のある文章 → 段落の並び（「・」で始まる行はぶら下げインデント） */
+  lines(text, po = {}, ro = {}){
+    const L = String(text ?? "").split(/\r?\n/);
+    return L.map(l => WX.p(l ? WX.run(l, ro) : "", { ...po, hang:/^\s*・/.test(l) ? 200 : po.hang })).join("");
+  },
+  cell(content, w, o = {}){
+    const tp = [`<w:tcW w:w="${w}" w:type="dxa"/>`];
+    if (o.span) tp.push(`<w:gridSpan w:val="${o.span}"/>`);
+    if (o.vm) tp.push(o.vm === "restart" ? `<w:vMerge w:val="restart"/>` : `<w:vMerge/>`);
+    if (o.shd) tp.push(`<w:shd w:val="clear" w:color="auto" w:fill="${String(o.shd).replace("#", "")}"/>`);
+    tp.push(`<w:vAlign w:val="${o.va || "top"}"/>`);
+    return `<w:tc><w:tcPr>${tp.join("")}</w:tcPr>${content || "<w:p/>"}</w:tc>`;
+  },
+  /* rows: [{cells:[{c, span, vm, shd, va}], header, cantSplit}] */
+  table(rows, widths, o = {}){
+    const total = widths.reduce((a, b) => a + b, 0), bc = o.border || "E6C8C1";
+    const bd = s => `<w:${s} w:val="single" w:sz="4" w:space="0" w:color="${bc}"/>`;
+    const tblPr = `<w:tblPr><w:tblW w:w="${total}" w:type="dxa"/><w:tblBorders>${["top", "left", "bottom", "right", "insideH", "insideV"].map(bd).join("")}</w:tblBorders><w:tblLayout w:type="fixed"/><w:tblCellMar><w:top w:w="50" w:type="dxa"/><w:left w:w="100" w:type="dxa"/><w:bottom w:w="50" w:type="dxa"/><w:right w:w="100" w:type="dxa"/></w:tblCellMar></w:tblPr>`;
+    const grid = `<w:tblGrid>${widths.map(w => `<w:gridCol w:w="${w}"/>`).join("")}</w:tblGrid>`;
+    const trs = rows.map(r => {
+      let ci = 0;
+      const tcs = r.cells.map(c => {
+        const span = c.span || 1, w = widths.slice(ci, ci + span).reduce((a, b) => a + b, 0);
+        ci += span;
+        return WX.cell(c.c, w, c);
+      }).join("");
+      const trPr = (r.cantSplit !== false ? "<w:cantSplit/>" : "") + (r.header ? "<w:tblHeader/>" : "");
+      return `<w:tr>${trPr ? `<w:trPr>${trPr}</w:trPr>` : ""}${tcs}</w:tr>`;
+    }).join("");
+    return `<w:tbl>${tblPr}${grid}${trs}</w:tbl>` + WX.p("", { sp:[0, 60] });
+  }
+};
+
+/* ---------- ZIP（無圧縮）---------- */
+const CRC_TABLE = (() => { const t = new Uint32Array(256); for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();
+function crc32(u8){ let c = 0xFFFFFFFF; for (let i = 0; i < u8.length; i++) c = CRC_TABLE[(c ^ u8[i]) & 0xFF] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; }
+function zipStore(files){
+  const enc = new TextEncoder(), now = new Date();
+  const dosTime = (now.getHours() << 11) | (now.getMinutes() << 5) | (now.getSeconds() >> 1);
+  const dosDate = ((now.getFullYear() - 1980) << 9) | ((now.getMonth() + 1) << 5) | now.getDate();
+  const chunks = [], central = []; let offset = 0;
+  files.forEach(f => {
+    const name = enc.encode(f.name), data = typeof f.data === "string" ? enc.encode(f.data) : f.data, crc = crc32(data);
+    const lh = new DataView(new ArrayBuffer(30));
+    lh.setUint32(0, 0x04034b50, true); lh.setUint16(4, 20, true); lh.setUint16(6, 0x0800, true); lh.setUint16(8, 0, true);
+    lh.setUint16(10, dosTime, true); lh.setUint16(12, dosDate, true); lh.setUint32(14, crc, true);
+    lh.setUint32(18, data.length, true); lh.setUint32(22, data.length, true); lh.setUint16(26, name.length, true); lh.setUint16(28, 0, true);
+    chunks.push(new Uint8Array(lh.buffer), name, data);
+    const ch = new DataView(new ArrayBuffer(46));
+    ch.setUint32(0, 0x02014b50, true); ch.setUint16(4, 20, true); ch.setUint16(6, 20, true); ch.setUint16(8, 0x0800, true); ch.setUint16(10, 0, true);
+    ch.setUint16(12, dosTime, true); ch.setUint16(14, dosDate, true); ch.setUint32(16, crc, true);
+    ch.setUint32(20, data.length, true); ch.setUint32(24, data.length, true); ch.setUint16(28, name.length, true);
+    ch.setUint16(30, 0, true); ch.setUint16(32, 0, true); ch.setUint16(34, 0, true); ch.setUint16(36, 0, true); ch.setUint32(38, 0, true); ch.setUint32(42, offset, true);
+    central.push(new Uint8Array(ch.buffer), name);
+    offset += 30 + name.length + data.length;
+  });
+  const cdSize = central.reduce((a, c) => a + c.length, 0);
+  const end = new DataView(new ArrayBuffer(22));
+  end.setUint32(0, 0x06054b50, true); end.setUint16(8, files.length, true); end.setUint16(10, files.length, true);
+  end.setUint32(12, cdSize, true); end.setUint32(16, offset, true);
+  return new Blob([...chunks, ...central, new Uint8Array(end.buffer)], { type:"application/vnd.openxmlformats-officedocument.wordprocessingml.document" });
+}
+
+/* ---------- まとめ → Word の本文 ---------- */
+const SOFT_HEX = { kenko:"FFF6EE", undo:"F2FBF5", ninchi:"F7F4FD", gengo:"F2F8FE", ningen:"FFF3F6" };
+function buildDocxBody(rec, withP1){
+  if (!rec.marks) rec.marks = autoMarks(analyze(rec.input));
+  rec.edits = rec.edits || {}; rec.confirm = rec.confirm || { main:"", related:[], by:"", date:"", checks:{} }; rec.final = rec.final || {};
+  const inp = rec.input, X = derive(rec), T = autoTexts(rec, X), SUP = supMap(), conf = rec.confirm;
+  const val = k => Object.prototype.hasOwnProperty.call(rec.edits, k) ? rec.edits[k] : (T[k] || "");
+  const rf = recFac(rec);
+  const FULL = 9866;                          /* A4・左右18mm余白の本文幅 */
+  const P = WX.p, R = WX.run, L = WX.lines;
+  const box = on => on ? "■" : "□";
+  const h1 = (n, t, pb) => P([R(`${n}　`, { color:"B6496C" }), R(t)], { style:"Heading1", pageBreakBefore:pb });
+  const h2 = t => P(R(t), { style:"Heading2" });
+  const lab = (t, fill) => ({ c:P(R(t, { b:true, sz:18 })), shd:fill || "FFF4F0", va:"center" });
+  const txt = (t, o) => ({ c:L(t, {}, o), ...(o && o.cellShd ? { shd:o.cellShd } : {}) });
+  const scenes = [...(inp.scenes || []).filter(s => s !== "その他"), ...((inp.scenes || []).includes("その他") ? [inp.sceneOther || "その他"] : [])].join("・");
+  const out = [];
+
+  /* 表紙 */
+  if (rf) out.push(P(R(facLabel(rf), { color:"B6496C", b:true, sz:18 }), { sp:[0, 20] }));
+  out.push(P(R("五領域アセスメント まとめ"), { style:"Title" }));
+  out.push(P(R("観察した事実から、強みと支援の手がかりを整理しました", { color:"7A6770", sz:18 }), { sp:[0, 160] }));
+  const q = FULL / 3;
+  const infoW = [1300, q - 1300, 1300, q - 1300, 1300, FULL - 2 * q - 1300].map(Math.round);
+  out.push(WX.table([
+    { cells:[lab("子どもの名前"), txt(inp.name, { b:true }), lab("年齢・学年"), txt(inp.age || "—"), lab("日付"), txt(fmtDate(inp.date) || "—")] },
+    { cells:[lab("期間"), txt(fmtPeriod(inp.periodStart, inp.periodEnd) || "—"), lab("記録者"), txt(inp.recorder || "—"), lab("場面"), txt(scenes || "—")] }
+  ], infoW));
+  const mainTxt = conf.main ? `${DMAP[conf.main].name}（確定）` : X.main ? `${X.main.D.name}（候補）` : "判断できる情報がまだありません";
+  const relKeys = conf.main ? (conf.related || []) : X.related.map(d => d.D.key);
+  const supNames = (inp.supports || []).map(id => SUP[id]).filter(Boolean).map(s => s.name);
+  out.push(P(R("ひとめでわかるまとめ"), { style:"Heading2" }));
+  out.push(WX.table([
+    { cells:[lab("主に関係する領域", "F5F1FD"), { c:P(R(mainTxt, { b:true, color:"6650A6" })) + (relKeys.length ? P(R(`あわせて確認：${relKeys.map(k => DMAP[k].name).join("、")}`, { sz:18 })) : "") }] },
+    { cells:[lab("見えてきた強み", "FFF9E0"), txt(T["gl.strength"])] },
+    { cells:[lab("明日から試す支援", "EEFAF2"), txt(val("plan.oneline") || "—")] },
+    { cells:[lab("使う支援", "EEF6FD"), txt(supNames.join("、") || "選ばれていません")] }
+  ], [2200, FULL - 2200]));
+
+  /* 1ページ目（入力内容） */
+  if (withP1) {
+    out.push(h1(1, "観察した事実と意向（入力内容）", true));
+    out.push(WX.table(TEXT_FIELDS.map(f => ({ cells:[lab(f.label, "FFF3E8"), txt(inp[f.key] || "—")] })), [2600, FULL - 2600]));
+  }
+
+  /* 2ページ目 */
+  out.push(h1(2, "五領域の視点で整理する", true));
+  out.push(P(R("入力内容から「強み」「困り」「要確認」を自動でつけています（●＝あてはまる）。", { color:"7A6770", sz:18 })));
+  const cw = [1650, FULL - 1650 - 3 * 820, 820, 820, 820];
+  const head = { header:true, cells:[lab("領域"), lab("確認する視点"), { ...lab("強み", "FFEBA6"), c:P(R("強み", { b:true, sz:18 }), { jc:"center" }) }, { ...lab("困り", "FFD3C9"), c:P(R("困り", { b:true, sz:18 }), { jc:"center" }) }, { ...lab("要確認", "E4E0EC"), c:P(R("要確認", { b:true, sz:18 }), { jc:"center" }) }] };
+  const rows2 = [head];
+  DOMAINS.forEach(D => {
+    VPS.filter(v => v.d === D.key).forEach((v, i) => {
+      const m = rec.marks[v.id] || {}, a = X.an[v.id], ev = a.neg[0] || a.pos[0] || a.neu[0];
+      const mk = (on, color) => ({ c:P(on ? R("●", { color, sz:24 }) : "", { jc:"center" }), va:"center" });
+      rows2.push({ cells:[
+        i === 0 ? { c:P(R(D.name, { b:true, color:D.deepHex })), shd:D.hex.replace("#", ""), vm:"restart", va:"center" } : { c:"<w:p/>", shd:D.hex.replace("#", ""), vm:"cont" },
+        { c:P(R(v.label)) + (ev ? P(R(`「${snippet(ev)}」`, { color:"7A6770", sz:16 })) : "") },
+        mk(m.s, "B08900"), mk(m.k, "B24A36"), mk(m.c, "5F5873")
+      ] });
+    });
+  });
+  out.push(WX.table(rows2, cw));
+  out.push(P([R("確認のポイント　", { b:true, color:"A2561C" }), R("同じ姿が複数の領域に関係することがあります。チェック数だけで主領域を決めません。")], { shd:"FFF3E8" }));
+
+  /* 3ページ目 */
+  out.push(h1(3, "領域の候補と根拠", true));
+  out.push(h2("1　候補を確認する"));
+  out.push(WX.table([
+    { cells:[lab("主に関係する領域"), txt(val("p3.main"))] },
+    { cells:[lab("あわせて確認する領域"), txt(val("p3.related"))] },
+    { cells:[lab("根拠となる事実"), txt(val("p3.evidence") || "—")] },
+    { cells:[lab("不足している情報"), txt(val("p3.missing") || "—")] }
+  ], [2400, FULL - 2400]));
+  out.push(h2("2　領域別の根拠メモ"));
+  const statusTxt = dd => [dd.s.length ? `強み${dd.s.length}` : "", dd.k.length ? `困り${dd.k.length}` : "", dd.c.length ? `要確認${dd.c.length}` : ""].filter(Boolean).join("・") || "情報なし";
+  out.push(WX.table(DOMAINS.map(D => { const dd = X.doms[D.key];
+    return { cantSplit:false, cells:[{ c:P(R(D.name, { b:true, color:D.deepHex })) + P(R(statusTxt(dd), { sz:16, color:"7A6770" })), shd:D.hex.replace("#", "") }, txt(val(`memo.${D.key}`))] }; }), [2400, FULL - 2400]));
+  out.push(h2("3　支援者が確認して確定する"));
+  out.push(WX.table([
+    { cells:[lab("確定した主領域"), txt(conf.main ? DMAP[conf.main].name : "")] },
+    { cells:[lab("確定した関連領域"), { c:P(DOMAINS.map(D => R(`${box((conf.related || []).includes(D.key))} ${D.name}　`)).join("")) }] },
+    { cells:[lab("確認者と確認日"), txt([conf.by, fmtDate(conf.date, false)].filter(Boolean).join("　"))] },
+    { cells:[lab("確認"), { c:P([["c1", "本人と家族の意向を反映した"], ["c2", "複数領域の重なりを確認した"], ["c3", "不足情報を確認した"]].map(([k, l]) => R(`${box(conf.checks && conf.checks[k])} ${l}　`)).join("")) }] }
+  ], [2400, FULL - 2400]));
+  out.push(P([R("アプリの考え方　", { b:true, color:"6650A6" }), R("自動表示は支援を考えるための候補です。診断や評価の確定には使わず、支援者が根拠を確認します。")], { shd:"F5F1FD" }));
+
+  /* 4ページ目 */
+  const ses = T._session;
+  out.push(h1(4, "支援ポイントを決める", true));
+  out.push(h2("1　事実と仮説を分ける"));
+  const fw = Math.floor(FULL / 4);
+  const fhRows = [{ header:true, cells:[lab("観察した事実", "FFF3E8"), lab("強み・うまくいった条件", "FFF9E0"), lab("考えられる背景", "F5F1FD"), lab("支援のポイント", "EEFAF2")] }];
+  for (let i = 0; i < T._rows; i++) fhRows.push({ cells:["fact", "str", "bg", "pt"].map(k => txt(val(`fh.${i}.${k}`))) });
+  out.push(WX.table(fhRows, [fw, fw, fw, FULL - 3 * fw]));
+  out.push(h2("2　五領域別の必要な支援"));
+  DOMAINS.forEach(D => {
+    const dd = X.doms[D.key];
+    const inner = P([R(D.name, { b:true, color:D.deepHex, sz:22 }), R(`　${statusTxt(dd)}`, { sz:16, color:"7A6770" })], { sp:[0, 40] })
+      + P(R(domSentence(dd), { sz:18 }))
+      + P(R("この子へのポイント", { b:true, color:D.deepHex, sz:18 }), { sp:[80, 20] }) + L(val(`tip.${D.key}`))
+      + (dd.has ? P(R("選んだ支援から", { b:true, color:D.deepHex, sz:18 }), { sp:[80, 20] }) + L(val(`sup.${D.key}`) || "この領域に合う支援が選ばれていません") : "");
+    out.push(WX.table([{ cantSplit:false, cells:[{ c:inner, shd:SOFT_HEX[D.key] }] }], [FULL], { border:D.hex.replace("#", "") }));
+  });
+  let n = 3;
+  if (ses) {
+    const Dm = DIMS[ses.topDim];
+    out.push(h2(`${n++}　ブレインジム・BBAで試す流れ`));
+    out.push(P([R("今回の手がかり：", { b:true }), R(`${Dm.name}（${Dm.axis}／${Dm.skill}）「${Dm.q}」`)], { shd:"EEF6FD" }));
+    out.push(WX.table([{ cantSplit:false, cells:[{ c:L(val("bg.session")), shd:"F5F1FD" }] }], [FULL], { border:"D3C6F0" }));
+    ses.notes.forEach(t => out.push(P(R(`・${t}`, { sz:16, color:"7A6770" }), { hang:200 })));
+  }
+  out.push(h2(`${n++}　支援を一文で書く`));
+  out.push(P(R("型：「いつ・どこで」「何を」「どのように支援するか」", { sz:16, color:"7A6770" })));
+  out.push(WX.table([{ cells:[{ c:L(val("plan.oneline") || " ", {}, { b:true }), shd:"EEFAF2" }] }], [FULL], { border:"AEDDC2" }));
+  out.push(h2(`${n++}　試す支援`));
+  const kv = [["plan.when", "いつ・場面"], ["plan.who", "誰が"], ["plan.env", "環境の工夫"], ["plan.talk", "伝え方・関わり方"], ["plan.choice", "本人が選べること"], ["plan.share", "共有する相手"], ["plan.period", "試す期間"], ["plan.review", "見直し日"]];
+  const kvRows = [];
+  for (let i = 0; i < kv.length; i += 2) kvRows.push({ cells:[lab(kv[i][1]), txt(val(kv[i][0])), lab(kv[i + 1][1]), txt(val(kv[i + 1][0]))] });
+  const half = FULL / 2;
+  out.push(WX.table(kvRows, [1700, half - 1700, 1700, FULL - half - 1700].map(Math.round)));
+  out.push(h2(`${n++}　実施後の記録`));
+  out.push(WX.table([
+    { cells:[lab("本人の反応と変化"), { c:L(val("after.reaction") || " ") + P("") }] },
+    { cells:[lab("次の判断"), { c:P(["続ける", "少し変える", "いったんやめる"].map(x => R(`${box(rec.next === x)} ${x}　`)).join("")) }] },
+    { cells:[lab("最終確認"), { c:P([["f1", "事実と仮説を分けた"], ["f2", "本人と家族の意向を入れた"], ["f3", "強みを書いた"], ["f4", "複数領域の重なりを確認した"], ["f5", "個人情報の扱いを確認した"]].map(([k, l]) => R(`${box(rec.final[k])} ${l}　`)).join("")) }] }
+  ], [2400, FULL - 2400]));
+  out.push(P(R("参考：こども家庭庁「放課後等デイサービスガイドライン」（令和6年7月）の五領域の考え方をもとに整理しています。", { sz:16, color:"7A6770" })));
+  return out.join("");
+}
+
+function buildDocx(rec, withP1){
+  const W_NS = 'xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"';
+  const font = "游ゴシック";
+  const body = buildDocxBody(rec, withP1);
+  const doc = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document ${W_NS}><w:body>${body}<w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="1020" w:right="1020" w:bottom="1020" w:left="1020" w:header="567" w:footer="567" w:gutter="0"/></w:sectPr></w:body></w:document>`;
+  const styles = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:styles ${W_NS}>`
+    + `<w:docDefaults><w:rPrDefault><w:rPr><w:rFonts w:ascii="${font}" w:eastAsia="${font}" w:hAnsi="${font}" w:cs="${font}"/><w:color w:val="4F3F48"/><w:sz w:val="20"/><w:szCs w:val="20"/><w:lang w:val="en-US" w:eastAsia="ja-JP" w:bidi="ar-SA"/></w:rPr></w:rPrDefault>`
+    + `<w:pPrDefault><w:pPr><w:spacing w:after="20" w:line="288" w:lineRule="auto"/></w:pPr></w:pPrDefault></w:docDefaults>`
+    + `<w:style w:type="paragraph" w:default="1" w:styleId="Normal"><w:name w:val="Normal"/><w:qFormat/></w:style>`
+    + `<w:style w:type="paragraph" w:styleId="Title"><w:name w:val="Title"/><w:basedOn w:val="Normal"/><w:next w:val="Normal"/><w:qFormat/><w:pPr><w:spacing w:after="40"/></w:pPr><w:rPr><w:b/><w:bCs/><w:color w:val="5A3F4C"/><w:sz w:val="40"/><w:szCs w:val="40"/></w:rPr></w:style>`
+    + `<w:style w:type="paragraph" w:styleId="Heading1"><w:name w:val="heading 1"/><w:basedOn w:val="Normal"/><w:next w:val="Normal"/><w:qFormat/><w:pPr><w:keepNext/><w:pBdr><w:bottom w:val="single" w:sz="12" w:space="3" w:color="F8C3CF"/></w:pBdr><w:spacing w:before="0" w:after="160"/><w:outlineLvl w:val="0"/></w:pPr><w:rPr><w:b/><w:bCs/><w:color w:val="5A3F4C"/><w:sz w:val="30"/><w:szCs w:val="30"/></w:rPr></w:style>`
+    + `<w:style w:type="paragraph" w:styleId="Heading2"><w:name w:val="heading 2"/><w:basedOn w:val="Normal"/><w:next w:val="Normal"/><w:qFormat/><w:pPr><w:keepNext/><w:spacing w:before="200" w:after="80"/><w:outlineLvl w:val="1"/></w:pPr><w:rPr><w:b/><w:bCs/><w:color w:val="B6496C"/><w:sz w:val="23"/><w:szCs w:val="23"/></w:rPr></w:style>`
+    + `</w:styles>`;
+  const settings = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:settings ${W_NS}><w:defaultTabStop w:val="840"/><w:compat><w:compatSetting w:name="compatibilityMode" w:uri="http://schemas.microsoft.com/office/word" w:val="15"/></w:compat></w:settings>`;
+  const iso = new Date().toISOString().replace(/\.\d+Z$/, "Z");
+  const core = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><cp:coreProperties xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><dc:title>${WX.esc(`五領域アセスメント まとめ（${rec.input.name || ""}）`)}</dc:title><dc:creator>五領域アセスメント整理アプリ</dc:creator><dcterms:created xsi:type="dcterms:W3CDTF">${iso}</dcterms:created><dcterms:modified xsi:type="dcterms:W3CDTF">${iso}</dcterms:modified></cp:coreProperties>`;
+  const ct = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/><Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/><Override PartName="/word/settings.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.settings+xml"/><Override PartName="/docProps/core.xml" ContentType="application/vnd.openxmlformats-package.core-properties+xml"/></Types>`;
+  const rels = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties" Target="docProps/core.xml"/></Relationships>`;
+  const docRels = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/settings" Target="settings.xml"/></Relationships>`;
+  return zipStore([
+    { name:"[Content_Types].xml", data:ct }, { name:"_rels/.rels", data:rels },
+    { name:"word/document.xml", data:doc }, { name:"word/_rels/document.xml.rels", data:docRels },
+    { name:"word/styles.xml", data:styles }, { name:"word/settings.xml", data:settings }, { name:"docProps/core.xml", data:core }
+  ]);
+}
+function saveWord(rec){
+  if (!rec) return;
+  if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
+  try {
+    const blob = buildDocx(rec, !!db.settings.printP1);
+    const safe = s => String(s || "").replace(/[\\/:*?"<>|\s]/g, "");
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = `五領域アセスメント_${safe(rec.input.name) || "記録"}_${rec.input.date || todayISO()}.docx`;
+    document.body.appendChild(a); a.click();
+    setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+    toast("Wordファイルを保存しました（ダウンロードフォルダを見てください）");
+  } catch (e) { console.error(e); toast("Wordファイルを作れませんでした。もう一度お試しください"); }
+}
 </script>
 <script>
 "use strict";
@@ -1616,8 +1881,9 @@ function renderResult(){
         <button type="button" class="btn btn-sm" data-go="history">${ART.icon("list")}保存した記録</button>
       </div>
       <div class="right">
-        <label class="printopt"><input type="checkbox" class="p1opt" ${db.settings.printP1 ? "checked" : ""}>1ページ目（入力内容）も印刷する</label>
+        <label class="printopt"><input type="checkbox" class="p1opt" ${db.settings.printP1 ? "checked" : ""}>1ページ目（入力内容）も入れる</label>
         <button type="button" class="btn btn-main" data-act="print">${ART.icon("print")}PDFで保存・印刷</button>
+        <button type="button" class="btn btn-sky" data-act="word">${ART.icon("word")}Wordで保存</button>
       </div>
     </div>`;
 
@@ -1646,7 +1912,7 @@ function renderResult(){
   /* 1ページ目（入力内容） */
   const p1 = `<section class="sheet p1-sheet">
     ${tag(1, "観察した事実と意向（入力内容）", "var(--peach)")}
-    <p class="sheet-lead no-print">この部分は「1ページ目も印刷する」にチェックしたときだけ印刷されます。</p>
+    <p class="sheet-lead no-print">この部分は「1ページ目（入力内容）も入れる」にチェックしたときだけ、PDF・Wordに入ります。</p>
     <dl class="p1-grid">${TEXT_FIELDS.map(f => `<div class="p1-item"><dt>${esc(f.label)}</dt><dd>${esc(inp[f.key]) || "—"}</dd></div>`).join("")}</dl>
   </section>`;
 
@@ -1759,7 +2025,7 @@ function renderResult(){
   </section>`;
 
   return `${toolbar("top")}
-    <div class="banner mint no-print" style="margin-bottom:18px">${ART.bulb()}<p class="small">点線の枠をタップすると、まとめの文章をその場で書きかえられます（自動で保存）。「PDFで保存・印刷」を押し、印刷画面の送信先で<b>「PDFに保存」</b>を選ぶとPDFになります。</p></div>
+    <div class="banner mint no-print" style="margin-bottom:18px">${ART.bulb()}<p class="small">点線の枠をタップすると、まとめの文章をその場で書きかえられます（自動で保存）。「PDFで保存・印刷」を押し、印刷画面の送信先で<b>「PDFに保存」</b>を選ぶとPDFになります。書きかえて使いたいときは<b>「Wordで保存」</b>を押すと、Wordファイル（.docx）がダウンロードされます。</p></div>
     ${cover}${p1}${p2}${p3}${p4}${toolbar("bottom")}`;
 }
 
@@ -1789,6 +2055,7 @@ function renderHistoryList(){
       <div class="acts">
         <button type="button" class="btn btn-sm btn-main" data-hview="${r.id}">まとめを見る</button>
         <button type="button" class="btn btn-sm" data-hprint="${r.id}">${ART.icon("print")}PDF・印刷</button>
+        <button type="button" class="btn btn-sm" data-hword="${r.id}">${ART.icon("word")}Word</button>
         <button type="button" class="btn btn-sm" data-hedit="${r.id}">入力を直す</button>
         <button type="button" class="btn btn-sm" data-hnext="${r.id}">${ART.icon("plus")}この子の次の記録</button>
         <button type="button" class="btn btn-sm btn-ghost btn-danger" data-hdel="${r.id}">削除</button>
@@ -2193,6 +2460,7 @@ document.addEventListener("click", e => {
   if (ds.facdel) { confirmDeleteFacility(ds.facdel); return; }
   if (ds.hview) { go("result", ds.hview); return; }
   if (ds.hprint) { go("result", ds.hprint); setTimeout(printRecord, 250); return; }
+  if (ds.hword) { const r = db.records.find(x => x.id === ds.hword); if (r) saveWord(r); return; }
   if (ds.hedit) { const r = db.records.find(x => x.id === ds.hedit); if (r) editInput(r); return; }
   if (ds.hnext) {
     const r = db.records.find(x => x.id === ds.hnext);
@@ -2256,6 +2524,7 @@ document.addEventListener("click", e => {
       break;
     }
     case "print": printRecord(); break;
+    case "word": saveWord(currentRecord()); break;
     case "print-guide": {
       const old = document.title; document.title = "ブレインジム・BBA早見表";
       document.body.classList.add("print-guide");
