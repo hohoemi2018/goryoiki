@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#F4E2CF">
+<meta name="description" content="質問に答えるだけで、お子さんの取扱説明書がA4一枚にまとまります。保護者用と支援者・先生用があり、面談、引き継ぎ、新しい先生や祖父母への説明に使えます。">
+<title>子どものトリセツ</title>
+<meta property="og:type" content="website">
+<meta property="og:title" content="子どものトリセツ｜A4一枚のサポートブック">
+<meta property="og:description" content="質問にタップで答えるだけで、お子さんの取扱説明書がA4一枚に。保護者用と支援者・先生用があります。記録はお使いの端末の中だけに保存されます。">
+<meta property="og:url" content="https://hohoemi2018.github.io/goryoiki/torisetsu/">
+<meta property="og:image" content="https://hohoemi2018.github.io/goryoiki/torisetsu/ogp.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="ja_JP">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@600;700&family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/*
+  子どものトリセツ（A4一枚のサポートブック） ― 発達支援ほほえみ
+  選択肢を変えたいときは、ファイル後半のスクリプト内の OPTS を書きかえてください。
+  保護者用・支援者用で変わる言葉は、スクリプト内の MODE にまとめてあります。
+  イラストはすべてこのファイル内のオリジナルSVG（body直後の symbol）です。
+*/
+:root{
+  --bg:#FAF6F0;--ink:#3A322D;--muted:#776B61;--line:#E6DCCF;--apricot:#F4E2CF;
+  --orange:#D4782A;--green:#2E8B6A;--blue:#2B5FA8;--amber:#B07E1F;--rose:#C4554D;
+  --round:"Zen Maru Gothic","Hiragino Maru Gothic ProN","BIZ UDPGothic","Yu Gothic","Noto Sans CJK JP",sans-serif;
+  --mincho:"Shippori Mincho","Hiragino Mincho ProN","Yu Mincho","Noto Serif CJK JP",serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box;min-width:0}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:16px/1.7 var(--round);-webkit-text-size-adjust:100%;overflow-x:clip}
+button,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer;-webkit-tap-highlight-color:transparent}
+:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.wrap{max-width:780px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left));padding-right:max(16px,env(safe-area-inset-right))}
+.wrap.wide{max-width:900px}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:48px;padding:10px 22px;border-radius:999px;border:2px solid transparent;font-weight:700;font-size:16px;line-height:1.3;text-align:center}
+.btn.primary{background:var(--orange);color:#fff;box-shadow:0 3px 0 #A95A17}
+.btn.primary:active{transform:translateY(2px);box-shadow:0 1px 0 #A95A17}
+.btn.ghost{background:#fff;border-color:var(--line)}
+.btn.small{min-height:44px;padding:8px 16px;font-size:15px}
+.btn.danger{background:var(--rose);color:#fff}
+.btn.p-green{background:#2E8B6A;color:#fff;box-shadow:0 3px 0 #1F6A50}
+.btn.p-blue{background:#2B5FA8;color:#fff;box-shadow:0 3px 0 #1D467F}
+.btn.p-green:active,.btn.p-blue:active{transform:translateY(2px);box-shadow:none}
+.link{background:none;border:0;padding:8px 4px;min-height:44px;color:var(--muted);font-weight:700;font-size:15px;white-space:nowrap}
+
+/* ホーム */
+.hero{background:var(--apricot);padding:max(28px,env(safe-area-inset-top)) 0 40px;overflow:hidden}
+.hero-in{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:32px;align-items:center}
+.brand{margin:0 0 6px;font-size:13px;font-weight:700;color:#9A5A22;letter-spacing:.06em}
+.hero h1{margin:0;font-family:var(--mincho);font-weight:700;font-size:clamp(40px,8vw,54px);line-height:1.1;color:#3A2A20}
+.subt{display:inline-block;margin:12px 0 0;padding:3px 14px;background:#fff;border-radius:999px;font-size:14px;font-weight:700;color:#9A5A22}
+.lead{margin:14px 0 18px}
+.modes{display:grid;gap:10px}
+.mode{display:grid;grid-template-columns:84px minmax(0,1fr);gap:6px 14px;align-items:center;background:#fff;border-radius:18px;padding:12px 16px 12px 12px;box-shadow:0 2px 0 rgba(120,70,30,.08)}
+.mode-ill{grid-row:span 2;width:84px;height:64px}
+.mode-tx b{display:block;font-size:18px;line-height:1.35}
+.m-parent .mode-tx b{color:#21694F}
+.m-staff .mode-tx b{color:#1F4985}
+.mode-tx span{display:block;font-size:13.5px;line-height:1.55;color:var(--muted)}
+.mode-btns{display:flex;flex-wrap:wrap;align-items:center;gap:2px 12px}
+.time{margin:12px 0 0;font-size:13px;color:#86684F}
+.thumb-box{position:relative;justify-self:center;width:100%;max-width:290px}
+.thumb{position:relative;width:100%;cursor:pointer;transform:rotate(2deg);border-radius:3px;box-shadow:0 16px 32px rgba(120,70,30,.22),0 2px 6px rgba(120,70,30,.14);overflow:hidden;background:#fff}
+.thumb-tag{position:absolute;right:10px;bottom:10px;background:var(--ink);color:#fff;font-size:12px;font-weight:700;padding:3px 12px;border-radius:999px}
+.kid{position:absolute;left:-38px;bottom:-24px;width:88px;height:121px;z-index:2;pointer-events:none}
+.fl-star{position:absolute;right:-18px;top:-20px;width:54px;height:54px;z-index:2;pointer-events:none;animation:float 3.4s ease-in-out infinite}
+.fl-heart{position:absolute;left:-26px;top:22%;width:32px;height:32px;z-index:2;pointer-events:none;transform:rotate(-14deg)}
+@keyframes float{50%{transform:translateY(-6px) rotate(8deg)}}
+.sec-h{font-size:19px;margin:34px 0 12px}
+.plist{display:grid;gap:10px}
+.pcard{background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px 16px;display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px}
+.pcard.del{border-color:var(--rose);background:#FFF7F6}
+.pn{flex:1 1 200px;font-weight:700;font-size:17px;line-height:1.45}
+.pm{display:block;font-size:13px;color:var(--muted);font-weight:500}
+.pb{display:flex;flex-wrap:wrap;gap:8px}
+.badge{display:inline-block;margin-right:8px;padding:1px 10px;border-radius:999px;font-size:12px;font-weight:700;vertical-align:2px}
+.b-parent{background:#E4F3EC;color:#21694F}
+.b-staff{background:#E8F0FA;color:#1F4985}
+.empty-st{background:#fff;border:1.5px dashed var(--line);border-radius:16px;padding:18px 20px;color:var(--muted);text-align:center;font-size:15px}
+.empty-st p{margin:6px 0 0}
+.es-kid{width:52px;height:72px}
+.how{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:0;padding:0;list-style:none}
+.how li{background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px 16px}
+.how .n{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--orange);color:#fff;font-size:14px;font-weight:700}
+.how b{display:block;margin:6px 0 2px}
+.how span{font-size:14px;color:var(--muted)}
+.care{display:flex;gap:10px;align-items:flex-start;background:#E6F3EC;color:#24553F;border-radius:14px;padding:12px 16px;font-size:14px;margin:18px 0 0}
+.ci{flex:none;width:28px;height:28px}
+.note{font-size:13.5px;color:var(--muted);margin:14px 0 0}
+.note.warn{color:#9C3E37}
+.foot{text-align:center;font-size:12.5px;color:var(--muted);padding:36px 0 calc(28px + env(safe-area-inset-bottom))}
+
+/* 入力画面 */
+.topbar{position:sticky;top:0;z-index:5;background:rgba(250,246,240,.95);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top)}
+.tb-in{display:flex;align-items:center;gap:8px;min-height:52px}
+.tb-title{flex:1;text-align:center;font-weight:700;font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tb-side{min-width:72px;text-align:right;font-size:12.5px;color:var(--green);white-space:nowrap}
+.saved-ind{opacity:0;transition:opacity .3s}
+.saved-ind.show{opacity:1}
+.pills{position:relative;display:flex;gap:6px;overflow-x:auto;padding:10px 16px 8px;max-width:780px;margin:0 auto;scrollbar-width:none}
+.pills::-webkit-scrollbar{display:none}
+.pill{flex:none;min-height:40px;padding:6px 13px;border:1.5px solid var(--line);background:#fff;border-radius:999px;font-size:13px;font-weight:700;color:var(--muted)}
+.pill.done{color:var(--ink)}
+.pill.done::before{content:"✓ ";color:var(--green)}
+.pill.cur{background:var(--ink);border-color:var(--ink);color:#fff}
+.pill.cur::before{color:#9FE0C4}
+.bar{height:4px;background:var(--line);border-radius:4px;overflow:hidden}
+.bar span{display:block;height:100%;background:var(--orange);transition:width .3s}
+.q{padding:18px 0 130px}
+.q[data-c=orange]{--c:#D4782A;--t:#FCEDDF;--d:#A3561A}
+.q[data-c=blue]{--c:#2B5FA8;--t:#E8F0FA;--d:#1F4985}
+.q[data-c=amber]{--c:#B07E1F;--t:#FAF0D9;--d:#84601A}
+.q[data-c=green]{--c:#2E8B6A;--t:#E4F3EC;--d:#21694F}
+.q[data-c=rose]{--c:#C4554D;--t:#FBE9E7;--d:#9C3E37}
+.qhead{display:flex;align-items:center;gap:14px;margin-bottom:6px}
+.qicon{flex:none;display:grid;place-items:center;width:68px;height:68px;border-radius:50%;background:var(--t)}
+.qicon svg{width:48px;height:48px}
+.qno{margin:0;font-size:13px;font-weight:700;color:var(--d)}
+.qmode{display:inline-block;margin-left:8px;padding:0 9px;border-radius:999px;background:#fff;border:1px solid var(--line);color:var(--muted);font-size:12px}
+.q h2{margin:2px 0 0;font-size:clamp(20px,5.2vw,26px);line-height:1.4;text-wrap:balance}
+.help{margin:0 0 8px;color:var(--muted);font-size:15px}
+.order{margin:0 0 6px;font-size:13.5px;color:var(--d);background:var(--t);border-radius:10px;padding:8px 12px}
+.gh{font-size:14px;margin:18px 0 8px;color:var(--d)}
+.gh.big{font-size:17px;color:var(--ink);margin-top:26px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chipw{display:inline-flex;align-items:center;max-width:100%}
+.chip{display:inline-flex;align-items:center;gap:7px;max-width:100%;min-height:44px;padding:8px 15px;border-radius:999px;border:1.5px solid var(--line);background:#fff;font-size:15px;font-weight:500;line-height:1.4;text-align:left}
+.chip.on{background:var(--t);border-color:var(--c);color:var(--d);font-weight:700}
+.chip .no{flex:none;display:inline-grid;place-items:center;min-width:22px;height:22px;border-radius:50%;background:var(--c);color:#fff;font-size:12px;font-weight:700}
+.rm{flex:none;width:40px;height:40px;margin-left:-2px;border:0;border-radius:50%;background:none;color:var(--muted);font-size:19px;line-height:1}
+.count{margin:14px 0 0;font-size:13.5px;color:var(--muted)}
+.addlab{display:block;margin:20px 0 6px;font-size:14px;font-weight:700}
+.addrow{display:flex;gap:8px}
+.addrow input,.field input,textarea{width:100%;min-height:48px;border:1.5px solid var(--line);border-radius:12px;background:#fff;padding:10px 14px;font-size:16px}
+.addrow input{flex:1}
+.field{display:block;margin:18px 0 0}
+.lab{display:block;font-weight:700;font-size:15px;margin-bottom:6px}
+.lab small{font-weight:500;color:var(--muted);font-size:13px;margin-left:6px}
+.quick{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.quick button{min-height:40px;padding:6px 14px;border-radius:999px;border:1.5px solid var(--line);background:#fff;font-size:14px}
+textarea{min-height:110px;resize:vertical;line-height:1.6}
+.cnt{display:block;text-align:right;font-size:12.5px;color:var(--muted);margin-top:4px}
+.navbar{position:fixed;left:0;right:0;bottom:0;z-index:5;background:rgba(255,255,255,.97);border-top:1px solid var(--line);padding:10px 0 calc(10px + env(safe-area-inset-bottom))}
+.nb-in{display:flex;gap:10px}
+.nb-in .primary{flex:1}
+.nb-in .ghost{min-width:96px}
+
+/* できあがり画面 */
+.pv{padding-top:14px;padding-bottom:calc(48px + env(safe-area-inset-bottom))}
+.pv-actions{display:flex;flex-wrap:wrap;gap:10px}
+.pv-hint{font-size:13.5px;color:var(--muted);margin:10px 0 0}
+.fitnote{font-size:13.5px;margin:8px 0 0;color:var(--muted)}
+.fitnote:empty{display:none}
+.fitnote.warn{color:#9C3E37;background:#FBE9E7;border-radius:10px;padding:8px 12px}
+.sample-note{margin:0 0 10px;font-size:13.5px;color:#86684F}
+.stage{position:relative;overflow:hidden;margin-top:16px;filter:drop-shadow(0 8px 18px rgba(80,50,20,.16))}
+.sheet-wrap,.thumb-in{width:210mm;transform-origin:top left}
+
+/* A4シート */
+.sheet{--fs:1;width:210mm;min-height:297mm;padding:11mm 12mm 10mm;background:#fff;color:#2F2925;font-family:var(--round);font-size:calc(10.5pt*var(--fs));line-height:1.55;display:flex;flex-direction:column;gap:calc(3.2mm*var(--fs));-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.sheet .sh{display:flex;justify-content:space-between;align-items:flex-end;gap:6mm;padding-bottom:2.6mm;border-bottom:.6mm solid #D4782A}
+.sheet .sh-l{display:flex;align-items:center;gap:3mm}
+.sheet .face{flex:none;width:calc(15mm*var(--fs));height:calc(15mm*var(--fs))}
+.sheet .kick{margin:0;font-size:calc(9.5pt*var(--fs));font-weight:700;color:#C0661D;letter-spacing:.06em}
+.sheet h1{margin:0;font-family:var(--mincho);font-weight:700;font-size:calc(24pt*var(--fs));line-height:1.2}
+.sheet h1 span{color:#C0661D}
+.sheet dl{flex:none;margin:0;display:grid;grid-template-columns:auto auto;column-gap:2.4mm;font-size:calc(9pt*var(--fs))}
+.sheet dl div{display:contents}
+.sheet dt{color:#8A7D72}
+.sheet dd{margin:0;font-weight:700}
+.ss{break-inside:avoid;background:var(--tint);border:1px solid var(--edge);border-radius:3mm;padding:2.6mm 3.6mm 3mm}
+.ss h2{display:flex;align-items:center;gap:1.8mm;margin:0 0 .8mm;font-size:calc(11.5pt*var(--fs));line-height:1.35;color:var(--sc)}
+.ss h2 .ic{flex:none;width:calc(5.6mm*var(--fs));height:calc(5.6mm*var(--fs))}
+.ss h2+h2,.ss .ls+h2{margin-top:2mm}
+.ss .sub{margin:0 0 1.2mm;font-size:calc(8.5pt*var(--fs));color:#7A6E64}
+.ls{margin:0;padding:0;list-style:none}
+.ls li{position:relative;padding-left:4mm;margin:.3mm 0}
+.ls li::before{content:"";position:absolute;left:.5mm;top:.58em;width:1.7mm;height:1.7mm;border-radius:50%;border:.35mm solid var(--sc)}
+.tags{display:flex;flex-wrap:wrap;gap:1.6mm;margin:.6mm 0 0;padding:0;list-style:none}
+.tags li{background:#fff;border:1px solid var(--edge);border-radius:99px;padding:.2mm 3mm}
+.row,.cols{display:grid;gap:3mm}
+.cols h3{display:inline-flex;align-items:center;gap:1mm;margin:.6mm 0 .8mm;padding:0 2.6mm 0 1.4mm;font-size:calc(9.5pt*var(--fs));color:var(--sc);background:#fff;border:1px solid var(--edge);border-radius:99px}
+.cols h3 .ic2{flex:none;width:calc(4.2mm*var(--fs));height:calc(4.2mm*var(--fs))}
+.big{margin:0 0 .6mm;font-weight:700;font-size:calc(12pt*var(--fs))}
+.msg{margin:0}
+.s-like{--sc:#C0661D;--tint:#FDF3EA;--edge:#F1D5BC}
+.s-trig{--sc:#2B5FA8;--tint:#EEF3FA;--edge:#CCDAEE}
+.s-sign{--sc:#9A6E15;--tint:#FBF5E6;--edge:#EEDDB3}
+.s-good{--sc:#2E8B6A;--tint:#ECF6F1;--edge:#C3E2D5}
+.s-ng{--sc:#C4554D;--tint:#FCEFEE;--edge:#F0CCC8}
+.s-info{--sc:#4F6480;--tint:#F3F5F8;--edge:#D9DFE8}
+.s-msg{--sc:#C0661D;--tint:#fff;--edge:#EBCDB2;border-style:dashed}
+.sheet .empty{margin:8mm 0;text-align:center;color:#8A7D72}
+.sf{margin-top:auto;padding-top:2mm;text-align:center;font-size:calc(7.5pt*var(--fs));color:#9A8F86}
+
+/* トースト・ダイアログ */
+#toast{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom));transform:translate(-50%,16px);width:max-content;max-width:90vw;background:var(--ink);color:#fff;padding:10px 18px;border-radius:999px;font-size:14px;text-align:center;opacity:0;pointer-events:none;transition:.25s;z-index:30}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+#modal{position:fixed;inset:0;z-index:40;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(40,30,25,.45)}
+#modal.open{display:flex}
+.mbox{width:100%;max-width:440px;max-height:90vh;overflow:auto;background:#fff;border-radius:20px;padding:26px 22px 22px;text-align:center;animation:pop .35s ease-out}
+.mbox h2{margin:0 0 10px;font-family:var(--mincho);font-size:24px}
+.m-ill{display:block;width:170px;height:117px;margin:-6px auto 6px}
+.praise{margin:0 0 14px;font-size:17px;line-height:1.85}
+.tip{margin:0 0 16px;padding:10px 12px;background:var(--bg);border-radius:12px;font-size:13.5px;color:var(--muted);text-align:left}
+.mbox textarea{min-height:220px;margin-bottom:14px;font-size:14px}
+@keyframes pop{from{opacity:0;transform:scale(.94) translateY(8px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+@media (max-width:600px){
+  .hero-in{grid-template-columns:1fr;gap:26px}
+  .mode{grid-template-columns:66px minmax(0,1fr);gap:6px 12px}
+  .mode-ill{width:66px;height:50px}
+  .thumb-box{max-width:230px}
+  .kid{left:-30px;bottom:-20px;width:70px;height:96px}
+  .fl-star{width:44px;height:44px;right:-14px;top:-16px}
+  .fl-heart{width:26px;height:26px;left:-22px}
+  .qicon{width:58px;height:58px}
+  .qicon svg{width:40px;height:40px}
+  .how{grid-template-columns:1fr}
+  .nb-in .ghost{min-width:84px}
+}
+
+@page{size:A4;margin:10mm 0}
+@media print{
+  html,body{background:#fff!important}
+  .no-print,.topbar,.navbar,#toast,#modal{display:none!important}
+  .pv{padding:0!important;margin:0!important;max-width:none!important}
+  .stage{height:auto!important;overflow:visible!important;margin:0!important;filter:none!important}
+  .sheet-wrap{transform:none!important;margin:0!important}
+  .sheet{min-height:0;padding-top:1mm;padding-bottom:0}
+  .sheet.fit{height:276.6mm;overflow:hidden}
+}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true" focusable="false"><defs>
+  <symbol id="i-child" viewBox="0 0 48 48">
+    <circle cx="9.5" cy="27.5" r="3.2" fill="#FCDCC4"/><circle cx="38.5" cy="27.5" r="3.2" fill="#FCDCC4"/>
+    <circle cx="24" cy="26" r="15" fill="#FCDCC4"/>
+    <path d="M8.8 25.5C8.8 15 15.5 8.5 24 8.5S39.2 15 39.2 25.5C36.5 20.5 31.5 17.6 26 17.4C24.8 19.2 22.6 20.3 20 20.3C18.6 20.3 17.3 20 16.2 19.5C13 20.8 10.5 22.9 8.8 25.5Z" fill="#6B4430"/>
+    <path d="M23.5 8.8C24 5.8 26.6 4.4 29 5.3" fill="none" stroke="#6B4430" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="19" cy="27.5" r="1.9" fill="#4A3A33"/><circle cx="29" cy="27.5" r="1.9" fill="#4A3A33"/>
+    <path d="M21.2 32.2q2.8 2.6 5.6 0" fill="none" stroke="#4A3A33" stroke-width="1.8" stroke-linecap="round"/>
+    <ellipse cx="14.8" cy="31.6" rx="2.6" ry="1.6" fill="#F4A6A0" opacity=".85"/><ellipse cx="33.2" cy="31.6" rx="2.6" ry="1.6" fill="#F4A6A0" opacity=".85"/>
+  </symbol>
+  <symbol id="i-kid" viewBox="0 0 80 110">
+    <ellipse cx="40" cy="105" rx="20" ry="3.5" fill="#000" opacity=".08"/>
+    <rect x="28.5" y="82" width="9" height="18" rx="4.5" fill="#5D7290"/><rect x="42.5" y="82" width="9" height="18" rx="4.5" fill="#5D7290"/>
+    <ellipse cx="32" cy="101" rx="6.5" ry="3.6" fill="#6B4430"/><ellipse cx="48" cy="101" rx="6.5" ry="3.6" fill="#6B4430"/>
+    <rect x="36" y="47" width="8" height="10" rx="3" fill="#F3C9AC"/>
+    <path d="M25 58Q40 50 55 58L59 85Q40 91 21 85Z" fill="#E8913F"/>
+    <path d="M30 70h20" stroke="#fff" stroke-width="2.4" stroke-linecap="round" opacity=".55"/>
+    <path d="M26 61Q17 69 18.5 79" fill="none" stroke="#E8913F" stroke-width="8" stroke-linecap="round"/>
+    <path d="M54 61Q64 54 66 42" fill="none" stroke="#E8913F" stroke-width="8" stroke-linecap="round"/>
+    <circle cx="18.5" cy="81" r="4.6" fill="#FCDCC4"/><circle cx="66.5" cy="39" r="4.6" fill="#FCDCC4"/>
+    <use href="#i-child" x="10" y="0" width="60" height="60"/>
+  </symbol>
+  <symbol id="i-parent" viewBox="0 0 100 76">
+    <path d="M14 76C14 60 22 52 36 52S58 60 58 76Z" fill="#7CC0A0"/>
+    <rect x="31" y="41" width="10" height="13" rx="4" fill="#F3C9AC"/>
+    <path d="M19 30C19 16 26 9 36 9S53 16 53 30V44C53 47 50 48 48 47V32H24V47C22 48 19 47 19 44Z" fill="#7A4A35"/>
+    <circle cx="36" cy="30" r="13.5" fill="#FCDCC4"/>
+    <path d="M22 29C22 18 28 12.5 36 12.5S50 18 50 29C47 23.5 42 20.5 36.5 20.3C33 22.8 28 24.5 22 29Z" fill="#7A4A35"/>
+    <circle cx="31" cy="31" r="1.7" fill="#4A3A33"/><circle cx="41" cy="31" r="1.7" fill="#4A3A33"/>
+    <path d="M33.4 35.4q2.6 2.3 5.2 0" fill="none" stroke="#4A3A33" stroke-width="1.7" stroke-linecap="round"/>
+    <ellipse cx="27" cy="35" rx="2.3" ry="1.4" fill="#F4A6A0" opacity=".8"/><ellipse cx="45" cy="35" rx="2.3" ry="1.4" fill="#F4A6A0" opacity=".8"/>
+    <rect x="67" y="51" width="6" height="11" rx="2.5" fill="#F3C9AC"/>
+    <path d="M56 76C56 66 61 61 70 61S84 66 84 76Z" fill="#E8913F"/>
+    <use href="#i-child" x="51" y="22" width="38" height="38"/>
+    <use href="#i-heart" x="77" y="5" width="20" height="20"/>
+  </symbol>
+  <symbol id="i-staff" viewBox="0 0 100 76">
+    <path d="M22 76C22 59 31 51 46 51S70 59 70 76Z" fill="#6F9BD6"/>
+    <path d="M34 54L36 76H56L58 54C54 57 50 58 46 58S38 57 34 54Z" fill="#F7C6C1"/>
+    <rect x="47" y="62" width="10" height="7" rx="1.5" fill="#fff"/><path d="M49 64.6h6" stroke="#E8913F" stroke-width="1.4" stroke-linecap="round"/>
+    <rect x="41" y="40" width="10" height="13" rx="4" fill="#F3C9AC"/>
+    <circle cx="32.5" cy="30" r="2.8" fill="#FCDCC4"/><circle cx="59.5" cy="30" r="2.8" fill="#FCDCC4"/>
+    <circle cx="46" cy="29" r="13.5" fill="#FCDCC4"/>
+    <path d="M32 29C32 18 38 12 46.5 12S60 17.5 60 27C57 22 52 19.5 47 19.8C43 20 37 23 32 29Z" fill="#3F3A4A"/>
+    <circle cx="41" cy="30.5" r="1.7" fill="#4A3A33"/><circle cx="51" cy="30.5" r="1.7" fill="#4A3A33"/>
+    <path d="M43.4 35q2.6 2.3 5.2 0" fill="none" stroke="#4A3A33" stroke-width="1.7" stroke-linecap="round"/>
+    <ellipse cx="37" cy="34.5" rx="2.3" ry="1.4" fill="#F4A6A0" opacity=".8"/><ellipse cx="55" cy="34.5" rx="2.3" ry="1.4" fill="#F4A6A0" opacity=".8"/>
+    <g transform="rotate(8 78 52)"><rect x="68" y="38" width="20" height="26" rx="2.5" fill="#fff" stroke="#D9CBB8" stroke-width="1.2"/><rect x="74" y="36" width="8" height="4" rx="1.5" fill="#E8913F"/><path d="M72 46h12M72 51h12M72 56h8" stroke="#C9D7EA" stroke-width="1.6" stroke-linecap="round"/></g>
+    <circle cx="68" cy="61" r="4" fill="#FCDCC4"/>
+    <use href="#i-star" x="4" y="6" width="22" height="22"/>
+  </symbol>
+  <symbol id="i-star" viewBox="0 0 48 48">
+    <polygon points="24,6 30.17,16.51 42.07,19.13 33.99,28.24 35.17,40.37 24,35.5 12.83,40.37 14.01,28.24 5.93,19.13 17.83,16.51" fill="#F6C453" stroke="#F6C453" stroke-width="4" stroke-linejoin="round"/>
+    <circle cx="20.5" cy="24.5" r="1.8" fill="#4A3A33"/><circle cx="27.5" cy="24.5" r="1.8" fill="#4A3A33"/>
+    <path d="M21.6 28.4q2.4 2.2 4.8 0" fill="none" stroke="#4A3A33" stroke-width="1.7" stroke-linecap="round"/>
+    <ellipse cx="17.6" cy="28.4" rx="2" ry="1.3" fill="#F29A8E" opacity=".8"/><ellipse cx="30.4" cy="28.4" rx="2" ry="1.3" fill="#F29A8E" opacity=".8"/>
+  </symbol>
+  <symbol id="i-cloud" viewBox="0 0 48 48">
+    <g fill="#9DBEE8"><circle cx="15" cy="26" r="8.5"/><circle cx="25" cy="19" r="11"/><circle cx="33.5" cy="25.5" r="8.5"/><rect x="9" y="24" width="30" height="11.5" rx="5.75"/></g>
+    <circle cx="20" cy="26" r="1.8" fill="#3E4F6B"/><circle cx="28" cy="26" r="1.8" fill="#3E4F6B"/>
+    <path d="M21 31q1.5-1.4 3 0t3 0" fill="none" stroke="#3E4F6B" stroke-width="1.6" stroke-linecap="round"/>
+    <path d="M16 39.5q-2.2 3 0 4.4q2.2-1.4 0-4.4z" fill="#6F9BD6"/><path d="M32 39.5q-2.2 3 0 4.4q2.2-1.4 0-4.4z" fill="#6F9BD6"/>
+  </symbol>
+  <symbol id="i-sign" viewBox="0 0 48 48">
+    <path d="M14 8h20a10 10 0 0 1 10 10v6a10 10 0 0 1-10 10H22l-8 7v-7.2A10 10 0 0 1 4 24v-6A10 10 0 0 1 14 8z" fill="#F6C453"/>
+    <rect x="21.9" y="12.5" width="4.2" height="11.5" rx="2.1" fill="#fff"/><circle cx="24" cy="28.6" r="2.4" fill="#fff"/>
+    <path d="M40 4.5l1.5 3M45 9l-3 1.2" stroke="#E8A93A" stroke-width="1.8" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="i-clover" viewBox="0 0 48 48">
+    <path d="M24 26q1 9 6 16" fill="none" stroke="#3F9572" stroke-width="2.6" stroke-linecap="round"/>
+    <g fill="#5BB08A" stroke="#fff" stroke-width="1.2">
+      <path transform="rotate(45 24 24)" d="M24 24C20.5 21 15.5 18.5 15.5 13.8C15.5 10.8 17.8 8.6 20.4 8.6C22.1 8.6 23.4 9.6 24 10.9C24.6 9.6 25.9 8.6 27.6 8.6C30.2 8.6 32.5 10.8 32.5 13.8C32.5 18.5 27.5 21 24 24Z"/>
+      <path transform="rotate(135 24 24)" d="M24 24C20.5 21 15.5 18.5 15.5 13.8C15.5 10.8 17.8 8.6 20.4 8.6C22.1 8.6 23.4 9.6 24 10.9C24.6 9.6 25.9 8.6 27.6 8.6C30.2 8.6 32.5 10.8 32.5 13.8C32.5 18.5 27.5 21 24 24Z"/>
+      <path transform="rotate(225 24 24)" d="M24 24C20.5 21 15.5 18.5 15.5 13.8C15.5 10.8 17.8 8.6 20.4 8.6C22.1 8.6 23.4 9.6 24 10.9C24.6 9.6 25.9 8.6 27.6 8.6C30.2 8.6 32.5 10.8 32.5 13.8C32.5 18.5 27.5 21 24 24Z"/>
+      <path transform="rotate(315 24 24)" d="M24 24C20.5 21 15.5 18.5 15.5 13.8C15.5 10.8 17.8 8.6 20.4 8.6C22.1 8.6 23.4 9.6 24 10.9C24.6 9.6 25.9 8.6 27.6 8.6C30.2 8.6 32.5 10.8 32.5 13.8C32.5 18.5 27.5 21 24 24Z"/>
+    </g>
+    <circle cx="24" cy="24" r="2" fill="#3F9572"/>
+  </symbol>
+  <symbol id="i-clock" viewBox="0 0 48 48">
+    <circle cx="12.5" cy="11.5" r="5" fill="#E8913F"/><circle cx="35.5" cy="11.5" r="5" fill="#E8913F"/>
+    <path d="M14 39l-3 4M34 39l3 4" stroke="#E8913F" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="24" cy="26" r="15" fill="#FFF6E8" stroke="#E8913F" stroke-width="3.5"/>
+    <path d="M24 26v-8M24 26l5.5 3" stroke="#4A3A33" stroke-width="2.4" stroke-linecap="round"/>
+    <circle cx="24" cy="26" r="1.8" fill="#4A3A33"/>
+  </symbol>
+  <symbol id="i-heart" viewBox="0 0 48 48">
+    <path d="M24 41C14 34 6 27 6 18C6 12 10.5 8 16 8C19.5 8 22.4 9.9 24 12.6C25.6 9.9 28.5 8 32 8C37.5 8 42 12 42 18C42 27 34 34 24 41Z" fill="#F28B82"/>
+    <circle cx="18.5" cy="21" r="1.8" fill="#4A3A33"/><circle cx="29.5" cy="21" r="1.8" fill="#4A3A33"/>
+    <path d="M21.4 25.4q2.6 2.4 5.2 0" fill="none" stroke="#4A3A33" stroke-width="1.7" stroke-linecap="round"/>
+    <ellipse cx="14.8" cy="25" rx="2.4" ry="1.5" fill="#FFD0CB"/><ellipse cx="33.2" cy="25" rx="2.4" ry="1.5" fill="#FFD0CB"/>
+    <path d="M11.5 15q1.8-3.2 5-3.6" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" opacity=".7"/>
+  </symbol>
+  <symbol id="i-rainbow" viewBox="0 0 48 48">
+    <g fill="none" stroke-width="5" stroke-linecap="round">
+      <path d="M7 34a17 17 0 0 1 34 0" stroke="#F28B82"/><path d="M12.5 34a11.5 11.5 0 0 1 23 0" stroke="#F6C453"/><path d="M18 34a6 6 0 0 1 12 0" stroke="#7FB7E6"/>
+    </g>
+    <g fill="#CFE0F5" stroke="#CFE0F5" stroke-width="3">
+      <circle cx="4.5" cy="38.5" r="3.4"/><circle cx="9" cy="36.2" r="4.6"/><circle cx="13.4" cy="38.8" r="3.2"/><rect x="4.5" y="37.5" width="9" height="4.5"/>
+      <circle cx="43.5" cy="38.5" r="3.4"/><circle cx="39" cy="36.2" r="4.6"/><circle cx="34.6" cy="38.8" r="3.2"/><rect x="34.5" y="37.5" width="9" height="4.5"/>
+    </g>
+    <g fill="#fff">
+      <circle cx="4.5" cy="38.5" r="3.4"/><circle cx="9" cy="36.2" r="4.6"/><circle cx="13.4" cy="38.8" r="3.2"/><rect x="4.5" y="37.5" width="9" height="4.5"/>
+      <circle cx="43.5" cy="38.5" r="3.4"/><circle cx="39" cy="36.2" r="4.6"/><circle cx="34.6" cy="38.8" r="3.2"/><rect x="34.5" y="37.5" width="9" height="4.5"/>
+    </g>
+  </symbol>
+  <symbol id="i-ng" viewBox="0 0 48 48">
+    <circle cx="24" cy="24" r="17" fill="#EE8E86"/>
+    <path d="M17.5 17.5l13 13M30.5 17.5l-13 13" stroke="#fff" stroke-width="4.6" stroke-linecap="round"/>
+    <path d="M41 6l1.2 3.2M44.8 11.5l-3.2.6" stroke="#EE8E86" stroke-width="1.8" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="i-mail" viewBox="0 0 48 48">
+    <rect x="6" y="12" width="36" height="26" rx="5" fill="#DCE8F7"/>
+    <path d="M8 15l16 12l16-12" fill="none" stroke="#6F9BD6" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M24 33c-2.4-1.7-4.4-3.2-4.4-5.4c0-1.4 1.1-2.5 2.4-2.5c.9 0 1.6.5 2 1.1c.4-.6 1.1-1.1 2-1.1c1.3 0 2.4 1.1 2.4 2.5c0 2.2-2 3.7-4.4 5.4z" fill="#F28B82"/>
+  </symbol>
+  <symbol id="i-msg" viewBox="0 0 48 48">
+    <path d="M14 8h20a10 10 0 0 1 10 10v6a10 10 0 0 1-10 10h-2v7l-8-7H14A10 10 0 0 1 4 24v-6A10 10 0 0 1 14 8z" fill="#FBD9BF"/>
+    <path d="M24 28C20 25 16.5 22.5 16.5 19C16.5 16.7 18.3 15 20.4 15C22 15 23.3 15.9 24 17.1C24.7 15.9 26 15 27.6 15C29.7 15 31.5 16.7 31.5 19C31.5 22.5 28 25 24 28Z" fill="#E8913F"/>
+  </symbol>
+</defs></svg>
+<div id="app"></div>
+<div id="toast" role="status" aria-live="polite"></div>
+<div id="modal"></div>
+<script>
+{
+const APP='子どものトリセツ';
+const BRAND='発達支援ほほえみ';
+const COMPANY='発達支援ほほえみ';
+const KEY='hohoemi-torisetsu-v1';
+const LISTS=['likes','triggers','signs','prevent','during','after','ng','contact'];
+
+/* ===== 選択肢（ここを書きかえると、選べる項目が変わります） ===== */
+const OPTS={
+  likes:[
+    {g:'好きなこと',items:['電車・乗り物','恐竜','虫・生き物','絵をかく','工作','ブロック','パズル','音楽・歌','ダンス','体を動かす','外遊び','水遊び','砂・どろんこ遊び','絵本','動画','ゲーム','ごっこ遊び','料理のお手伝い','数字・文字','くるくる回るもの']},
+    {g:'得意なこと・いいところ',items:['記憶力がいい','細かいところに気づく','集中力がある','やさしい','人なつっこい','お手伝いが好き','がんばり屋','ルールを守る','ユーモアがある']}
+  ],
+  triggers:[
+    {g:'切り替え・見通し',items:['遊びを途中でやめること','予定が急に変わること','待つこと','順番を守ること','初めての場所・人','先の見通しがないこと']},
+    {g:'感覚',items:['大きな音・急な音','人が多い場所','まぶしい光','服のタグ・肌ざわり','苦手なにおい・味','急に体をさわられること']},
+    {g:'気持ち',items:['負けること','失敗すること','思い通りにならないこと','急かされること','みんなの前で注意されること','自分の物をさわられること']},
+    {g:'体の状態',items:['おなかがすいたとき','眠いとき・疲れたとき','暑さ・寒さ','体調が悪いとき']},
+    {g:'伝え合い',items:['言葉でうまく伝えられないとき','長い説明','一度にたくさん言われること']}
+  ],
+  signs:[{items:['声が大きくなる','早口になる','同じことを何度も言う','急に黙りこむ','そわそわと動きが増える','耳をふさぐ','爪や指をかむ','表情がかたくなる','顔が赤くなる','「いやだ」が増える','物を強くさわる・投げ始める','その場から離れようとする','大人にくっついてくる','泣きそうな顔になる']}],
+  prevent:[{items:['予定を前もって伝える','「あと〇分で終わり」と予告する','絵や写真で予定を見せる','「〇〇のあと△△」と順番を伝える','選べるように2つ出す','タイマーを使う','短い言葉ではっきり伝える','変更はなるべく早めに伝える','静かに休める場所を用意する','苦手な音や場所を避ける','できたらすぐにほめる']}],
+  during:[{items:['まず安全を確保して見守る','静かな場所へ移る','声かけを少なくする','落ち着いた低い声で話す','そばで待つ','少し離れて見守る','ぎゅっと抱きしめる','背中をゆっくりさする','好きな物を渡す','気持ちを言葉にする（「〇〇したかったね」）','一緒にゆっくり呼吸する','フックアップ（腕と足を組んでゆっくり呼吸）','水を飲ませる','まわりの人や物を離す']}],
+  after:[{items:['気持ちを代わりに言葉にする','落ち着けたことをほめる','次はどうするか一緒に考える','いつも通りに接する','好きな遊びに戻る','少し休ませる','ぎゅっとする']}],
+  ng:[{items:['大きな声でしかる','みんなの前で注意する','急に体をさわる・押さえつける','長く説明する・説得する','「なんで？」と理由を問い詰める','「何回言ったらわかるの」と言う','笑う・からかう','ほかの子と比べる','無理に目を合わせさせる','約束を急に変える','「置いていくよ」とおどす','落ち着く前に謝らせる','ひとりきりにする']}],
+  contact:[{items:['ケガをしそうなとき','自分をたたく・かむなどがあるとき','友だちに手が出たとき','いつもより長くおさまらないとき','体調が悪そうなとき','いつもと様子がちがうとき','迷ったときはいつでも']}]
+};
+const CALM=['5分くらい','10〜15分くらい','30分くらい','30分以上かかることも','日によってちがう'];
+const PH={likes:'例）新幹線の図鑑',triggers:'例）エレベーター',signs:'例）服のそでをかむ',prevent:'例）電車のカードで次を見せる',during:'例）好きな歌を小さく歌う',after:'例）電車の話をする',ng:'例）後ろから急に声をかける',contact:'例）30分以上おさまらないとき'};
+
+/* ===== 保護者用・支援者用で変わる言葉 ===== */
+const MODE={
+  parent:{
+    label:'保護者用',desc:'わが子のことを、園・学校・放デイ・祖父母に伝える',btn:'p-green',
+    kick:'かかわってくださる方へ',
+    writers:['母','父','祖母','祖父','保護者'],writerPh:'例）母',
+    basicHelp:'呼び名がトリセツの題名になります。どの質問も、とばして大丈夫です。',
+    prevent:['前もってしてもらえると助かること','かんしゃくを起こしにくくする工夫です。家でうまくいっている工夫も選んでください。'],
+    during:['かんしゃくになったときに効く対応','これまでに「これは効いた」と思えたことを選んでください。'],
+    contact:['こんなときは連絡ください','園や学校、施設から保護者に連絡してほしいときの目安になります。','こんなときは連絡ください',''],
+    msg:['先生やまわりの方へ、ひとこと','例）切り替えには時間がかかりますが、見通しがあるとがんばれる子です。よろしくお願いします。'],
+    praise:[
+      n=>`${n}のことを、ここまで言葉にできるのは、毎日いちばん近くで見てきたあなただからこそです。`,
+      n=>`このトリセツは、${n}とまわりの大人をつなぐ橋になります。作ってくださって、ありがとうございます。`,
+      n=>`わかってくれる大人がひとり増えるだけで、${n}もあなたも、ぐっと楽になります。`,
+      n=>`${n}のために時間をつくってくださって、ありがとうございます。今日はご自分にも「よくやったね」と言ってあげてください。`
+    ],
+    tip:'子どもの様子は少しずつ変わっていきます。3か月に1度くらい見直して、新しく「効いたこと」を足していくのがおすすめです。'
+  },
+  staff:{
+    label:'支援者・先生用',desc:'支援の工夫を、職員どうしの引き継ぎや保護者と共有する',btn:'p-blue',
+    kick:'支援の共有・引き継ぎに',
+    writers:['担当職員','担任','児発管','保育士','支援員'],writerPh:'例）担当職員',
+    basicHelp:'呼び名がトリセツの題名になります。施設のパソコンで作るときは、イニシャルやニックネームがおすすめです。どの質問も、とばして大丈夫です。',
+    prevent:['前もってしておくと効果的なこと','環境づくりや声かけなど、かんしゃくを起こしにくくする工夫です。'],
+    during:['かんしゃくになったときに効く対応','支援の中で「これは効いた」と確かめられた対応を選んでください。'],
+    contact:['こんなときは保護者・担当者へ連絡を','ほかの職員や先生が、保護者や担当者に連絡・共有するときの目安になります。','こんなときは連絡を','保護者・担当者へ'],
+    msg:['引き継ぐ方・関わる方へ、ひとこと','例）活動の切り替えは5分前と1分前に予告すると、落ち着いて移れます。'],
+    praise:[
+      n=>`${n}のことを、ここまで言葉にできるのは、日々の支援の中でよく見てきたからこそです。`,
+      n=>`このトリセツがあれば、だれが関わっても${n}に同じ対応ができます。`,
+      n=>`家庭と同じ方向を向いて関われることが、${n}のいちばんの安心になります。`,
+      n=>`忙しい中、${n}のために時間をつくってくださって、ありがとうございます。`
+    ],
+    tip:'保護者と一緒に見直すと、家庭と施設の対応がそろいます。施設の共用パソコンで作った場合は、印刷したら削除しておきましょう。'
+  }
+};
+const STEPS=[
+  {k:'basic',pill:'はじめに',c:'orange',ic:'i-child'},
+  {k:'likes',pill:'好きなこと',c:'orange',ic:'i-star',t:n=>`${n}の好きなこと・得意なこと`,h:'まわりの大人が関わるきっかけになります。'},
+  {k:'triggers',pill:'苦手なこと',c:'blue',ic:'i-cloud',t:n=>`${n}が苦手なこと`,h:'かんしゃくのきっかけになりやすいことを選んでください。'},
+  {k:'signs',pill:'前兆のサイン',c:'amber',ic:'i-sign',t:n=>`かんしゃくの前に、${n}に出やすいサイン`,h:'このサインに早めに気づけると、大きくなる前に対応できます。'},
+  {k:'prevent',pill:'前もって',c:'green',ic:'i-clock'},
+  {k:'during',pill:'かんしゃく中',c:'green',ic:'i-heart'},
+  {k:'after',pill:'落ち着いたら',c:'green',ic:'i-rainbow',t:()=>'落ち着いたあとの関わり方',h:'気持ちを立て直すときに助かることです。'},
+  {k:'ng',pill:'やってはいけない',c:'rose',ic:'i-ng',t:()=>'やってはいけない対応',h:'逆効果になりやすいことを選んでください。トリセツには「しないでほしいこと」という見出しで載ります。'},
+  {k:'extra',pill:'さいごに',c:'blue',ic:'i-mail'}
+];
+
+function blank(){return {name:'',age:'',writer:'',place:'',date:today(),likes:[],triggers:[],signs:[],prevent:[],during:[],after:[],ng:[],contact:[],calm:'',message:'',custom:{}}}
+function norm(d){d=Object.assign(blank(),d||{});for(const k of LISTS){if(!Array.isArray(d[k]))d[k]=[]}if(!d.custom||typeof d.custom!=='object')d.custom={};for(const k of ['name','age','writer','place','date','calm','message']){if(typeof d[k]!=='string')d[k]=''}return d}
+function mode(m){return m==='staff'?'staff':'parent'}
+function today(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function fmtDate(s){const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(s||'');return m?`${+m[1]}年${+m[2]}月${+m[3]}日`:''}
+function fmtShort(ts){const d=new Date(ts);return `${d.getMonth()+1}月${d.getDate()}日`}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function nm(d){return (d.name||'').trim()||'お子さん'}
+
+/* ===== 見本（架空のお子さん） ===== */
+const SAMPLES={
+  parent:norm({name:'ゆうくん',age:'5歳（年中）',writer:'母',date:today(),
+    likes:['電車・乗り物','ブロック','数字・文字','水遊び','記憶力がいい','細かいところに気づく'],
+    triggers:['遊びを途中でやめること','予定が急に変わること','大きな音・急な音','負けること','おなかがすいたとき'],
+    signs:['同じことを何度も言う','声が大きくなる','耳をふさぐ','「いやだ」が増える'],
+    prevent:['「あと〇分で終わり」と予告する','絵や写真で予定を見せる','選べるように2つ出す','電車のカードで「次はこれ」と見せる'],
+    during:['まず安全を確保して見守る','声かけを少なくする','静かな場所へ移る','背中をゆっくりさする'],
+    after:['気持ちを代わりに言葉にする','落ち着けたことをほめる','いつも通りに接する'],
+    ng:['大きな声でしかる','みんなの前で注意する','「なんで？」と理由を問い詰める','落ち着く前に謝らせる'],
+    calm:'10〜15分くらい',contact:['自分をたたく・かむなどがあるとき','30分以上おさまらないとき'],
+    message:'切り替えには時間がかかりますが、見通しがあるとがんばれる子です。電車の話をすると笑顔になります。どうぞよろしくお願いします。'}),
+  staff:norm({name:'ゆうくん',age:'5歳（年中）',writer:'担当職員',place:'ひまわり教室',date:today(),
+    likes:['電車・乗り物','ブロック','数字・文字','細かいところに気づく','ルールを守る'],
+    triggers:['遊びを途中でやめること','予定が急に変わること','人が多い場所','大きな音・急な音','負けること'],
+    signs:['同じことを何度も言う','耳をふさぐ','その場から離れようとする','「いやだ」が増える'],
+    prevent:['「あと〇分で終わり」と予告する','絵や写真で予定を見せる','タイマーを使う','静かに休める場所を用意する'],
+    during:['まず安全を確保して見守る','声かけを少なくする','静かな場所へ移る','フックアップ（腕と足を組んでゆっくり呼吸）'],
+    after:['気持ちを代わりに言葉にする','次はどうするか一緒に考える','好きな遊びに戻る'],
+    ng:['みんなの前で注意する','急に体をさわる・押さえつける','長く説明する・説得する','落ち着く前に謝らせる'],
+    calm:'10〜15分くらい',contact:['自分をたたく・かむなどがあるとき','いつもより長くおさまらないとき'],
+    message:'活動の切り替えは5分前と1分前に予告すると、落ち着いて移れます。電車のカードで「次はこれ」と見せるとスムーズです。'})
+};
+
+/* ===== 保存（この端末のブラウザの中だけ） ===== */
+let db={profiles:[]},canSave=true,view='home',cur=null,step=0,pendingDel=null,savedT=null,printing=false,sampleMode='parent';
+const inFrame=(()=>{try{return window.self!==window.top}catch(e){return true}})();
+function load(){
+  try{localStorage.setItem(KEY+'-t','1');localStorage.removeItem(KEY+'-t');
+    const s=localStorage.getItem(KEY);
+    if(s){const o=JSON.parse(s);if(o&&Array.isArray(o.profiles))db={profiles:o.profiles.filter(p=>p&&p.id).map(p=>({id:p.id,mode:mode(p.mode),created:p.created||Date.now(),updated:p.updated||Date.now(),d:norm(p.d)}))}}
+  }catch(e){canSave=false}
+}
+function persist(){if(!canSave)return;try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){canSave=false;toast('この画面では保存できません。印刷・PDF保存は使えます')}}
+function touch(){
+  if(!cur)return;cur.updated=Date.now();persist();
+  const s=document.getElementById('savedInd');
+  if(s&&canSave){s.classList.add('show');clearTimeout(savedT);savedT=setTimeout(()=>s.classList.remove('show'),1300)}
+}
+function curMode(){return view==='sample'?sampleMode:(cur?cur.mode:'parent')}
+
+/* ===== A4シート ===== */
+function ic(id,cls){return `<svg class="${cls||'ic'}" aria-hidden="true" focusable="false"><use href="#${id}"/></svg>`}
+function list(a){return `<ul class="ls">${a.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`}
+function sec(cls,title,sub,body,icon){return `<section class="ss ${cls}"><h2>${ic(icon)}${title}</h2>${sub?`<p class="sub">${sub}</p>`:''}${body}</section>`}
+function row(parts,cls){parts=parts.filter(Boolean);return parts.length?`<div class="${cls}" style="grid-template-columns:repeat(${parts.length},minmax(0,1fr))">${parts.join('')}</div>`:''}
+function sheetHTML(d,m){
+  const M=MODE[mode(m)],n=nm(d);
+  const likes=d.likes.length?sec('s-like','好きなこと・得意なこと','',`<ul class="tags">${d.likes.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`,'i-star'):'';
+  const r1=row([
+    d.triggers.length&&sec('s-trig','苦手なこと','かんしゃくのきっかけになりやすいこと',list(d.triggers),'i-cloud'),
+    d.signs.length&&sec('s-sign','かんしゃくの前のサイン','このサインが出たら、早めの対応をお願いします',list(d.signs),'i-sign')
+  ],'row');
+  const cols=row([['前もって',d.prevent,'i-clock'],['かんしゃくのとき',d.during,'i-heart'],['落ち着いたら',d.after,'i-rainbow']].filter(c=>c[1].length).map(c=>`<div><h3>${ic(c[2],'ic2')}${c[0]}</h3>${list(c[1])}</div>`),'cols');
+  const good=cols?sec('s-good','効く対応','',cols,'i-clover'):'';
+  const info=(d.calm||d.contact.length)?`<section class="ss s-info">${d.calm?`<h2>${ic('i-clock')}落ち着くまでの目安</h2><p class="big">${esc(d.calm)}</p>`:''}${d.contact.length?`<h2>${ic('i-mail')}${M.contact[2]}</h2>${M.contact[3]?`<p class="sub">${M.contact[3]}</p>`:''}${list(d.contact)}`:''}</section>`:'';
+  const r2=row([d.ng.length&&sec('s-ng','しないでほしいこと','逆効果になりやすい対応',list(d.ng),'i-ng'),info],'row');
+  const msg=d.message.trim()?sec('s-msg','ひとこと','',`<p class="msg">${esc(d.message.trim()).replace(/\n/g,'<br>')}</p>`,'i-msg'):'';
+  const meta=[['年齢',d.age],['記入',d.writer],['所属',d.place],['記入日',fmtDate(d.date)]].filter(x=>x[1]).map(x=>`<div><dt>${x[0]}</dt><dd>${esc(x[1])}</dd></div>`).join('');
+  const empty=!(likes||r1||good||r2||msg);
+  return `<article class="sheet"><header class="sh"><div class="sh-l">${ic('i-child','face')}<div><p class="kick">${M.kick}</p><h1><span>${esc(n)}</span>のトリセツ</h1></div></div>${meta?`<dl>${meta}</dl>`:''}</header>${empty?'<p class="empty">まだ何も選ばれていません。入力画面にもどって選んでください。</p>':''}${likes}${r1}${good}${r2}${msg}<footer class="sf">「${APP}」で作成　|　${BRAND}</footer></article>`;
+}
+let A4=0;
+function a4px(){if(!A4){const t=document.createElement('div');t.style.cssText='position:absolute;visibility:hidden;width:1px;height:297mm';document.body.appendChild(t);A4=t.getBoundingClientRect().height;t.remove()}return A4}
+function fit(sh){
+  const max=a4px()*296/297;let fs=1;
+  sh.classList.remove('fit','over');sh.style.minHeight='0';sh.style.setProperty('--fs','1');
+  const over=()=>sh.scrollHeight>max;
+  if(!over()){
+    /* 余白が多いときは、読みやすいように文字を少し大きくする */
+    while(fs<1.15){const n=Math.round((fs+0.03)*100)/100;sh.style.setProperty('--fs',String(n));if(over()){sh.style.setProperty('--fs',String(fs));break}fs=n}
+  }else{
+    while(over()&&fs>0.83){fs=Math.round((fs-0.03)*100)/100;sh.style.setProperty('--fs',String(fs))}
+  }
+  const ok=sh.scrollHeight<=max;sh.style.minHeight='';sh.classList.add(ok?'fit':'over');
+  return {ok,fs};
+}
+function scaleTo(box,inner){
+  const sh=inner&&inner.firstElementChild;if(!sh)return;
+  const w=sh.offsetWidth,h=sh.offsetHeight,s=Math.min(1,box.clientWidth/w);
+  inner.style.transform=`scale(${s})`;inner.style.marginLeft=Math.max(0,(box.clientWidth-w*s)/2)+'px';box.style.height=Math.ceil(h*s)+'px';
+}
+function layout(){
+  if(view==='home'){const t=document.querySelector('.thumb');if(t){fit(t.querySelector('.sheet'));scaleTo(t,t.firstElementChild)}}
+  if(view==='preview'||view==='sample'){
+    const st=document.getElementById('stage');if(!st)return;
+    const r=fit(st.querySelector('.sheet'));scaleTo(st,st.firstElementChild);
+    const fn=document.getElementById('fitnote');
+    if(fn){
+      if(!r.ok){fn.className='fitnote warn no-print';fn.textContent='A4一枚に収まりきらず、2枚に分かれることがあります。各項目を5つ前後にしぼると、1枚にきれいに収まります。'}
+      else if(r.fs<0.94){fn.className='fitnote no-print';fn.textContent='A4一枚に収めるため、文字を少し小さくしています。'}
+      else fn.textContent='';
+    }
+  }
+}
+
+/* ===== 画面 ===== */
+function topbar(title,backAct,backLabel,right){
+  return `<div class="topbar"><div class="wrap tb-in"><button class="link" data-act="${backAct}">${backLabel}</button><span class="tb-title" id="tbName">${title}</span><span class="tb-side">${right||`<span class="saved-ind" id="savedInd">保存しました</span>`}</span></div></div>`;
+}
+function modeCard(m){
+  const M=MODE[m];
+  return `<div class="mode m-${m}"><svg class="mode-ill" viewBox="0 0 100 76" aria-hidden="true"><use href="#i-${m}"/></svg><div class="mode-tx"><b>${M.label}</b><span>${M.desc}</span></div><div class="mode-btns"><button type="button" class="btn small ${M.btn}" data-act="new" data-mode="${m}">${M.label}で作る</button><button type="button" class="link" data-act="sample" data-mode="${m}">見本を見る</button></div></div>`;
+}
+function homeHTML(){
+  const ps=[...db.profiles].sort((a,b)=>b.updated-a.updated);
+  const cards=ps.length?ps.map(p=>{
+    const t=`${esc(nm(p.d))}のトリセツ`;
+    if(pendingDel===p.id)return `<div class="pcard del"><span class="pn">「${t}」を削除しますか？<span class="pm">削除すると元にもどせません</span></span><span class="pb"><button class="btn small danger" data-act="delyes" data-id="${p.id}">削除する</button><button class="btn small ghost" data-act="delno">やめる</button></span></div>`;
+    return `<div class="pcard"><span class="pn"><span class="badge b-${p.mode}">${MODE[p.mode].label}</span>${t}<span class="pm">${p.d.age?esc(p.d.age)+'・':''}${fmtShort(p.updated)}に更新</span></span><span class="pb"><button class="btn small primary" data-act="open" data-id="${p.id}">見る・印刷</button><button class="btn small ghost" data-act="edit" data-id="${p.id}">直す</button><button class="btn small ghost" data-act="del" data-id="${p.id}">削除</button></span></div>`;
+  }).join(''):`<div class="empty-st"><svg class="es-kid" viewBox="0 0 80 110" aria-hidden="true"><use href="#i-kid"/></svg><p>まだありません。上の「保護者用」か「支援者・先生用」から始めましょう。<br>何人分でも、ひとりずつ作れます。</p></div>`;
+  return `<header class="hero"><div class="wrap hero-in">
+    <div><p class="brand">${BRAND}</p><h1>子どもの<br>トリセツ</h1><p class="subt">A4一枚のサポートブック</p>
+      <p class="lead">質問にタップで答えるだけで、お子さんの「取扱説明書」がA4一枚にまとまります。かかわる大人の対応をそろえるための一枚です。</p>
+      <div class="modes">${modeCard('parent')}${modeCard('staff')}</div>
+      <p class="time">10分ほどでできます。途中でやめても自動で保存されます。</p></div>
+    <div class="thumb-box">
+      <div class="thumb" data-act="sample" data-mode="parent" role="button" tabindex="0" aria-label="保護者用の見本を見る"><div class="thumb-in" aria-hidden="true">${sheetHTML(SAMPLES.parent,'parent')}</div><span class="thumb-tag">見本</span></div>
+      <svg class="kid" viewBox="0 0 80 110" aria-hidden="true"><use href="#i-kid"/></svg>${ic('i-star','fl-star')}${ic('i-heart','fl-heart')}
+    </div>
+  </div></header>
+  <main class="wrap">
+    <h2 class="sec-h">作ったトリセツ</h2><div class="plist">${cards}</div>
+    ${canSave?'':'<p class="note warn">この画面では保存ができません（プライベートブラウズなど）。作ったその場で、印刷・PDF保存・文章コピーをしてください。</p>'}
+    <h2 class="sec-h">使い方</h2>
+    <ol class="how"><li><span class="n">1</span><b>立場を選んで答える</b><span>保護者用と支援者・先生用で、質問の言葉が変わります</span></li><li><span class="n">2</span><b>A4一枚で確認</b><span>文字の大きさは自動で調整されます</span></li><li><span class="n">3</span><b>印刷・PDFで渡す</b><span>LINEやメール用の文章コピーもできます</span></li></ol>
+    <p class="note">入力した内容は、この端末のブラウザの中だけに保存されます。インターネット上には送られません。ほかの端末では見られないので、渡すときは印刷・PDF・文章コピーをお使いください。</p>
+    <p class="note">施設の共用パソコンでは、ほかの職員も「作ったトリセツ」の一覧を見られます。呼び名はイニシャルやニックネームにして、印刷したら削除するのがおすすめです。</p>
+    <p class="care">${ic('i-heart','ci')}<span>かんしゃくが激しくて毎日つらいときは、ひとりで抱えずに、通っている園や施設、地域の子育て相談窓口に相談してください。</span></p>
+  </main>
+  <footer class="foot">${COMPANY}</footer>`;
+}
+function stepDone(i){
+  const k=STEPS[i].k,d=cur.d;
+  if(k==='basic')return !!d.name.trim();
+  if(k==='extra')return !!(d.calm||d.contact.length||d.message.trim());
+  return d[k].length>0;
+}
+function optBlock(f){
+  const d=cur.d,sel=d[f],cus=d.custom[f]||[];
+  const chip=(v,isC)=>{const i=sel.indexOf(v);return `<span class="chipw"><button type="button" class="chip${i>=0?' on':''}" data-act="toggle" data-field="${f}" data-val="${esc(v)}" aria-pressed="${i>=0}">${i>=0?`<b class="no">${i+1}</b>`:''}<span>${esc(v)}</span></button>${isC?`<button type="button" class="rm" data-act="rmc" data-field="${f}" data-val="${esc(v)}" aria-label="${esc(v)}を消す">×</button>`:''}</span>`};
+  const groups=OPTS[f].map(g=>`${g.g?`<h3 class="gh">${g.g}</h3>`:''}<div class="chips">${g.items.map(v=>chip(v,false)).join('')}</div>`).join('');
+  const custom=cus.length?`<h3 class="gh">自分で追加した項目</h3><div class="chips">${cus.map(v=>chip(v,true)).join('')}</div>`:'';
+  const c=sel.length;
+  return `<div class="ob" id="ob-${f}">${groups}${custom}<p class="count">${c?`${c}個えらんでいます${c>7?'。多いほどトリセツの文字が小さくなります':''}`:'まだ選んでいません（とばしてもOKです）'}</p></div>`;
+}
+function addRow(f){return `<label class="addlab" for="add-${f}">ほかにあれば追加</label><div class="addrow"><input class="add-in" id="add-${f}" data-field="${f}" maxlength="40" placeholder="${PH[f]}" enterkeyhint="done" autocomplete="off"><button type="button" class="btn small ghost" data-act="add" data-field="${f}">追加</button></div>`}
+function calmBlock(){const d=cur.d;return `<div class="ob" id="ob-calm"><div class="chips">${CALM.map(v=>`<button type="button" class="chip${d.calm===v?' on':''}" data-act="calm" data-val="${v}" aria-pressed="${d.calm===v}">${v}</button>`).join('')}</div></div>`}
+function wizardHTML(){
+  const s=STEPS[step],d=cur.d,n=nm(d),M=MODE[cur.mode];
+  const head=t=>`<div class="qhead"><span class="qicon">${ic(s.ic,'qi')}</span><div><p class="qno">${step+1} / ${STEPS.length}<span class="qmode">${M.label}</span></p><h2>${t}</h2></div></div>`;
+  let body;
+  if(s.k==='basic'){
+    body=`${head('まず、お子さんのことを教えてください')}<p class="help">${M.basicHelp}</p>
+    <label class="field"><span class="lab">呼び名</span><input data-f="name" value="${esc(d.name)}" placeholder="例）ゆうくん" maxlength="20" autocomplete="off"></label>
+    <label class="field"><span class="lab">年齢・学年<small>なくてもOK</small></span><input data-f="age" value="${esc(d.age)}" placeholder="例）5歳（年中）" maxlength="20" autocomplete="off"></label>
+    <div class="field"><label class="lab" for="f-writer">記入した人<small>なくてもOK</small></label><input id="f-writer" data-f="writer" value="${esc(d.writer)}" placeholder="${M.writerPh}" maxlength="20" autocomplete="off"><div class="quick">${M.writers.map(v=>`<button type="button" data-act="writer" data-val="${v}">${v}</button>`).join('')}</div></div>
+    ${cur.mode==='staff'?`<label class="field"><span class="lab">事業所・園・学校名<small>なくてもOK</small></span><input data-f="place" value="${esc(d.place)}" placeholder="例）〇〇教室" maxlength="30" autocomplete="off"></label>`:''}
+    <label class="field"><span class="lab">記入日</span><input type="date" data-f="date" value="${esc(d.date)}"></label>`;
+  }else if(s.k==='extra'){
+    body=`${head('さいごに')}<p class="help">あてはまるものだけで大丈夫です。</p>
+    <h3 class="gh big">落ち着くまでの目安</h3>${calmBlock()}
+    <h3 class="gh big">${M.contact[0]}</h3><p class="help">${M.contact[1]}</p>${optBlock('contact')}${addRow('contact')}
+    <h3 class="gh big"><label for="f-msg">${M.msg[0]}</label></h3><textarea id="f-msg" data-f="message" maxlength="150" placeholder="${M.msg[1]}">${esc(d.message)}</textarea><span class="cnt" id="msgCnt">${d.message.length} / 150</span>`;
+  }else{
+    const [t,h]=(s.k==='prevent'||s.k==='during')?M[s.k]:[s.t(n),s.h];
+    body=`${head(esc(t))}<p class="help">${h}</p><p class="order">選んだ順に番号がつき、その順番でトリセツに載ります。大事なものから3〜6個がおすすめです。</p>${optBlock(s.k)}${addRow(s.k)}`;
+  }
+  const pills=STEPS.map((x,i)=>`<button type="button" class="pill${i===step?' cur':''}${stepDone(i)?' done':''}" data-act="step" data-i="${i}">${x.pill}</button>`).join('');
+  return `${topbar(`${esc(n)}のトリセツ`,'home','‹ ホーム')}
+  <div class="pills" id="pills">${pills}</div>
+  <div class="wrap"><div class="bar"><span style="width:${(step+1)/STEPS.length*100}%"></span></div></div>
+  <main class="wrap"><section class="q" data-c="${s.c}">${body}</section></main>
+  <div class="navbar"><div class="wrap nb-in"><button type="button" class="btn ghost" data-act="prev">${step===0?'ホーム':'戻る'}</button><button type="button" class="btn primary" data-act="next">${step===STEPS.length-1?'トリセツを見る':'次へ'}</button></div></div>`;
+}
+function previewHTML(){
+  const sample=view==='sample',m=curMode(),M=MODE[m],d=sample?SAMPLES[m]:cur.d;
+  return `${sample?topbar(`見本：${M.label}`,'home','‹ もどる',' '):topbar(`${esc(nm(d))}のトリセツ`,'edit','‹ 入力を直す','<button class="link" data-act="home">ホーム</button>')}
+  <main class="wrap wide pv">
+    ${sample?`<p class="sample-note no-print">これは${M.label}の見本です（架空のお子さんの例）。</p>`:''}
+    <div class="pv-actions no-print"><button type="button" class="btn primary" data-act="print">印刷・PDF保存</button><button type="button" class="btn ghost" data-act="copy">文章でコピー</button>${sample?`<button type="button" class="btn ghost" data-act="new" data-mode="${m}">${M.label}で作る</button>`:''}</div>
+    <p class="pv-hint no-print">PDFにするときは、印刷画面の送信先（プリンター）で「PDFに保存」を選んでください。文章でコピーすると、LINEやメールにそのまま貼れます。</p>
+    ${inFrame?'<p class="fitnote warn no-print">この画面の中では印刷ボタンが動かないことがあります。ブラウザで直接ひらいてお使いください。</p>':''}
+    <p class="fitnote no-print" id="fitnote"></p>
+    <div class="stage" id="stage"><div class="sheet-wrap">${sheetHTML(d,m)}</div></div>
+  </main>`;
+}
+function render(){
+  if((view==='wizard'||view==='preview')&&!cur)view='home';
+  document.getElementById('app').innerHTML=view==='home'?homeHTML():view==='wizard'?wizardHTML():previewHTML();
+  layout();
+  if(view==='wizard'){const c=document.getElementById('pills'),p=c&&c.querySelector('.pill.cur');if(p)c.scrollLeft=p.offsetLeft-c.clientWidth/2+p.offsetWidth/2}
+}
+function go(v){view=v;render();window.scrollTo(0,0)}
+function updPill(){const p=document.querySelector(`.pill[data-i="${step}"]`);if(p)p.classList.toggle('done',stepDone(step))}
+function reOpts(f){const el=document.getElementById('ob-'+f);if(el)el.outerHTML=optBlock(f);updPill()}
+function addCustom(f){
+  const inp=document.getElementById('add-'+f);if(!inp||!cur)return;
+  const v=inp.value.replace(/\s+/g,' ').trim().slice(0,40);if(!v){inp.focus();return}
+  const preset=OPTS[f].some(g=>g.items.includes(v)),c=cur.d.custom[f]=cur.d.custom[f]||[];
+  if(!preset&&!c.includes(v))c.push(v);
+  if(!cur.d[f].includes(v))cur.d[f].push(v);
+  inp.value='';touch();reOpts(f);toast(`「${v}」を追加しました`);
+}
+
+/* ===== コピー・印刷・メッセージ ===== */
+function buildText(d,m){
+  const M=MODE[mode(m)],L=[`【${nm(d)}のトリセツ】`];
+  const meta=[d.age,d.writer&&('記入：'+d.writer),d.place,fmtDate(d.date)].filter(Boolean).join('／');if(meta)L.push(meta);
+  const add=(t,a)=>{if(a.length){L.push('','■'+t);a.forEach(x=>L.push('・'+x))}};
+  add('好きなこと・得意なこと',d.likes);
+  add('苦手なこと（かんしゃくのきっかけになりやすいこと）',d.triggers);
+  add('かんしゃくの前のサイン',d.signs);
+  if(d.prevent.length||d.during.length||d.after.length){L.push('','■効く対応');[['前もって',d.prevent],['かんしゃくのとき',d.during],['落ち着いたら',d.after]].forEach(([t,a])=>{if(a.length){L.push(`〈${t}〉`);a.forEach(x=>L.push('・'+x))}})}
+  add('しないでほしいこと（逆効果になりやすい対応）',d.ng);
+  if(d.calm)L.push('','■落ち着くまでの目安',d.calm);
+  add(M.contact[0],d.contact);
+  if(d.message.trim())L.push('','■ひとこと',d.message.trim());
+  return L.join('\n');
+}
+async function copyText(t){
+  const done=()=>toast('コピーしました。LINEやメールに貼りつけられます');
+  try{if(navigator.clipboard&&window.isSecureContext){await navigator.clipboard.writeText(t);done();return}}catch(e){}
+  try{const ta=document.createElement('textarea');ta.value=t;ta.setAttribute('readonly','');ta.style.cssText='position:fixed;top:0;left:0;opacity:0';document.body.appendChild(ta);ta.focus();ta.select();ta.setSelectionRange(0,t.length);const ok=document.execCommand('copy');ta.remove();if(ok){done();return}}catch(e){}
+  openModal(`<h2>文章をコピー</h2><p class="tip">自動でコピーできませんでした。下の文章を長押し（またはすべて選択）して、コピーしてください。</p><textarea id="manualCopy" readonly>${esc(t)}</textarea><button type="button" class="btn primary" data-act="close">とじる</button>`);
+  const mc=document.getElementById('manualCopy');if(mc){mc.focus();mc.select()}
+}
+function doPrint(){layout();printing=true;try{window.print()}catch(e){printing=false;toast('印刷できませんでした。ブラウザで直接ひらいてお使いください')}}
+function praise(){
+  const M=MODE[curMode()],n=view==='sample'?'ゆうくん':nm(cur?cur.d:SAMPLES.parent);
+  const msg=M.praise[Math.floor(Math.random()*M.praise.length)](n);
+  openModal(`<svg class="m-ill" viewBox="0 0 170 117" aria-hidden="true"><use href="#i-kid" x="45" y="2" width="80" height="110"/><use href="#i-star" x="122" y="4" width="38" height="38"/><use href="#i-heart" x="12" y="34" width="30" height="30"/></svg><h2>おつかれさまでした</h2><p class="praise">${esc(msg)}</p><p class="tip">${M.tip}</p><button type="button" class="btn primary" data-act="close">とじる</button>`);
+}
+const modal=document.getElementById('modal'),toastEl=document.getElementById('toast');let tt;
+function openModal(h){modal.innerHTML=`<div class="mbox" role="dialog" aria-modal="true">${h}</div>`;modal.classList.add('open');const b=modal.querySelector('.btn');if(b&&!modal.querySelector('textarea'))b.focus()}
+function closeModal(){modal.classList.remove('open');modal.innerHTML=''}
+function toast(m){toastEl.textContent=m;toastEl.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>toastEl.classList.remove('show'),2400)}
+
+/* ===== 操作 ===== */
+document.addEventListener('click',e=>{
+  if(e.target===modal){closeModal();return}
+  const b=e.target.closest('[data-act]');if(!b)return;
+  const a=b.dataset.act,id=b.dataset.id,f=b.dataset.field,v=b.dataset.val;
+  const find=()=>db.profiles.find(p=>p.id===id);
+  switch(a){
+    case 'new':{const p={id:'p'+Date.now().toString(36)+Math.random().toString(36).slice(2,6),mode:mode(b.dataset.mode),created:Date.now(),updated:Date.now(),d:blank()};db.profiles.push(p);persist();cur=p;step=0;go('wizard');break}
+    case 'sample':sampleMode=mode(b.dataset.mode);go('sample');break;
+    case 'home':cur=null;pendingDel=null;go('home');break;
+    case 'open':{const p=find();if(p){cur=p;go('preview')}break}
+    case 'edit':{if(id){const p=find();if(!p)break;cur=p;step=0}go('wizard');break}
+    case 'del':pendingDel=id;render();break;
+    case 'delno':pendingDel=null;render();break;
+    case 'delyes':db.profiles=db.profiles.filter(p=>p.id!==id);pendingDel=null;persist();render();toast('削除しました');break;
+    case 'step':step=+b.dataset.i;go('wizard');break;
+    case 'prev':if(step>0){step--;go('wizard')}else{cur=null;go('home')}break;
+    case 'next':if(step<STEPS.length-1){step++;go('wizard')}else go('preview');break;
+    case 'toggle':{const arr=cur.d[f],i=arr.indexOf(v);if(i>=0)arr.splice(i,1);else arr.push(v);touch();reOpts(f);break}
+    case 'add':addCustom(f);break;
+    case 'rmc':cur.d.custom[f]=(cur.d.custom[f]||[]).filter(x=>x!==v);cur.d[f]=cur.d[f].filter(x=>x!==v);touch();reOpts(f);break;
+    case 'calm':cur.d.calm=cur.d.calm===v?'':v;touch();document.getElementById('ob-calm').outerHTML=calmBlock();updPill();break;
+    case 'writer':{cur.d.writer=v;const w=document.getElementById('f-writer');if(w)w.value=v;touch();break}
+    case 'print':doPrint();break;
+    case 'copy':copyText(buildText(view==='sample'?SAMPLES[sampleMode]:cur.d,curMode()));break;
+    case 'close':closeModal();break;
+  }
+});
+document.addEventListener('input',e=>{
+  const t=e.target,f=t.dataset&&t.dataset.f;if(!f||!cur)return;
+  cur.d[f]=t.value;touch();
+  if(f==='name'){const tb=document.getElementById('tbName');if(tb)tb.textContent=nm(cur.d)+'のトリセツ'}
+  if(f==='message'){const c=document.getElementById('msgCnt');if(c)c.textContent=t.value.length+' / 150'}
+  updPill();
+});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'&&modal.classList.contains('open')){closeModal();return}
+  const t=e.target;
+  if(e.key==='Enter'&&t.classList&&t.classList.contains('add-in')){if(e.isComposing||e.keyCode===229)return;e.preventDefault();addCustom(t.dataset.field);return}
+  if((e.key==='Enter'||e.key===' ')&&t.getAttribute&&t.getAttribute('role')==='button'){e.preventDefault();t.click()}
+});
+window.addEventListener('beforeprint',layout);
+window.addEventListener('afterprint',()=>{if(printing){printing=false;setTimeout(praise,250)}});
+let rt;window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(layout,120)});
+
+load();render();
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(layout);
+}
+
+</script>
+</body>
+</html>
